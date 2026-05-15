@@ -18,14 +18,23 @@ module.exports = async (req, res, next) => {
         const [, token] =
             authHeader.split(" ");
 
-        const decoded = jwt.verify(
-            token,
-            process.env.JWT_SECRET
-        );
+        const decoded =
+            jwt.verify(
+                token,
+                process.env.JWT_SECRET
+            );
 
         req.usuario = {
-            usuarioid: decoded.usuarioid,
-            lojaId: decoded.lojaId
+
+            usuarioid:
+                decoded.usuarioid,
+
+            lojaId:
+                decoded.lojaId,
+
+            tipo:
+                decoded.tipo
+
         };
 
         next();

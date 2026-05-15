@@ -59,6 +59,12 @@ module.exports = {
 
                     },
 
+                    include: {
+
+                        vendas: true
+
+                    },
+
                     orderBy: {
 
                         clienteid: "desc"

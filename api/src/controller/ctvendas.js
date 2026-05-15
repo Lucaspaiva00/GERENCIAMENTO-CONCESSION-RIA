@@ -10,9 +10,10 @@ const criar = async (req, res) => {
 
     try {
 
-        const {
+        const lojaId =
+            req.usuario.lojaId;
 
-            lojaId,
+        const {
 
             clienteId,
 
@@ -35,10 +36,15 @@ const criar = async (req, res) => {
         /* VEÍCULO */
 
         const veiculo =
-            await prisma.veiculo.findUnique({
+            await prisma.veiculo.findFirst({
 
                 where: {
-                    veiculoid: Number(veiculoId)
+
+                    veiculoid:
+                        Number(veiculoId),
+
+                    lojaId
+
                 }
 
             });
@@ -59,6 +65,60 @@ const criar = async (req, res) => {
 
         }
 
+        /* CLIENTE */
+
+        const cliente =
+            await prisma.cliente.findFirst({
+
+                where: {
+
+                    clienteid:
+                        Number(clienteId),
+
+                    lojaId
+
+                }
+
+            });
+
+        if (!cliente) {
+
+            return res.status(404).json({
+                error: "Cliente não encontrado"
+            });
+
+        }
+
+        /* VENDEDOR */
+
+        let vendedor = null;
+
+        if (vendedorId) {
+
+            vendedor =
+                await prisma.usuario.findFirst({
+
+                    where: {
+
+                        usuarioid:
+                            Number(vendedorId),
+
+                        lojaId
+
+                    }
+
+                });
+
+            if (!vendedor) {
+
+                return res.status(404).json({
+                    error: "Vendedor não encontrado"
+                });
+
+            }
+
+        }
+
         const lucro =
             Number(valorVenda) -
             Number(veiculo.valorCompra);
@@ -75,8 +135,7 @@ const criar = async (req, res) => {
 
                         data: {
 
-                            lojaId:
-                                Number(lojaId),
+                            lojaId,
 
                             clienteId:
                                 Number(clienteId),
@@ -116,12 +175,16 @@ const criar = async (req, res) => {
                 await tx.veiculo.update({
 
                     where: {
+
                         veiculoid:
                             Number(veiculoId)
+
                     },
 
                     data: {
+
                         status: "VENDIDO"
+
                     }
 
                 });
@@ -132,8 +195,7 @@ const criar = async (req, res) => {
 
                     data: {
 
-                        lojaId:
-                            Number(lojaId),
+                        lojaId,
 
                         descricao:
                             `Venda do veículo ${veiculo.titulo}`,
@@ -187,9 +249,7 @@ const criar = async (req, res) => {
                                     `Parcela ${i}/${parcelas}`,
 
                                 valor:
-                                    Number(
-                                        valorParcela
-                                    ),
+                                    Number(valorParcela),
 
                                 vencimento
 
@@ -203,53 +263,39 @@ const criar = async (req, res) => {
 
                 /* COMISSÃO */
 
-                if (vendedorId) {
+                if (
+                    vendedor &&
+                    vendedor.comissaoPercentual
+                ) {
 
-                    const vendedor =
-                        await tx.usuario.findUnique({
+                    const valorComissao =
+                        (
+                            Number(valorVenda)
+                            *
+                            Number(
+                                vendedor.comissaoPercentual
+                            )
+                        ) / 100;
 
-                            where: {
-                                usuarioid:
-                                    Number(vendedorId)
-                            }
+                    await tx.comissao.create({
 
-                        });
+                        data: {
 
-                    if (
-                        vendedor &&
-                        vendedor.comissaoPercentual
-                    ) {
+                            vendaId:
+                                novaVenda.vendaid,
 
-                        const valorComissao =
-                            (
-                                Number(valorVenda)
-                                *
-                                Number(
-                                    vendedor.comissaoPercentual
-                                )
-                            ) / 100;
+                            vendedorId:
+                                vendedor.usuarioid,
 
-                        await tx.comissao.create({
+                            percentual:
+                                vendedor.comissaoPercentual,
 
-                            data: {
+                            valor:
+                                valorComissao
 
-                                vendaId:
-                                    novaVenda.vendaid,
+                        }
 
-                                vendedorId:
-                                    vendedor.usuarioid,
-
-                                percentual:
-                                    vendedor.comissaoPercentual,
-
-                                valor:
-                                    valorComissao
-
-                            }
-
-                        });
-
-                    }
+                    });
 
                 }
 
@@ -279,8 +325,17 @@ const listar = async (req, res) => {
 
     try {
 
+        const lojaId =
+            req.usuario.lojaId;
+
         const vendas =
             await prisma.venda.findMany({
+
+                where: {
+
+                    lojaId
+
+                },
 
                 include: {
 
@@ -297,7 +352,9 @@ const listar = async (req, res) => {
                 },
 
                 orderBy: {
+
                     vendaid: "desc"
+
                 }
 
             });

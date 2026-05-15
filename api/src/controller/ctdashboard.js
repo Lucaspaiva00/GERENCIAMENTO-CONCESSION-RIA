@@ -6,75 +6,158 @@ module.exports = {
 
         try {
 
-            const totalVeiculos = await prisma.veiculo.count();
+            const lojaId =
+                req.usuario.lojaId;
 
-            const disponiveis = await prisma.veiculo.count({
-                where: {
-                    status: "DISPONIVEL"
-                }
-            });
+            /* VEÍCULOS */
 
-            const vendidos = await prisma.veiculo.count({
-                where: {
-                    status: "VENDIDO"
-                }
-            });
+            const totalVeiculos =
+                await prisma.veiculo.count({
 
-            const manutencao = await prisma.veiculo.count({
-                where: {
-                    status: "MANUTENCAO"
-                }
-            });
+                    where: {
+                        lojaId
+                    }
 
-            const entradas = await prisma.financeiro.aggregate({
-                _sum: {
-                    valor: true
-                },
-                where: {
-                    tipo: "ENTRADA"
-                }
-            });
+                });
 
-            const saidas = await prisma.financeiro.aggregate({
-                _sum: {
-                    valor: true
-                },
-                where: {
-                    tipo: "SAIDA"
-                }
-            });
+            const vendidos =
+                await prisma.veiculo.count({
 
-            const pendentes = await prisma.financeiro.count({
-                where: {
-                    status: "PENDENTE"
-                }
-            });
+                    where: {
 
-            const totalEntradas = entradas._sum.valor || 0;
+                        lojaId,
 
-            const totalSaidas = saidas._sum.valor || 0;
+                        status: "VENDIDO"
 
-            const saldo = totalEntradas - totalSaidas;
+                    }
+
+                });
+
+            const consignados =
+                await prisma.veiculo.count({
+
+                    where: {
+
+                        lojaId,
+
+                        tipoEstoque:
+                            "CONSIGNADO"
+
+                    }
+
+                });
+
+            const disponiveis =
+                await prisma.veiculo.count({
+
+                    where: {
+
+                        lojaId,
+
+                        status:
+                            "DISPONIVEL"
+
+                    }
+
+                });
+
+            const manutencao =
+                await prisma.veiculo.count({
+
+                    where: {
+
+                        lojaId,
+
+                        status:
+                            "MANUTENCAO"
+
+                    }
+
+                });
+
+            /* FINANCEIRO */
+
+            const entradas =
+                await prisma.financeiro.aggregate({
+
+                    where: {
+
+                        lojaId,
+
+                        tipo: "ENTRADA"
+
+                    },
+
+                    _sum: {
+
+                        valor: true
+
+                    }
+
+                });
+
+            const saidas =
+                await prisma.financeiro.aggregate({
+
+                    where: {
+
+                        lojaId,
+
+                        tipo: "SAIDA"
+
+                    },
+
+                    _sum: {
+
+                        valor: true
+
+                    }
+
+                });
+
+            const totalEntradas =
+                entradas._sum.valor || 0;
+
+            const totalSaidas =
+                saidas._sum.valor || 0;
+
+            const saldo =
+                totalEntradas - totalSaidas;
 
             return res.json({
 
                 veiculos: {
-                    total: totalVeiculos,
-                    disponiveis: disponiveis,
-                    vendidos: vendidos,
-                    manutencao: manutencao
+
+                    total:
+                        totalVeiculos,
+
+                    vendidos,
+
+                    consignados,
+
+                    disponiveis,
+
+                    manutencao
+
                 },
 
                 financeiro: {
-                    entradas: totalEntradas,
-                    saidas: totalSaidas,
-                    saldo: saldo,
-                    pendentes: pendentes
+
+                    entradas:
+                        totalEntradas,
+
+                    saidas:
+                        totalSaidas,
+
+                    saldo
+
                 }
 
             });
 
         } catch (error) {
+
+            console.log(error);
 
             return res.status(500).json(error);
 

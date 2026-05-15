@@ -141,11 +141,13 @@ routes.delete(
 
 routes.post(
     "/vendas",
+    auth,
     vendas.criar
 );
 
 routes.get(
     "/vendas",
+    auth,
     vendas.listar
 );
 

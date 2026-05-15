@@ -7,7 +7,6 @@ module.exports = {
         try {
 
             const {
-                lojaId,
                 descricao,
                 tipo,
                 valor,
@@ -15,16 +14,28 @@ module.exports = {
                 vencimento
             } = req.body;
 
-            const movimentacao = await prisma.financeiro.create({
-                data: {
-                    lojaId,
-                    descricao,
-                    tipo,
-                    valor,
-                    status,
-                    vencimento
-                }
-            });
+            const movimentacao =
+                await prisma.financeiro.create({
+
+                    data: {
+
+                        lojaId:
+                            req.usuario.lojaId,
+
+                        descricao,
+
+                        tipo,
+
+                        valor:
+                            Number(valor),
+
+                        status,
+
+                        vencimento
+
+                    }
+
+                });
 
             return res.json(movimentacao);
 
@@ -40,11 +51,24 @@ module.exports = {
 
         try {
 
-            const movimentacoes = await prisma.financeiro.findMany({
-                orderBy: {
-                    financeiroid: "desc"
-                }
-            });
+            const movimentacoes =
+                await prisma.financeiro.findMany({
+
+                    where: {
+
+                        lojaId:
+                            req.usuario.lojaId
+
+                    },
+
+                    orderBy: {
+
+                        financeiroid:
+                            "desc"
+
+                    }
+
+                });
 
             return res.json(movimentacoes);
 
@@ -60,13 +84,23 @@ module.exports = {
 
         try {
 
-            const { id } = req.params;
+            const { id } =
+                req.params;
 
-            const movimentacao = await prisma.financeiro.findUnique({
-                where: {
-                    financeiroid: Number(id)
-                }
-            });
+            const movimentacao =
+                await prisma.financeiro.findFirst({
+
+                    where: {
+
+                        financeiroid:
+                            Number(id),
+
+                        lojaId:
+                            req.usuario.lojaId
+
+                    }
+
+                });
 
             return res.json(movimentacao);
 
@@ -82,7 +116,8 @@ module.exports = {
 
         try {
 
-            const { id } = req.params;
+            const { id } =
+                req.params;
 
             const {
                 descricao,
@@ -92,18 +127,32 @@ module.exports = {
                 vencimento
             } = req.body;
 
-            const movimentacao = await prisma.financeiro.update({
-                where: {
-                    financeiroid: Number(id)
-                },
-                data: {
-                    descricao,
-                    tipo,
-                    valor,
-                    status,
-                    vencimento
-                }
-            });
+            const movimentacao =
+                await prisma.financeiro.update({
+
+                    where: {
+
+                        financeiroid:
+                            Number(id)
+
+                    },
+
+                    data: {
+
+                        descricao,
+
+                        tipo,
+
+                        valor:
+                            Number(valor),
+
+                        status,
+
+                        vencimento
+
+                    }
+
+                });
 
             return res.json(movimentacao);
 
@@ -119,16 +168,25 @@ module.exports = {
 
         try {
 
-            const { id } = req.params;
+            const { id } =
+                req.params;
 
             await prisma.financeiro.delete({
+
                 where: {
-                    financeiroid: Number(id)
+
+                    financeiroid:
+                        Number(id)
+
                 }
+
             });
 
             return res.json({
-                message: "Movimentação deletada com sucesso"
+
+                message:
+                    "Movimentação deletada com sucesso"
+
             });
 
         } catch (error) {
