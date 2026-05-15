@@ -53,15 +53,17 @@ model Loja {
 }
 
 model Usuario {
-  usuarioid Int         @id @default(autoincrement())
-  lojaId    Int
-  loja      Loja        @relation(fields: [lojaId], references: [lojaid], onDelete: Cascade)
-  nome      String
-  email     String      @unique
-  senha     String
-  tipo      TipoUsuario @default(VENDEDOR)
-  createdAt DateTime    @default(now())
-  vendas    Venda[]
+  usuarioid          Int         @id @default(autoincrement())
+  lojaId             Int
+  loja               Loja        @relation(fields: [lojaId], references: [lojaid], onDelete: Cascade)
+  nome               String
+  email              String      @unique
+  senha              String
+  tipo               TipoUsuario @default(VENDEDOR)
+  comissaoPercentual Float?      @default(0)
+  createdAt          DateTime    @default(now())
+  vendas             Venda[]
+  comissaos          Comissao[]
 }
 
 model Cliente {
@@ -90,6 +92,7 @@ model Veiculo {
   km          Int?
   valorCompra Float
   valorVenda  Float
+  imagem      String?
   tipo        TipoVeiculo
   tipoEstoque TipoEstoque
   status      StatusVeiculo      @default(DISPONIVEL)
@@ -109,18 +112,44 @@ model HistoricoVeiculo {
 }
 
 model Venda {
-  vendaid    Int      @id @default(autoincrement())
-  lojaId     Int
-  loja       Loja     @relation(fields: [lojaId], references: [lojaid], onDelete: Cascade)
-  clienteId  Int
-  cliente    Cliente  @relation(fields: [clienteId], references: [clienteid], onDelete: Restrict)
-  veiculoId  Int      @unique
-  veiculo    Veiculo  @relation(fields: [veiculoId], references: [veiculoid], onDelete: Restrict)
-  vendedorId Int?
-  vendedor   Usuario? @relation(fields: [vendedorId], references: [usuarioid])
-  valorVenda Float
-  lucro      Float?
+  vendaid       Int            @id @default(autoincrement())
+  lojaId        Int
+  loja          Loja           @relation(fields: [lojaId], references: [lojaid], onDelete: Cascade)
+  clienteId     Int
+  cliente       Cliente        @relation(fields: [clienteId], references: [clienteid], onDelete: Restrict)
+  veiculoId     Int            @unique
+  veiculo       Veiculo        @relation(fields: [veiculoId], references: [veiculoid], onDelete: Restrict)
+  vendedorId    Int?
+  vendedor      Usuario?       @relation(fields: [vendedorId], references: [usuarioid])
+  valorVenda    Float
+  valorCompra   Float
+  lucro         Float
+  observacoes   String?        @db.Text
+  createdAt     DateTime       @default(now())
+  contaRecebers ContaReceber[]
+  comissao      Comissao?
+}
+
+model Comissao {
+  comissaoid Int      @id @default(autoincrement())
+  vendaId    Int      @unique
+  venda      Venda    @relation(fields: [vendaId], references: [vendaid], onDelete: Cascade)
+  vendedorId Int
+  vendedor   Usuario  @relation(fields: [vendedorId], references: [usuarioid])
+  percentual Float
+  valor      Float
   createdAt  DateTime @default(now())
+}
+
+model ContaReceber {
+  contareceberid Int         @id @default(autoincrement())
+  vendaId        Int
+  venda          Venda       @relation(fields: [vendaId], references: [vendaid], onDelete: Cascade)
+  descricao      String
+  valor          Float
+  vencimento     DateTime
+  status         StatusConta @default(PENDENTE)
+  createdAt      DateTime    @default(now())
 }
 
 model Financeiro {

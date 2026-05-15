@@ -6,6 +6,8 @@ module.exports = {
 
         try {
 
+            const imagem = req.file ? req.file.filename : null;
+
             const {
                 lojaId,
                 titulo,
@@ -25,17 +27,18 @@ module.exports = {
 
             const veiculo = await prisma.veiculo.create({
                 data: {
-                    lojaId,
+                    lojaId: Number(lojaId),
                     titulo,
                     marca,
                     modelo,
-                    ano,
+                    ano: Number(ano),
                     placa,
                     chassi,
                     cor,
-                    km,
-                    valorCompra,
-                    valorVenda,
+                    km: km ? Number(km) : null,
+                    valorCompra: Number(valorCompra),
+                    valorVenda: Number(valorVenda),
+                    imagem,
                     tipo,
                     tipoEstoque,
                     observacoes
@@ -45,6 +48,8 @@ module.exports = {
             return res.json(veiculo);
 
         } catch (error) {
+
+            console.log(error);
 
             return res.status(500).json(error);
 
@@ -56,15 +61,73 @@ module.exports = {
 
         try {
 
+            const {
+                busca,
+                status,
+                tipoEstoque,
+                tipo
+            } = req.query;
+
+            const filtros = {
+
+                lojaId: Number(req.lojaId)
+
+            };
+
+            if (busca) {
+
+                filtros.OR = [
+                    {
+                        titulo: {
+                            contains: busca
+                        }
+                    },
+                    {
+                        marca: {
+                            contains: busca
+                        }
+                    },
+                    {
+                        modelo: {
+                            contains: busca
+                        }
+                    },
+                    {
+                        placa: {
+                            contains: busca
+                        }
+                    }
+                ];
+
+            }
+
+            if (status) {
+                filtros.status = status;
+            }
+
+            if (tipoEstoque) {
+                filtros.tipoEstoque = tipoEstoque;
+            }
+
+            if (tipo) {
+                filtros.tipo = tipo;
+            }
+
             const veiculos = await prisma.veiculo.findMany({
+
+                where: filtros,
+
                 orderBy: {
                     veiculoid: "desc"
                 }
+
             });
 
             return res.json(veiculos);
 
         } catch (error) {
+
+            console.log(error);
 
             return res.status(500).json(error);
 
@@ -88,6 +151,8 @@ module.exports = {
 
         } catch (error) {
 
+            console.log(error);
+
             return res.status(500).json(error);
 
         }
@@ -99,6 +164,8 @@ module.exports = {
         try {
 
             const { id } = req.params;
+
+            const imagem = req.file ? req.file.filename : undefined;
 
             const {
                 titulo,
@@ -117,31 +184,39 @@ module.exports = {
                 observacoes
             } = req.body;
 
+            const dadosAtualizacao = {
+                titulo,
+                marca,
+                modelo,
+                ano: ano ? Number(ano) : undefined,
+                placa,
+                chassi,
+                cor,
+                km: km ? Number(km) : null,
+                valorCompra: valorCompra ? Number(valorCompra) : undefined,
+                valorVenda: valorVenda ? Number(valorVenda) : undefined,
+                tipo,
+                tipoEstoque,
+                status,
+                observacoes
+            };
+
+            if (imagem) {
+                dadosAtualizacao.imagem = imagem;
+            }
+
             const veiculo = await prisma.veiculo.update({
                 where: {
                     veiculoid: Number(id)
                 },
-                data: {
-                    titulo,
-                    marca,
-                    modelo,
-                    ano,
-                    placa,
-                    chassi,
-                    cor,
-                    km,
-                    valorCompra,
-                    valorVenda,
-                    tipo,
-                    tipoEstoque,
-                    status,
-                    observacoes
-                }
+                data: dadosAtualizacao
             });
 
             return res.json(veiculo);
 
         } catch (error) {
+
+            console.log(error);
 
             return res.status(500).json(error);
 
@@ -166,6 +241,8 @@ module.exports = {
             });
 
         } catch (error) {
+
+            console.log(error);
 
             return res.status(500).json(error);
 
