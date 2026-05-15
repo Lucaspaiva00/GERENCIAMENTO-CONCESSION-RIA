@@ -45,6 +45,10 @@ module.exports = {
             const clientes =
                 await prisma.cliente.findMany({
 
+                    include: {
+                        vendas: true
+                    },
+
                     orderBy: {
                         clienteid: "desc"
                     }

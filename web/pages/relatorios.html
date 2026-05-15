@@ -1,5 +1,4 @@
-<!-- pages/vendas.html -->
-
+<!-- pages/financeiro.html -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 
@@ -9,11 +8,13 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Vendas</title>
+    <title>Financeiro | Paiva Tech</title>
 
     <link rel="stylesheet" href="../assets/css/style.css">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 </head>
 
@@ -30,12 +31,10 @@
                 <div class="sidebar-logo">
 
                     <div class="sidebar-icon">
-                        <i class="fa-solid fa-motorcycle"></i>
+                        <i class="fa-solid fa-chart-pie"></i>
                     </div>
 
-                    <span>
-                        PAIVA TECH
-                    </span>
+                    <span>PAIVA TECH</span>
 
                 </div>
 
@@ -47,27 +46,26 @@
                     </a>
 
                     <a href="./veiculos.html">
-                        <i class="fa-solid fa-motorcycle"></i>
+                        <i class="fa-solid fa-car-side"></i>
                         Veículos
                     </a>
 
-                    <a href="#" class="active">
+                    <a href="./vendas.html">
                         <i class="fa-solid fa-cart-shopping"></i>
                         Vendas
                     </a>
-
-                    <a href="#">
+                    <a href="./financeiro.html">
                         <i class="fa-solid fa-wallet"></i>
                         Financeiro
                     </a>
 
-                    <a href="clientes.html">
+                    <a href="./clientes.html">
                         <i class="fa-solid fa-users"></i>
                         Clientes
                     </a>
 
-                    <a href="#">
-                        <i class="fa-solid fa-chart-pie"></i>
+                    <a href="./relatorios.html" class="active">
+                        <i class="fa-solid fa-chart-column"></i>
                         Relatórios
                     </a>
 
@@ -78,7 +76,6 @@
             <button class="logout-btn" id="logoutBtn">
 
                 <i class="fa-solid fa-right-from-bracket"></i>
-
                 Sair
 
             </button>
@@ -94,20 +91,19 @@
                 <div>
 
                     <h1 class="page-title">
-                        Vendas
+                        Financeiro
                     </h1>
 
                     <p class="page-subtitle">
-                        Controle de vendas da loja
+                        Controle financeiro completo
                     </p>
 
                 </div>
 
-                <button class="btn-primary" id="btnNovaVenda">
+                <button class="btn-primary" onclick="abrirModal()">
 
                     <i class="fa-solid fa-plus"></i>
-
-                    Nova venda
+                    Nova movimentação
 
                 </button>
 
@@ -122,16 +118,14 @@
                     <div>
 
                         <span class="card-label">
-                            Total vendido
+                            Entradas
                         </span>
 
-                        <h2 id="totalVendas">
-                            R$ 0
+                        <h2 id="totalEntradas">
+                            R$ 0,00
                         </h2>
 
                     </div>
-
-                    <i class="fa-solid fa-sack-dollar card-icon"></i>
 
                 </div>
 
@@ -140,16 +134,14 @@
                     <div>
 
                         <span class="card-label">
-                            Lucro total
+                            Saídas
                         </span>
 
-                        <h2 id="lucroTotal">
-                            R$ 0
+                        <h2 id="totalSaidas">
+                            R$ 0,00
                         </h2>
 
                     </div>
-
-                    <i class="fa-solid fa-chart-line card-icon"></i>
 
                 </div>
 
@@ -158,34 +150,66 @@
                     <div>
 
                         <span class="card-label">
-                            Quantidade
+                            Saldo
                         </span>
 
-                        <h2 id="quantidadeVendas">
-                            0
+                        <h2 id="saldoTotal">
+                            R$ 0,00
                         </h2>
 
                     </div>
-
-                    <i class="fa-solid fa-cart-shopping card-icon"></i>
 
                 </div>
 
             </div>
 
-            <!-- FILTRO -->
+            <!-- GRAFICOS -->
+
+            <div class="charts-grid">
+
+                <div class="chart-card">
+
+                    <h3>
+                        Fluxo Financeiro
+                    </h3>
+
+                    <canvas id="financeiroChart"></canvas>
+
+                </div>
+
+                <div class="chart-card">
+
+                    <h3>
+                        Distribuição
+                    </h3>
+
+                    <canvas id="tipoChart"></canvas>
+
+                </div>
+
+            </div>
+
+            <!-- FILTROS -->
 
             <div class="filters-card">
 
-                <input type="text" id="busca" class="filter-input" placeholder="Buscar cliente ou veículo">
+                <input type="text" class="filter-input" placeholder="Buscar descrição..." id="buscaInput">
 
-                <button class="btn-primary" id="btnFiltrar">
+                <select class="filter-input" id="tipoFiltro">
 
-                    <i class="fa-solid fa-filter"></i>
+                    <option value="">
+                        Todos
+                    </option>
 
-                    Filtrar
+                    <option value="ENTRADA">
+                        Entrada
+                    </option>
 
-                </button>
+                    <option value="SAIDA">
+                        Saída
+                    </option>
+
+                </select>
 
             </div>
 
@@ -199,19 +223,18 @@
 
                         <tr>
 
-                            <th>Cliente</th>
-                            <th>Veículo</th>
+                            <th>Descrição</th>
                             <th>Tipo</th>
-                            <th>Venda</th>
-                            <th>Lucro</th>
-                            <th>Vendedor</th>
+                            <th>Valor</th>
+                            <th>Status</th>
+                            <th>Vencimento</th>
                             <th>Data</th>
 
                         </tr>
 
                     </thead>
 
-                    <tbody id="tbodyVendas">
+                    <tbody id="financeiroTable">
 
                     </tbody>
 
@@ -225,57 +248,65 @@
 
     <!-- MODAL -->
 
-    <div class="modal-overlay" id="modalVenda">
+    <div class="modal-overlay" id="modalFinanceiro">
 
         <div class="modal-content">
 
             <div class="modal-header">
 
                 <h2>
-                    Nova venda
+                    Nova Movimentação
                 </h2>
 
-                <button id="fecharModal">
-
+                <button onclick="fecharModal()">
                     <i class="fa-solid fa-xmark"></i>
-
                 </button>
 
             </div>
 
-            <form id="formVenda">
+            <form id="formFinanceiro">
 
                 <div class="form-grid">
 
-                    <input type="text" name="clienteNome" placeholder="Nome do cliente" required>
+                    <input type="text" placeholder="Descrição" id="descricao" required>
 
-                    <input type="text" name="clienteTelefone" placeholder="Telefone">
-
-                    <select name="veiculoId" id="selectVeiculos" required>
+                    <select id="tipo" required>
 
                         <option value="">
-                            Selecione um veículo
+                            Tipo
+                        </option>
+
+                        <option value="ENTRADA">
+                            Entrada
+                        </option>
+
+                        <option value="SAIDA">
+                            Saída
                         </option>
 
                     </select>
 
-                    <input type="number" name="valorVenda" placeholder="Valor da venda" required>
+                    <input type="number" placeholder="Valor" id="valor" required>
 
-                    <select name="vendedorId" id="selectVendedores">
+                    <select id="status">
 
-                        <option value="">
-                            Sem vendedor
+                        <option value="PAGO">
+                            Pago
+                        </option>
+
+                        <option value="PENDENTE">
+                            Pendente
                         </option>
 
                     </select>
 
-                    <textarea name="observacoes" placeholder="Observações"></textarea>
+                    <input type="date" id="vencimento">
 
                 </div>
 
-                <button type="submit" class="btn-primary full">
+                <button class="btn-primary full">
 
-                    Finalizar venda
+                    Salvar movimentação
 
                 </button>
 
@@ -285,7 +316,7 @@
 
     </div>
 
-    <script src="../assets/js/vendas.js"></script>
+    <script src="../assets/js/financeiro.js"></script>
 
 </body>
 

@@ -871,3 +871,625 @@ body {
     }
 
 }
+
+/* =========================
+   FINANCEIRO PREMIUM UI
+========================= */
+
+.charts-grid {
+
+    display: grid;
+
+    grid-template-columns: 2fr 1fr;
+
+    gap: 24px;
+
+    margin-bottom: 24px;
+
+}
+
+.chart-card {
+
+    position: relative;
+
+    background: linear-gradient(180deg,
+            #ffffff,
+            #f8fafc);
+
+    border-radius: 24px;
+
+    padding: 24px;
+
+    border: 1px solid rgba(229, 231, 235, 0.8);
+
+    box-shadow:
+        0 10px 30px rgba(15, 23, 42, 0.04);
+
+    overflow: hidden;
+
+}
+
+.chart-card::before {
+
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 4px;
+
+    background: linear-gradient(90deg,
+            #2563EB,
+            #3B82F6);
+
+}
+
+.chart-card h3 {
+
+    font-size: 18px;
+
+    font-weight: 700;
+
+    color: #111827;
+
+    margin-bottom: 20px;
+
+}
+
+.chart-card canvas {
+
+    width: 100% !important;
+
+    height: 320px !important;
+
+}
+
+/* =========================
+   CARDS KPI
+========================= */
+
+.cards-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fit, minmax(260px, 1fr));
+
+    gap: 22px;
+
+    margin-bottom: 24px;
+
+}
+
+.dashboard-card {
+
+    position: relative;
+
+    background: linear-gradient(145deg,
+            #ffffff,
+            #f8fafc);
+
+    border-radius: 24px;
+
+    padding: 26px;
+
+    border: 1px solid rgba(229, 231, 235, 0.7);
+
+    overflow: hidden;
+
+    transition: 0.3s;
+
+    box-shadow:
+        0 10px 30px rgba(15, 23, 42, 0.04);
+
+}
+
+.dashboard-card:hover {
+
+    transform: translateY(-4px);
+
+    box-shadow:
+        0 18px 40px rgba(15, 23, 42, 0.08);
+
+}
+
+.dashboard-card::after {
+
+    content: "";
+
+    position: absolute;
+
+    top: -30px;
+    right: -30px;
+
+    width: 120px;
+    height: 120px;
+
+    border-radius: 50%;
+
+    background: rgba(37, 99, 235, 0.06);
+
+}
+
+.card-label {
+
+    display: block;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    color: #6B7280;
+
+    margin-bottom: 12px;
+
+}
+
+.dashboard-card h2 {
+
+    font-size: 34px;
+
+    font-weight: 800;
+
+    color: #111827;
+
+    letter-spacing: -1px;
+
+}
+
+/* =========================
+   FILTROS
+========================= */
+
+.filters-card {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 16px;
+
+    flex-wrap: wrap;
+
+    background: #ffffff;
+
+    border-radius: 24px;
+
+    padding: 20px;
+
+    margin-bottom: 24px;
+
+    border: 1px solid rgba(229, 231, 235, 0.8);
+
+    box-shadow:
+        0 10px 30px rgba(15, 23, 42, 0.04);
+
+}
+
+.filter-input {
+
+    flex: 1;
+
+    min-width: 220px;
+
+    height: 54px;
+
+    border: 1px solid #E5E7EB;
+
+    border-radius: 16px;
+
+    padding: 0 18px;
+
+    background: #F9FAFB;
+
+    font-size: 14px;
+
+    transition: 0.3s;
+
+}
+
+.filter-input:focus {
+
+    background: white;
+
+    border-color: #2563EB;
+
+    box-shadow:
+        0 0 0 4px rgba(37, 99, 235, 0.12);
+
+}
+
+/* =========================
+   TABELA
+========================= */
+
+.table-card {
+
+    background: white;
+
+    border-radius: 24px;
+
+    overflow: hidden;
+
+    border: 1px solid rgba(229, 231, 235, 0.8);
+
+    box-shadow:
+        0 10px 30px rgba(15, 23, 42, 0.04);
+
+}
+
+.custom-table {
+
+    width: 100%;
+
+    border-collapse: collapse;
+
+}
+
+.custom-table thead {
+
+    background: #F8FAFC;
+
+}
+
+.custom-table th {
+
+    padding: 20px;
+
+    text-align: left;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    color: #6B7280;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.5px;
+
+}
+
+.custom-table td {
+
+    padding: 20px;
+
+    border-top: 1px solid #F1F5F9;
+
+    font-size: 14px;
+
+    color: #111827;
+
+    font-weight: 500;
+
+}
+
+.custom-table tbody tr {
+
+    transition: 0.2s;
+
+}
+
+.custom-table tbody tr:hover {
+
+    background: #F8FAFC;
+
+}
+
+/* =========================
+   BADGES
+========================= */
+
+.badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 8px 14px;
+
+    border-radius: 999px;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    letter-spacing: 0.3px;
+
+}
+
+.badge-success {
+
+    background: rgba(34, 197, 94, 0.12);
+
+    color: #16A34A;
+
+}
+
+.badge-danger {
+
+    background: rgba(239, 68, 68, 0.12);
+
+    color: #DC2626;
+
+}
+
+.badge-warning {
+
+    background: rgba(245, 158, 11, 0.12);
+
+    color: #D97706;
+
+}
+
+/* =========================
+   MODAL
+========================= */
+
+.modal-content {
+
+    width: 100%;
+
+    max-width: 760px;
+
+    background: white;
+
+    border-radius: 28px;
+
+    padding: 30px;
+
+    border: 1px solid rgba(229, 231, 235, 0.8);
+
+    box-shadow:
+        0 20px 60px rgba(15, 23, 42, 0.15);
+
+}
+
+.modal-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 26px;
+
+}
+
+.modal-header h2 {
+
+    font-size: 26px;
+
+    font-weight: 800;
+
+    color: #111827;
+
+}
+
+.modal-header button {
+
+    width: 46px;
+    height: 46px;
+
+    border: none;
+
+    border-radius: 14px;
+
+    background: #F3F4F6;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+
+    font-size: 18px;
+
+}
+
+.modal-header button:hover {
+
+    background: #E5E7EB;
+
+}
+
+.form-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fit, minmax(240px, 1fr));
+
+    gap: 18px;
+
+}
+
+.form-grid input,
+.form-grid select {
+
+    width: 100%;
+
+    height: 54px;
+
+    border: 1px solid #E5E7EB;
+
+    border-radius: 16px;
+
+    padding: 0 18px;
+
+    background: #F9FAFB;
+
+    font-size: 14px;
+
+    transition: 0.3s;
+
+}
+
+.form-grid input:focus,
+.form-grid select:focus {
+
+    background: white;
+
+    border-color: #2563EB;
+
+    box-shadow:
+        0 0 0 4px rgba(37, 99, 235, 0.12);
+
+}
+
+.full {
+
+    width: 100%;
+
+    margin-top: 24px;
+
+}
+
+/* =========================
+   BOTÕES
+========================= */
+
+.btn-primary {
+
+    height: 54px;
+
+    border: none;
+
+    border-radius: 16px;
+
+    padding: 0 24px;
+
+    background: linear-gradient(135deg,
+            #2563EB,
+            #3B82F6);
+
+    color: white;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 10px;
+
+    box-shadow:
+        0 10px 20px rgba(37, 99, 235, 0.2);
+
+}
+
+.btn-primary:hover {
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 16px 30px rgba(37, 99, 235, 0.3);
+
+}
+
+/* =========================
+   RESPONSIVO
+========================= */
+
+@media(max-width: 1100px) {
+
+    .charts-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+}
+
+@media(max-width: 768px) {
+
+    .charts-grid {
+
+        gap: 18px;
+
+    }
+
+    .chart-card canvas {
+
+        height: 260px !important;
+
+    }
+
+    .dashboard-card h2 {
+
+        font-size: 28px;
+
+    }
+
+    .filters-card {
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+    }
+
+    .filter-input {
+
+        width: 100%;
+
+    }
+
+    .custom-table {
+
+        min-width: 700px;
+
+    }
+
+}
+
+@media(max-width: 500px) {
+
+    .main-content {
+
+        padding: 16px;
+
+    }
+
+    .chart-card,
+    .dashboard-card,
+    .filters-card,
+    .table-card {
+
+        border-radius: 20px;
+
+    }
+
+    .chart-card {
+
+        padding: 18px;
+
+    }
+
+    .dashboard-card {
+
+        padding: 20px;
+
+    }
+
+    .modal-content {
+
+        padding: 20px;
+
+        border-radius: 22px;
+
+    }
+
+}
