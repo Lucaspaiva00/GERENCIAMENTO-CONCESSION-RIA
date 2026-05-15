@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Usuários</title>
+
+    <link rel="stylesheet" href="../assets/css/style.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+
+        <!-- SIDEBAR -->
+
+        <aside class="sidebar">
+
+            <div>
+
+                <div class="sidebar-logo">
+
+                    <div class="sidebar-icon">
+                        <i class="fa-solid fa-motorcycle"></i>
+                    </div>
+
+                    <span>
+                        PAIVA TECH
+                    </span>
+
+                </div>
+
+                <nav class="sidebar-menu">
+
+                    <a href="../index.html">
+
+                        <i class="fa-solid fa-chart-line"></i>
+
+                        Dashboard
+
+                    </a>
+
+                    <a href="veiculos.html">
+
+                        <i class="fa-solid fa-car-side"></i>
+
+                        Veículos
+
+                    </a>
+
+                    <a href="vendas.html">
+
+                        <i class="fa-solid fa-cart-shopping"></i>
+
+                        Vendas
+
+                    </a>
+
+                    <a href="financeiro.html">
+
+                        <i class="fa-solid fa-wallet"></i>
+
+                        Financeiro
+
+                    </a>
+
+                    <a href="clientes.html">
+
+                        <i class="fa-solid fa-users"></i>
+
+                        Clientes
+
+                    </a>
+
+                    <a href="relatorios.html">
+
+                        <i class="fa-solid fa-chart-pie"></i>
+
+                        Relatórios
+
+                    </a>
+
+                    <a href="usuarios.html" class="active">
+
+                        <i class="fa-solid fa-user-shield"></i>
+
+                        Usuários
+
+                    </a>
+
+                </nav>
+
+            </div>
+
+            <button class="logout-btn" id="logoutBtn">
+
+                <i class="fa-solid fa-right-from-bracket"></i>
+
+                Sair
+
+            </button>
+
+        </aside>
+
+        <!-- MAIN -->
+
+        <main class="main-content">
+
+            <div class="topbar">
+
+                <div>
+
+                    <h1 class="page-title">
+                        Usuários
+                    </h1>
+
+                    <p class="page-subtitle">
+                        Gerencie os acessos do sistema
+                    </p>
+
+                </div>
+
+                <button class="btn-primary" id="btnNovoUsuario">
+
+                    <i class="fa-solid fa-plus"></i>
+
+                    Novo usuário
+
+                </button>
+
+            </div>
+
+            <!-- KPIS -->
+
+            <div class="cards-grid">
+
+                <div class="dashboard-card">
+
+                    <div>
+
+                        <span class="card-label">
+                            Total usuários
+                        </span>
+
+                        <h2 id="kpiUsuarios">
+                            0
+                        </h2>
+
+                    </div>
+
+                    <div class="card-icon-box blue">
+
+                        <i class="fa-solid fa-users"></i>
+
+                    </div>
+
+                </div>
+
+                <div class="dashboard-card">
+
+                    <div>
+
+                        <span class="card-label">
+                            Administradores
+                        </span>
+
+                        <h2 id="kpiAdmins">
+                            0
+                        </h2>
+
+                    </div>
+
+                    <div class="card-icon-box orange">
+
+                        <i class="fa-solid fa-user-shield"></i>
+
+                    </div>
+
+                </div>
+
+                <div class="dashboard-card">
+
+                    <div>
+
+                        <span class="card-label">
+                            Vendedores
+                        </span>
+
+                        <h2 id="kpiVendedores">
+                            0
+                        </h2>
+
+                    </div>
+
+                    <div class="card-icon-box green">
+
+                        <i class="fa-solid fa-user-tie"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- TABELA -->
+
+            <div class="table-card">
+
+                <table class="custom-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Usuário</th>
+                            <th>Email</th>
+                            <th>Tipo</th>
+                            <th>Comissão</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="tbodyUsuarios">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- MODAL -->
+
+    <div class="modal-overlay" id="modalUsuario">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <div>
+
+                    <h2>
+                        Novo usuário
+                    </h2>
+
+                    <p class="modal-subtitle">
+                        Cadastre um novo acesso
+                    </p>
+
+                </div>
+
+                <button id="fecharModal">
+
+                    <i class="fa-solid fa-xmark"></i>
+
+                </button>
+
+            </div>
+
+            <form id="formUsuario">
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label>
+                            Nome
+                        </label>
+
+                        <input type="text" name="nome" placeholder="Nome do usuário" required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Email
+                        </label>
+
+                        <input type="email" name="email" placeholder="email@email.com" required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Senha
+                        </label>
+
+                        <input type="password" name="senha" placeholder="********" required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Tipo
+                        </label>
+
+                        <select name="tipo">
+
+                            <option value="VENDEDOR">
+                                Vendedor
+                            </option>
+
+                            <option value="ADMIN">
+                                Administrador
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Comissão %
+                        </label>
+
+                        <input type="number" name="comissaoPercentual" placeholder="5">
+
+                    </div>
+
+                </div>
+
+                <button type="submit" class="btn-primary full">
+
+                    <i class="fa-solid fa-floppy-disk"></i>
+
+                    Salvar usuário
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <script src="../assets/js/usuarios.js"></script>
+
+</body>
+
+</html>

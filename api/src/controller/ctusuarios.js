@@ -11,7 +11,8 @@ module.exports = {
         try {
 
             const {
-                lojaId,
+                nomeLoja,
+                telefoneLoja,
                 nome,
                 email,
                 senha
@@ -32,27 +33,68 @@ module.exports = {
 
             }
 
+            /* CRIA LOJA */
+
+            const loja =
+                await prisma.loja.create({
+
+                    data: {
+
+                        nome: nomeLoja,
+
+                        telefone: telefoneLoja
+
+                    }
+
+                });
+
+            /* HASH SENHA */
+
             const senhaHash =
                 await bcrypt.hash(senha, 10);
+
+            /* CRIA USUÁRIO */
 
             const usuario =
                 await prisma.usuario.create({
 
                     data: {
 
-                        lojaId: Number(lojaId),
+                        lojaId: loja.lojaid,
 
                         nome,
 
                         email,
 
-                        senha: senhaHash
+                        senha: senhaHash,
+
+                        tipo: "ADMIN"
 
                     }
 
                 });
 
-            return res.json(usuario);
+            return res.json({
+
+                message: "Conta criada com sucesso",
+
+                usuario: {
+
+                    usuarioid:
+                        usuario.usuarioid,
+
+                    nome:
+                        usuario.nome,
+
+                    email:
+                        usuario.email,
+
+                    lojaId:
+                        usuario.lojaId
+
+                }
+
+            });
 
         } catch (error) {
 
@@ -112,7 +154,10 @@ module.exports = {
                         usuario.usuarioid,
 
                     lojaId:
-                        usuario.lojaId
+                        usuario.lojaId,
+
+                    tipo:
+                        usuario.tipo
 
                 },
 
@@ -138,7 +183,10 @@ module.exports = {
                         usuario.nome,
 
                     email:
-                        usuario.email
+                        usuario.email,
+
+                    tipo:
+                        usuario.tipo
 
                 },
 

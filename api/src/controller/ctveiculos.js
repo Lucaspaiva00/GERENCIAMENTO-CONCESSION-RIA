@@ -34,7 +34,7 @@ module.exports = {
 
                     data: {
 
-                        lojaId: 1,
+                        lojaId: req.usuario.lojaId,
 
                         titulo,
 
@@ -105,7 +105,7 @@ module.exports = {
 
             const filtros = {
 
-                lojaId: 1
+                lojaId: req.usuario.lojaId
 
             };
 
@@ -185,7 +185,7 @@ module.exports = {
                         veiculoid:
                             Number(id),
 
-                        lojaId: 1
+                        lojaId: req.usuario.lojaId
 
                     }
 

@@ -8,7 +8,9 @@ module.exports = {
 
             const {
                 nome,
-                telefone
+                telefone,
+                cpf,
+                cidade
             } = req.body;
 
             const cliente =
@@ -16,11 +18,16 @@ module.exports = {
 
                     data: {
 
-                        lojaId: 1,
+                        lojaId:
+                            req.usuario.lojaId,
 
                         nome,
 
-                        telefone
+                        telefone,
+
+                        cpf,
+
+                        cidade
 
                     }
 
@@ -45,12 +52,17 @@ module.exports = {
             const clientes =
                 await prisma.cliente.findMany({
 
-                    include: {
-                        vendas: true
+                    where: {
+
+                        lojaId:
+                            req.usuario.lojaId
+
                     },
 
                     orderBy: {
+
                         clienteid: "desc"
+
                     }
 
                 });
