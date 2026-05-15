@@ -1,0 +1,136 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum TipoUsuario {
+  ADMIN
+  VENDEDOR
+}
+
+enum TipoVeiculo {
+  MOTO
+  CARRO
+}
+
+enum TipoEstoque {
+  PROPRIO
+  CONSIGNADO
+}
+
+enum StatusVeiculo {
+  DISPONIVEL
+  RESERVADO
+  VENDIDO
+  MANUTENCAO
+}
+
+enum TipoMovimentacao {
+  ENTRADA
+  SAIDA
+}
+
+enum StatusConta {
+  PENDENTE
+  PAGO
+  ATRASADO
+}
+
+model Loja {
+  lojaid     Int          @id @default(autoincrement())
+  nome       String
+  telefone   String?
+  createdAt  DateTime     @default(now())
+  usuarios   Usuario[]
+  clientes   Cliente[]
+  veiculos   Veiculo[]
+  vendas     Venda[]
+  financeiro Financeiro[]
+}
+
+model Usuario {
+  usuarioid Int         @id @default(autoincrement())
+  lojaId    Int
+  loja      Loja        @relation(fields: [lojaId], references: [lojaid], onDelete: Cascade)
+  nome      String
+  email     String      @unique
+  senha     String
+  tipo      TipoUsuario @default(VENDEDOR)
+  createdAt DateTime    @default(now())
+  vendas    Venda[]
+}
+
+model Cliente {
+  clienteid Int      @id @default(autoincrement())
+  lojaId    Int
+  loja      Loja     @relation(fields: [lojaId], references: [lojaid], onDelete: Cascade)
+  nome      String
+  telefone  String?
+  cpf       String?
+  cidade    String?
+  createdAt DateTime @default(now())
+  vendas    Venda[]
+}
+
+model Veiculo {
+  veiculoid   Int                @id @default(autoincrement())
+  lojaId      Int
+  loja        Loja               @relation(fields: [lojaId], references: [lojaid], onDelete: Cascade)
+  titulo      String
+  marca       String
+  modelo      String
+  ano         Int
+  placa       String?            @unique
+  chassi      String?            @unique
+  cor         String?
+  km          Int?
+  valorCompra Float
+  valorVenda  Float
+  tipo        TipoVeiculo
+  tipoEstoque TipoEstoque
+  status      StatusVeiculo      @default(DISPONIVEL)
+  observacoes String?            @db.Text
+  createdAt   DateTime           @default(now())
+  vendas      Venda[]
+  historicos  HistoricoVeiculo[]
+}
+
+model HistoricoVeiculo {
+  historicoid Int      @id @default(autoincrement())
+  veiculoId   Int
+  veiculo     Veiculo  @relation(fields: [veiculoId], references: [veiculoid], onDelete: Cascade)
+  descricao   String   @db.Text
+  valor       Float?
+  createdAt   DateTime @default(now())
+}
+
+model Venda {
+  vendaid    Int      @id @default(autoincrement())
+  lojaId     Int
+  loja       Loja     @relation(fields: [lojaId], references: [lojaid], onDelete: Cascade)
+  clienteId  Int
+  cliente    Cliente  @relation(fields: [clienteId], references: [clienteid], onDelete: Restrict)
+  veiculoId  Int      @unique
+  veiculo    Veiculo  @relation(fields: [veiculoId], references: [veiculoid], onDelete: Restrict)
+  vendedorId Int?
+  vendedor   Usuario? @relation(fields: [vendedorId], references: [usuarioid])
+  valorVenda Float
+  lucro      Float?
+  createdAt  DateTime @default(now())
+}
+
+model Financeiro {
+  financeiroid Int              @id @default(autoincrement())
+  lojaId       Int
+  loja         Loja             @relation(fields: [lojaId], references: [lojaid], onDelete: Cascade)
+  descricao    String
+  tipo         TipoMovimentacao
+  valor        Float
+  status       StatusConta      @default(PENDENTE)
+  vencimento   DateTime?
+  createdAt    DateTime         @default(now())
+}
