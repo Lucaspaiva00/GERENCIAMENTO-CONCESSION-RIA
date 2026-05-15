@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Painel Central</title>
+
+    <link rel="stylesheet" href="./assets/css/style.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+
+        <!-- SIDEBAR -->
+
+        <aside class="sidebar">
+
+            <div class="sidebar-logo">
+
+                <div class="sidebar-icon">
+                    <i class="fa-solid fa-motorcycle"></i>
+                </div>
+
+                <span>
+                    PAIVA TECH
+                </span>
+
+            </div>
+
+            <nav class="sidebar-menu">
+
+                <a href="#" class="active">
+                    <i class="fa-solid fa-chart-line"></i>
+                    Dashboard
+                </a>
+
+                <a href="pages/veiculos.html">
+                    <i class="fa-solid fa-motorcycle"></i>
+                    Veículos
+                </a>
+
+                <a href="#">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    Vendas
+                </a>
+
+                <a href="#">
+                    <i class="fa-solid fa-wallet"></i>
+                    Financeiro
+                </a>
+
+                <a href="#">
+                    <i class="fa-solid fa-users"></i>
+                    Clientes
+                </a>
+
+                <a href="#">
+                    <i class="fa-solid fa-file-invoice-dollar"></i>
+                    Parcelas
+                </a>
+
+                <a href="#">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                    Histórico
+                </a>
+
+                <a href="#">
+                    <i class="fa-solid fa-gear"></i>
+                    Configurações
+                </a>
+
+            </nav>
+
+            <button class="logout-btn" id="logoutBtn">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                Sair
+            </button>
+
+        </aside>
+
+        <!-- CONTEÚDO -->
+
+        <main class="main-content">
+
+            <div class="topbar">
+
+                <div>
+
+                    <h1 class="page-title">
+                        Dashboard
+                    </h1>
+
+                    <p class="page-subtitle">
+                        Painel geral do sistema
+                    </p>
+
+                </div>
+
+                <div class="topbar-user">
+
+                    <i class="fa-solid fa-user"></i>
+
+                    <span id="usuarioNome">
+                        Usuário
+                    </span>
+
+                </div>
+
+            </div>
+
+            <!-- KPIs -->
+
+            <div class="cards-grid">
+
+                <div class="dashboard-card">
+
+                    <div>
+
+                        <span class="card-label">
+                            Veículos
+                        </span>
+
+                        <h2 id="totalVeiculos">
+                            0
+                        </h2>
+
+                    </div>
+
+                    <i class="fa-solid fa-car-side card-icon"></i>
+
+                </div>
+
+                <div class="dashboard-card">
+
+                    <div>
+
+                        <span class="card-label">
+                            Vendidos
+                        </span>
+
+                        <h2 id="veiculosVendidos">
+                            0
+                        </h2>
+
+                    </div>
+
+                    <i class="fa-solid fa-circle-check card-icon"></i>
+
+                </div>
+
+                <div class="dashboard-card">
+
+                    <div>
+
+                        <span class="card-label">
+                            Entradas
+                        </span>
+
+                        <h2 id="totalEntradas">
+                            R$ 0
+                        </h2>
+
+                    </div>
+
+                    <i class="fa-solid fa-arrow-trend-up card-icon"></i>
+
+                </div>
+
+                <div class="dashboard-card">
+
+                    <div>
+
+                        <span class="card-label">
+                            Saldo
+                        </span>
+
+                        <h2 id="saldo">
+                            R$ 0
+                        </h2>
+
+                    </div>
+
+                    <i class="fa-solid fa-wallet card-icon"></i>
+
+                </div>
+
+            </div>
+
+            <!-- GRÁFICOS -->
+
+            <div class="charts-grid">
+
+                <div class="chart-card">
+
+                    <h3>
+                        Fluxo Financeiro
+                    </h3>
+
+                    <canvas id="financeiroChart"></canvas>
+
+                </div>
+
+                <div class="chart-card">
+
+                    <h3>
+                        Veículos
+                    </h3>
+
+                    <canvas id="veiculosChart"></canvas>
+
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+    <script src="./assets/js/dashboard.js"></script>
+
+</body>
+
+</html>

@@ -6,10 +6,14 @@ module.exports = {
 
         try {
 
-            const imagem = req.file ? req.file.filename : null;
+            console.log(req.body);
+
+            const imagem =
+                req.file
+                    ? req.file.filename
+                    : null;
 
             const {
-                lojaId,
                 titulo,
                 marca,
                 modelo,
@@ -25,25 +29,56 @@ module.exports = {
                 observacoes
             } = req.body;
 
-            const veiculo = await prisma.veiculo.create({
-                data: {
-                    lojaId: Number(lojaId),
-                    titulo,
-                    marca,
-                    modelo,
-                    ano: Number(ano),
-                    placa,
-                    chassi,
-                    cor,
-                    km: km ? Number(km) : null,
-                    valorCompra: Number(valorCompra),
-                    valorVenda: Number(valorVenda),
-                    imagem,
-                    tipo,
-                    tipoEstoque,
-                    observacoes
-                }
-            });
+            const veiculo =
+                await prisma.veiculo.create({
+
+                    data: {
+
+                        lojaId: 1,
+
+                        titulo,
+
+                        marca,
+
+                        modelo,
+
+                        ano:
+                            ano
+                                ? Number(ano)
+                                : null,
+
+                        placa,
+
+                        chassi,
+
+                        cor,
+
+                        km:
+                            km
+                                ? Number(km)
+                                : null,
+
+                        valorCompra:
+                            valorCompra
+                                ? Number(valorCompra)
+                                : 0,
+
+                        valorVenda:
+                            valorVenda
+                                ? Number(valorVenda)
+                                : 0,
+
+                        imagem,
+
+                        tipo,
+
+                        tipoEstoque,
+
+                        observacoes
+
+                    }
+
+                });
 
             return res.json(veiculo);
 
@@ -70,58 +105,59 @@ module.exports = {
 
             const filtros = {
 
-                lojaId: Number(req.lojaId)
+                lojaId: 1
 
             };
 
             if (busca) {
 
                 filtros.OR = [
+
                     {
                         titulo: {
                             contains: busca
                         }
                     },
-                    {
-                        marca: {
-                            contains: busca
-                        }
-                    },
-                    {
-                        modelo: {
-                            contains: busca
-                        }
-                    },
+
                     {
                         placa: {
                             contains: busca
                         }
                     }
+
                 ];
 
             }
 
             if (status) {
+
                 filtros.status = status;
+
             }
 
             if (tipoEstoque) {
-                filtros.tipoEstoque = tipoEstoque;
+
+                filtros.tipoEstoque =
+                    tipoEstoque;
+
             }
 
             if (tipo) {
+
                 filtros.tipo = tipo;
+
             }
 
-            const veiculos = await prisma.veiculo.findMany({
+            const veiculos =
+                await prisma.veiculo.findMany({
 
-                where: filtros,
+                    where: filtros,
 
-                orderBy: {
-                    veiculoid: "desc"
-                }
+                    orderBy: {
+                        veiculoid: "desc"
+                    }
 
-            });
+                });
 
             return res.json(veiculos);
 
@@ -141,11 +177,19 @@ module.exports = {
 
             const { id } = req.params;
 
-            const veiculo = await prisma.veiculo.findUnique({
-                where: {
-                    veiculoid: Number(id)
-                }
-            });
+            const veiculo =
+                await prisma.veiculo.findFirst({
+
+                    where: {
+
+                        veiculoid:
+                            Number(id),
+
+                        lojaId: 1
+
+                    }
+
+                });
 
             return res.json(veiculo);
 
@@ -165,7 +209,10 @@ module.exports = {
 
             const { id } = req.params;
 
-            const imagem = req.file ? req.file.filename : undefined;
+            const imagem =
+                req.file
+                    ? req.file.filename
+                    : undefined;
 
             const {
                 titulo,
@@ -184,33 +231,69 @@ module.exports = {
                 observacoes
             } = req.body;
 
-            const dadosAtualizacao = {
+            const data = {
+
                 titulo,
+
                 marca,
+
                 modelo,
-                ano: ano ? Number(ano) : undefined,
+
+                ano:
+                    ano
+                        ? Number(ano)
+                        : null,
+
                 placa,
+
                 chassi,
+
                 cor,
-                km: km ? Number(km) : null,
-                valorCompra: valorCompra ? Number(valorCompra) : undefined,
-                valorVenda: valorVenda ? Number(valorVenda) : undefined,
+
+                km:
+                    km
+                        ? Number(km)
+                        : null,
+
+                valorCompra:
+                    valorCompra
+                        ? Number(valorCompra)
+                        : 0,
+
+                valorVenda:
+                    valorVenda
+                        ? Number(valorVenda)
+                        : 0,
+
                 tipo,
+
                 tipoEstoque,
+
                 status,
+
                 observacoes
+
             };
 
             if (imagem) {
-                dadosAtualizacao.imagem = imagem;
+
+                data.imagem = imagem;
+
             }
 
-            const veiculo = await prisma.veiculo.update({
-                where: {
-                    veiculoid: Number(id)
-                },
-                data: dadosAtualizacao
-            });
+            const veiculo =
+                await prisma.veiculo.update({
+
+                    where: {
+
+                        veiculoid:
+                            Number(id)
+
+                    },
+
+                    data
+
+                });
 
             return res.json(veiculo);
 
@@ -231,13 +314,21 @@ module.exports = {
             const { id } = req.params;
 
             await prisma.veiculo.delete({
+
                 where: {
-                    veiculoid: Number(id)
+
+                    veiculoid:
+                        Number(id)
+
                 }
+
             });
 
             return res.json({
-                message: "Veículo deletado com sucesso"
+
+                message:
+                    "Veículo deletado com sucesso"
+
             });
 
         } catch (error) {

@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Veículos</title>
+
+    <link rel="stylesheet" href="../assets/css/style.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+
+        <!-- SIDEBAR -->
+
+        <aside class="sidebar">
+
+            <div>
+
+                <div class="sidebar-logo">
+
+                    <div class="sidebar-icon">
+                        <i class="fa-solid fa-motorcycle"></i>
+                    </div>
+
+                    <span>
+                        PAIVA TECH
+                    </span>
+
+                </div>
+
+                <nav class="sidebar-menu">
+
+                    <a href="../index.html">
+                        <i class="fa-solid fa-chart-line"></i>
+                        Dashboard
+                    </a>
+
+                    <a href="#" class="active">
+                        <i class="fa-solid fa-motorcycle"></i>
+                        Veículos
+                    </a>
+
+                    <a href="#">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        Vendas
+                    </a>
+
+                    <a href="#">
+                        <i class="fa-solid fa-wallet"></i>
+                        Financeiro
+                    </a>
+
+                    <a href="#">
+                        <i class="fa-solid fa-users"></i>
+                        Clientes
+                    </a>
+
+                    <a href="#">
+                        <i class="fa-solid fa-file-invoice-dollar"></i>
+                        Parcelas
+                    </a>
+
+                    <a href="#">
+                        <i class="fa-solid fa-chart-pie"></i>
+                        Relatórios
+                    </a>
+
+                    <a href="#">
+                        <i class="fa-solid fa-gear"></i>
+                        Configurações
+                    </a>
+
+                </nav>
+
+            </div>
+
+            <button class="logout-btn" id="logoutBtn">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                Sair
+            </button>
+
+        </aside>
+
+        <!-- MAIN -->
+
+        <main class="main-content">
+
+            <!-- TOPO -->
+
+            <div class="topbar">
+
+                <div>
+
+                    <h1 class="page-title">
+                        Veículos
+                    </h1>
+
+                    <p class="page-subtitle">
+                        Gerencie os veículos da loja
+                    </p>
+
+                </div>
+
+                <button class="btn-primary" id="btnNovoVeiculo">
+                    <i class="fa-solid fa-plus"></i>
+                    Novo veículo
+                </button>
+
+            </div>
+
+            <!-- FILTROS -->
+
+            <div class="filters-card">
+
+                <input type="text" placeholder="Buscar veículo..." id="busca" class="filter-input">
+
+                <select id="status" class="filter-input">
+
+                    <option value="">
+                        Todos status
+                    </option>
+
+                    <option value="DISPONIVEL">
+                        Disponível
+                    </option>
+
+                    <option value="VENDIDO">
+                        Vendido
+                    </option>
+
+                    <option value="MANUTENCAO">
+                        Manutenção
+                    </option>
+
+                </select>
+
+                <select id="tipoEstoque" class="filter-input">
+
+                    <option value="">
+                        Todo estoque
+                    </option>
+
+                    <option value="PROPRIO">
+                        Próprio
+                    </option>
+
+                    <option value="CONSIGNADO">
+                        Consignado
+                    </option>
+
+                </select>
+
+                <button class="btn-primary" id="btnFiltrar">
+                    <i class="fa-solid fa-filter"></i>
+                    Filtrar
+                </button>
+
+            </div>
+
+            <!-- TABELA -->
+
+            <div class="table-card">
+
+                <table class="custom-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Imagem</th>
+                            <th>Veículo</th>
+                            <th>Placa</th>
+                            <th>Valor</th>
+                            <th>Status</th>
+                            <th>Estoque</th>
+                            <th>Ações</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="tbodyVeiculos">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- MODAL -->
+
+    <div class="modal-overlay" id="modalVeiculo">
+
+        <div class="modal-content">
+
+            <!-- HEADER -->
+
+            <div class="modal-header">
+
+                <div>
+
+                    <h2 id="modalTitulo">
+                        Novo veículo
+                    </h2>
+
+                    <p class="modal-subtitle">
+                        Preencha os dados do veículo
+                    </p>
+
+                </div>
+
+                <button id="fecharModal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+
+            </div>
+
+            <!-- FORM -->
+
+            <form id="formVeiculo">
+
+                <input type="hidden" name="veiculoid" id="veiculoid">
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label>
+                            Título
+                        </label>
+
+                        <input type="text" placeholder="Ex: Honda CG 160" name="titulo" required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Marca
+                        </label>
+
+                        <input type="text" placeholder="Honda" name="marca" required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Modelo
+                        </label>
+
+                        <input type="text" placeholder="CG 160" name="modelo" required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Ano
+                        </label>
+
+                        <input type="number" placeholder="2024" name="ano">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Placa
+                        </label>
+
+                        <input type="text" placeholder="ABC-1234" name="placa">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            KM
+                        </label>
+
+                        <input type="number" placeholder="12000" name="km">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Valor compra
+                        </label>
+
+                        <input type="number" placeholder="15000" name="valorCompra">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Valor venda
+                        </label>
+
+                        <input type="number" placeholder="18000" name="valorVenda">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Tipo
+                        </label>
+
+                        <select name="tipo">
+
+                            <option value="MOTO">
+                                Moto
+                            </option>
+
+                            <option value="CARRO">
+                                Carro
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Estoque
+                        </label>
+
+                        <select name="tipoEstoque">
+
+                            <option value="PROPRIO">
+                                Próprio
+                            </option>
+
+                            <option value="CONSIGNADO">
+                                Consignado
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="form-group full-width">
+
+                        <label>
+                            Imagem
+                        </label>
+
+                        <input type="file" name="imagem" accept="image/*">
+
+                    </div>
+
+                </div>
+
+                <!-- PREVIEW -->
+
+                <img id="previewImagem" class="preview-image" style="display:none;">
+
+                <!-- BOTÃO -->
+
+                <button type="submit" class="btn-primary full">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    Salvar veículo
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <script src="../assets/js/veiculos.js"></script>
+
+</body>
+
+</html>

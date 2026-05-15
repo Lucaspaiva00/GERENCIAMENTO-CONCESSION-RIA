@@ -1,29 +1,32 @@
 const jwt = require("jsonwebtoken");
 
-module.exports = (req, res, next) => {
-
-    const authHeader = req.headers.authorization;
-
-    if (!authHeader) {
-
-        return res.status(401).json({
-            error: "Token não informado"
-        });
-
-    }
-
-    const token = authHeader.split(" ")[1];
+module.exports = async (req, res, next) => {
 
     try {
+
+        const authHeader =
+            req.headers.authorization;
+
+        if (!authHeader) {
+
+            return res.status(401).json({
+                error: "Token não informado"
+            });
+
+        }
+
+        const [, token] =
+            authHeader.split(" ");
 
         const decoded = jwt.verify(
             token,
             process.env.JWT_SECRET
         );
 
-        req.usuarioId = decoded.id;
-
-        req.lojaId = decoded.lojaId;
+        req.usuario = {
+            usuarioid: decoded.usuarioid,
+            lojaId: decoded.lojaId
+        };
 
         next();
 
