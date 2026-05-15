@@ -1,59 +1,94 @@
 // assets/js/financeiro.js
 
-const API =
-    "http://localhost:3001";
-
-const token =
-    localStorage.getItem("token");
+const token = localStorage.getItem("token");
 
 if (!token) {
 
     window.location.href =
-        "../pages/login.html";
+        "./login.html";
 
 }
 
+const API =
+    "http://localhost:3001";
+
+const tabela =
+    document.getElementById("financeiroTabela");
+
+const modal =
+    document.getElementById("modalFinanceiro");
+
+const form =
+    document.getElementById("formFinanceiro");
+
+const btnNova =
+    document.getElementById("btnNovaMovimentacao");
+
+const btnFechar =
+    document.getElementById("fecharModal");
+
 let movimentacoes = [];
 
-let financeiroChart;
-let tipoChart;
+/* LOGOUT */
 
 document.getElementById("logoutBtn")
     .addEventListener("click", () => {
 
-        localStorage.removeItem("token");
-
-        localStorage.removeItem("usuario");
+        localStorage.clear();
 
         window.location.href =
-            "../pages/login.html";
+            "./login.html";
 
     });
+
+/* MODAL */
+
+btnNova.onclick = () => {
+
+    modal.classList.add("active");
+
+};
+
+btnFechar.onclick = () => {
+
+    modal.classList.remove("active");
+
+};
+
+window.onclick = (e) => {
+
+    if (e.target === modal) {
+
+        modal.classList.remove("active");
+
+    }
+
+};
+
+/* CARREGAR */
 
 async function carregarFinanceiro() {
 
     try {
 
-        const response =
-            await fetch(`${API}/financeiro`, {
-
+        const response = await fetch(
+            `${API}/financeiro`,
+            {
                 headers: {
                     Authorization:
                         `Bearer ${token}`
                 }
+            }
+        );
 
-            });
-
-        const data =
+        movimentacoes =
             await response.json();
 
-        movimentacoes = data;
+        renderizarTabela(
+            movimentacoes
+        );
 
-        renderTabela(data);
-
-        renderKPIs(data);
-
-        renderGraficos(data);
+        atualizarKPIs();
 
     } catch (error) {
 
@@ -63,23 +98,76 @@ async function carregarFinanceiro() {
 
 }
 
-function renderTabela(lista) {
+/* KPIS */
 
-    const tbody =
-        document.getElementById(
-            "financeiroTable"
-        );
+function atualizarKPIs() {
 
-    tbody.innerHTML = "";
+    const entradas =
+        movimentacoes
+            .filter(item =>
+                item.tipo === "ENTRADA"
+            )
+            .reduce((acc, item) =>
+                acc + Number(item.valor), 0);
+
+    const saidas =
+        movimentacoes
+            .filter(item =>
+                item.tipo === "SAIDA"
+            )
+            .reduce((acc, item) =>
+                acc + Number(item.valor), 0);
+
+    const saldo =
+        entradas - saidas;
+
+    document.getElementById(
+        "totalEntradas"
+    ).innerText =
+        formatarMoeda(entradas);
+
+    document.getElementById(
+        "totalSaidas"
+    ).innerText =
+        formatarMoeda(saidas);
+
+    document.getElementById(
+        "saldoAtual"
+    ).innerText =
+        formatarMoeda(saldo);
+
+}
+
+/* TABELA */
+
+function renderizarTabela(lista) {
+
+    tabela.innerHTML = "";
+
+    if (!lista.length) {
+
+        tabela.innerHTML = `
+            <tr>
+                <td colspan="6" class="empty-table">
+                    Nenhuma movimentação encontrada
+                </td>
+            </tr>
+        `;
+
+        return;
+
+    }
 
     lista.forEach(item => {
 
-        tbody.innerHTML += `
+        tabela.innerHTML += `
 
             <tr>
 
                 <td>
-                    ${item.descricao}
+                    <strong>
+                        ${item.descricao}
+                    </strong>
                 </td>
 
                 <td>
@@ -97,18 +185,25 @@ function renderTabela(lista) {
 
                 </td>
 
-                <td>
-                    R$ ${Number(item.valor)
-                .toLocaleString("pt-BR")}
+                <td class="
+                    ${item.tipo === "ENTRADA"
+                ? "text-success"
+                : "text-danger"}
+                ">
+
+                    ${item.tipo === "ENTRADA"
+                ? "+"
+                : "-"}
+
+                    ${formatarMoeda(item.valor)}
+
                 </td>
 
                 <td>
 
                     <span class="
                         badge
-                        ${item.status === "PAGO"
-                ? "badge-success"
-                : "badge-warning"}
+                        ${retornarBadgeStatus(item.status)}
                     ">
 
                         ${item.status}
@@ -119,17 +214,23 @@ function renderTabela(lista) {
 
                 <td>
 
-                    ${item.vencimento
-                ? new Date(item.vencimento)
-                    .toLocaleDateString("pt-BR")
-                : "-"}
+                    ${formatarData(item.vencimento)}
 
                 </td>
 
                 <td>
 
-                    ${new Date(item.createdAt)
-                .toLocaleDateString("pt-BR")}
+                    <div class="table-actions">
+
+                        <button
+                            class="btn-action btn-delete"
+                            onclick="deletarMovimentacao(${item.financeiroid})">
+
+                            <i class="fa-solid fa-trash"></i>
+
+                        </button>
+
+                    </div>
 
                 </td>
 
@@ -141,178 +242,10 @@ function renderTabela(lista) {
 
 }
 
-function renderKPIs(lista) {
+/* CADASTRAR */
 
-    let entradas = 0;
-    let saidas = 0;
-
-    lista.forEach(item => {
-
-        if (item.tipo === "ENTRADA") {
-
-            entradas += Number(item.valor);
-
-        } else {
-
-            saidas += Number(item.valor);
-
-        }
-
-    });
-
-    const saldo =
-        entradas - saidas;
-
-    document.getElementById(
-        "totalEntradas"
-    ).innerText =
-        `R$ ${entradas.toLocaleString("pt-BR")}`;
-
-    document.getElementById(
-        "totalSaidas"
-    ).innerText =
-        `R$ ${saidas.toLocaleString("pt-BR")}`;
-
-    document.getElementById(
-        "saldoTotal"
-    ).innerText =
-        `R$ ${saldo.toLocaleString("pt-BR")}`;
-
-}
-
-function renderGraficos(lista) {
-
-    let entradas = 0;
-    let saidas = 0;
-
-    lista.forEach(item => {
-
-        if (item.tipo === "ENTRADA") {
-
-            entradas += Number(item.valor);
-
-        } else {
-
-            saidas += Number(item.valor);
-
-        }
-
-    });
-
-    if (financeiroChart) {
-
-        financeiroChart.destroy();
-
-    }
-
-    if (tipoChart) {
-
-        tipoChart.destroy();
-
-    }
-
-    financeiroChart = new Chart(
-
-        document.getElementById(
-            "financeiroChart"
-        ),
-
-        {
-
-            type: "bar",
-
-            data: {
-
-                labels: [
-                    "Entradas",
-                    "Saídas"
-                ],
-
-                datasets: [{
-
-                    label: "Financeiro",
-
-                    data: [
-                        entradas,
-                        saidas
-                    ],
-
-                    borderRadius: 12,
-
-                    backgroundColor: [
-                        "#22C55E",
-                        "#EF4444"
-                    ]
-
-                }]
-
-            },
-
-            options: {
-
-                responsive: true,
-
-                plugins: {
-
-                    legend: {
-                        display: false
-                    }
-
-                }
-
-            }
-
-        }
-
-    );
-
-    tipoChart = new Chart(
-
-        document.getElementById(
-            "tipoChart"
-        ),
-
-        {
-
-            type: "doughnut",
-
-            data: {
-
-                labels: [
-                    "Entradas",
-                    "Saídas"
-                ],
-
-                datasets: [{
-
-                    data: [
-                        entradas,
-                        saidas
-                    ],
-
-                    backgroundColor: [
-                        "#2563EB",
-                        "#EF4444"
-                    ]
-
-                }]
-
-            },
-
-            options: {
-
-                responsive: true
-
-            }
-
-        }
-
-    );
-
-}
-
-document.getElementById("formFinanceiro")
-    .addEventListener("submit", async (e) => {
+form.addEventListener("submit",
+    async (e) => {
 
         e.preventDefault();
 
@@ -320,39 +253,30 @@ document.getElementById("formFinanceiro")
 
             const body = {
 
+                lojaId: 1,
+
                 descricao:
-                    document.getElementById(
-                        "descricao"
-                    ).value,
+                    document.getElementById("descricao").value,
 
                 tipo:
-                    document.getElementById(
-                        "tipo"
-                    ).value,
+                    document.getElementById("tipo").value,
 
                 valor:
                     Number(
-                        document.getElementById(
-                            "valor"
-                        ).value
+                        document.getElementById("valor").value
                     ),
 
                 status:
-                    document.getElementById(
-                        "status"
-                    ).value,
+                    document.getElementById("status").value,
 
                 vencimento:
-                    document.getElementById(
-                        "vencimento"
-                    ).value
+                    document.getElementById("vencimento").value
 
             };
 
             await fetch(
                 `${API}/financeiro`,
                 {
-
                     method: "POST",
 
                     headers: {
@@ -365,19 +289,16 @@ document.getElementById("formFinanceiro")
 
                     },
 
-                    body:
-                        JSON.stringify(body)
+                    body: JSON.stringify(body)
 
                 }
             );
 
-            fecharModal();
+            form.reset();
+
+            modal.classList.remove("active");
 
             carregarFinanceiro();
-
-            document.getElementById(
-                "formFinanceiro"
-            ).reset();
 
         } catch (error) {
 
@@ -387,39 +308,66 @@ document.getElementById("formFinanceiro")
 
     });
 
-function abrirModal() {
+/* DELETE */
 
-    document.getElementById(
-        "modalFinanceiro"
-    ).classList.add("active");
+async function deletarMovimentacao(id) {
+
+    const confirmar =
+        confirm(
+            "Deseja deletar esta movimentação?"
+        );
+
+    if (!confirmar) return;
+
+    try {
+
+        await fetch(
+            `${API}/financeiro/${id}`,
+            {
+                method: "DELETE",
+
+                headers: {
+                    Authorization:
+                        `Bearer ${token}`
+                }
+            }
+        );
+
+        carregarFinanceiro();
+
+    } catch (error) {
+
+        console.log(error);
+
+    }
 
 }
 
-function fecharModal() {
+/* FILTROS */
 
-    document.getElementById(
-        "modalFinanceiro"
-    ).classList.remove("active");
+document.getElementById("filtroBusca")
+    .addEventListener("input", aplicarFiltros);
 
-}
+document.getElementById("filtroTipo")
+    .addEventListener("change", aplicarFiltros);
 
-document.getElementById("buscaInput")
-    .addEventListener("input", filtrar);
+document.getElementById("filtroStatus")
+    .addEventListener("change", aplicarFiltros);
 
-document.getElementById("tipoFiltro")
-    .addEventListener("change", filtrar);
-
-function filtrar() {
+function aplicarFiltros() {
 
     const busca =
-        document.getElementById(
-            "buscaInput"
-        ).value.toLowerCase();
+        document.getElementById("filtroBusca")
+            .value
+            .toLowerCase();
 
     const tipo =
-        document.getElementById(
-            "tipoFiltro"
-        ).value;
+        document.getElementById("filtroTipo")
+            .value;
+
+    const status =
+        document.getElementById("filtroStatus")
+            .value;
 
     const filtrado =
         movimentacoes.filter(item => {
@@ -433,15 +381,55 @@ function filtrar() {
                 !tipo ||
                 item.tipo === tipo;
 
+            const matchStatus =
+                !status ||
+                item.status === status;
+
             return (
                 matchBusca &&
-                matchTipo
+                matchTipo &&
+                matchStatus
             );
 
         });
 
-    renderTabela(filtrado);
+    renderizarTabela(filtrado);
 
 }
+
+/* HELPERS */
+
+function formatarMoeda(valor) {
+
+    return Number(valor)
+        .toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL"
+        });
+
+}
+
+function formatarData(data) {
+
+    if (!data) return "-";
+
+    return new Date(data)
+        .toLocaleDateString("pt-BR");
+
+}
+
+function retornarBadgeStatus(status) {
+
+    if (status === "PAGO")
+        return "badge-success";
+
+    if (status === "ATRASADO")
+        return "badge-danger";
+
+    return "badge-warning";
+
+}
+
+/* INIT */
 
 carregarFinanceiro();
