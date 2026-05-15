@@ -34,7 +34,8 @@ module.exports = {
 
                     data: {
 
-                        lojaId: req.usuario.lojaId,
+                        lojaId:
+                            req.usuario.lojaId,
 
                         titulo,
 
@@ -105,7 +106,8 @@ module.exports = {
 
             const filtros = {
 
-                lojaId: req.usuario.lojaId
+                lojaId:
+                    req.usuario.lojaId
 
             };
 
@@ -185,11 +187,20 @@ module.exports = {
                         veiculoid:
                             Number(id),
 
-                        lojaId: req.usuario.lojaId
+                        lojaId:
+                            req.usuario.lojaId
 
                     }
 
                 });
+
+            if (!veiculo) {
+
+                return res.status(404).json({
+                    error: "Veículo não encontrado"
+                });
+
+            }
 
             return res.json(veiculo);
 
@@ -208,6 +219,29 @@ module.exports = {
         try {
 
             const { id } = req.params;
+
+            const veiculoExiste =
+                await prisma.veiculo.findFirst({
+
+                    where: {
+
+                        veiculoid:
+                            Number(id),
+
+                        lojaId:
+                            req.usuario.lojaId
+
+                    }
+
+                });
+
+            if (!veiculoExiste) {
+
+                return res.status(404).json({
+                    error: "Veículo não encontrado"
+                });
+
+            }
 
             const imagem =
                 req.file
@@ -312,6 +346,29 @@ module.exports = {
         try {
 
             const { id } = req.params;
+
+            const veiculoExiste =
+                await prisma.veiculo.findFirst({
+
+                    where: {
+
+                        veiculoid:
+                            Number(id),
+
+                        lojaId:
+                            req.usuario.lojaId
+
+                    }
+
+                });
+
+            if (!veiculoExiste) {
+
+                return res.status(404).json({
+                    error: "Veículo não encontrado"
+                });
+
+            }
 
             await prisma.veiculo.delete({
 
