@@ -73,61 +73,210 @@ async function carregarDashboard() {
 
 function criarGraficos(data) {
 
-    new Chart(
+    Chart.defaults.color = "#6B7280";
+
+    Chart.defaults.font.family = "Inter";
+
+    Chart.defaults.plugins.legend.labels.usePointStyle = true;
+
+    /* FINANCEIRO */
+
+    const financeiroCtx =
         document.getElementById(
             "financeiroChart"
-        ),
-        {
-            type: "bar",
+        );
 
-            data: {
+    new Chart(financeiroCtx, {
 
-                labels: [
-                    "Entradas",
-                    "Saídas",
-                    "Saldo"
+        type: "bar",
+
+        data: {
+
+            labels: [
+                "Entradas",
+                "Saídas",
+                "Saldo"
+            ],
+
+            datasets: [{
+
+                label: "Financeiro",
+
+                data: [
+
+                    data.financeiro.entradas,
+
+                    data.financeiro.saidas,
+
+                    data.financeiro.saldo
+
                 ],
 
-                datasets: [{
-                    data: [
-                        data.financeiro.entradas,
-                        data.financeiro.saidas,
-                        data.financeiro.saldo
-                    ]
-                }]
+                backgroundColor: [
+
+                    "#22C55E",
+
+                    "#EF4444",
+
+                    "#2563EB"
+
+                ],
+
+                borderRadius: 12,
+
+                borderSkipped: false,
+
+                maxBarThickness: 80
+
+            }]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            plugins: {
+
+                legend: {
+                    display: false
+                }
+
+            },
+
+            scales: {
+
+                x: {
+
+                    grid: {
+                        display: false
+                    },
+
+                    ticks: {
+                        font: {
+                            size: 14,
+                            weight: "600"
+                        }
+                    }
+
+                },
+
+                y: {
+
+                    beginAtZero: true,
+
+                    grid: {
+                        color: "#F3F4F6"
+                    },
+
+                    ticks: {
+
+                        callback: function (value) {
+
+                            return "R$ " + value;
+
+                        }
+
+                    }
+
+                }
 
             }
 
         }
-    );
 
-    new Chart(
+    });
+
+    /* VEÍCULOS */
+
+    const veiculosCtx =
         document.getElementById(
             "veiculosChart"
-        ),
-        {
-            type: "doughnut",
+        );
 
-            data: {
+    new Chart(veiculosCtx, {
 
-                labels: [
-                    "Disponíveis",
-                    "Vendidos",
-                    "Manutenção"
+        type: "doughnut",
+
+        data: {
+
+            labels: [
+
+                "Disponíveis",
+
+                "Vendidos",
+
+                "Manutenção"
+
+            ],
+
+            datasets: [{
+
+                data: [
+
+                    data.veiculos.disponiveis,
+
+                    data.veiculos.vendidos,
+
+                    data.veiculos.manutencao
+
                 ],
 
-                datasets: [{
-                    data: [
-                        data.veiculos.disponiveis,
-                        data.veiculos.vendidos,
-                        data.veiculos.manutencao
-                    ]
-                }]
+                backgroundColor: [
+
+                    "#2563EB",
+
+                    "#22C55E",
+
+                    "#F59E0B"
+
+                ],
+
+                borderWidth: 0,
+
+                hoverOffset: 12
+
+            }]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            cutout: "72%",
+
+            plugins: {
+
+                legend: {
+
+                    position: "bottom",
+
+                    labels: {
+
+                        padding: 20,
+
+                        font: {
+
+                            size: 13,
+
+                            weight: "600"
+
+                        }
+
+                    }
+
+                }
 
             }
 
         }
-    );
+
+    });
 
 }
 

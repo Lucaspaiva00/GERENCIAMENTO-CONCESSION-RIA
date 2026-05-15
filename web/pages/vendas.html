@@ -1,0 +1,297 @@
+<!-- pages/vendas.html -->
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Vendas</title>
+
+    <link rel="stylesheet" href="../assets/css/style.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+
+        <!-- SIDEBAR -->
+
+        <aside class="sidebar">
+
+            <div>
+
+                <div class="sidebar-logo">
+
+                    <div class="sidebar-icon">
+                        <i class="fa-solid fa-motorcycle"></i>
+                    </div>
+
+                    <span>
+                        PAIVA TECH
+                    </span>
+
+                </div>
+
+                <nav class="sidebar-menu">
+
+                    <a href="../index.html">
+                        <i class="fa-solid fa-chart-line"></i>
+                        Dashboard
+                    </a>
+
+                    <a href="./veiculos.html">
+                        <i class="fa-solid fa-motorcycle"></i>
+                        Veículos
+                    </a>
+
+                    <a href="#" class="active">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        Vendas
+                    </a>
+
+                    <a href="#">
+                        <i class="fa-solid fa-wallet"></i>
+                        Financeiro
+                    </a>
+
+                    <a href="#">
+                        <i class="fa-solid fa-users"></i>
+                        Clientes
+                    </a>
+
+                    <a href="#">
+                        <i class="fa-solid fa-file-invoice-dollar"></i>
+                        Parcelas
+                    </a>
+
+                    <a href="#">
+                        <i class="fa-solid fa-chart-pie"></i>
+                        Relatórios
+                    </a>
+
+                </nav>
+
+            </div>
+
+            <button class="logout-btn" id="logoutBtn">
+
+                <i class="fa-solid fa-right-from-bracket"></i>
+
+                Sair
+
+            </button>
+
+        </aside>
+
+        <!-- MAIN -->
+
+        <main class="main-content">
+
+            <div class="topbar">
+
+                <div>
+
+                    <h1 class="page-title">
+                        Vendas
+                    </h1>
+
+                    <p class="page-subtitle">
+                        Controle de vendas da loja
+                    </p>
+
+                </div>
+
+                <button class="btn-primary" id="btnNovaVenda">
+
+                    <i class="fa-solid fa-plus"></i>
+
+                    Nova venda
+
+                </button>
+
+            </div>
+
+            <!-- KPIS -->
+
+            <div class="cards-grid">
+
+                <div class="dashboard-card">
+
+                    <div>
+
+                        <span class="card-label">
+                            Total vendido
+                        </span>
+
+                        <h2 id="totalVendas">
+                            R$ 0
+                        </h2>
+
+                    </div>
+
+                    <i class="fa-solid fa-sack-dollar card-icon"></i>
+
+                </div>
+
+                <div class="dashboard-card">
+
+                    <div>
+
+                        <span class="card-label">
+                            Lucro total
+                        </span>
+
+                        <h2 id="lucroTotal">
+                            R$ 0
+                        </h2>
+
+                    </div>
+
+                    <i class="fa-solid fa-chart-line card-icon"></i>
+
+                </div>
+
+                <div class="dashboard-card">
+
+                    <div>
+
+                        <span class="card-label">
+                            Quantidade
+                        </span>
+
+                        <h2 id="quantidadeVendas">
+                            0
+                        </h2>
+
+                    </div>
+
+                    <i class="fa-solid fa-cart-shopping card-icon"></i>
+
+                </div>
+
+            </div>
+
+            <!-- FILTRO -->
+
+            <div class="filters-card">
+
+                <input type="text" id="busca" class="filter-input" placeholder="Buscar cliente ou veículo">
+
+                <button class="btn-primary" id="btnFiltrar">
+
+                    <i class="fa-solid fa-filter"></i>
+
+                    Filtrar
+
+                </button>
+
+            </div>
+
+            <!-- TABELA -->
+
+            <div class="table-card">
+
+                <table class="custom-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Cliente</th>
+                            <th>Veículo</th>
+                            <th>Tipo</th>
+                            <th>Venda</th>
+                            <th>Lucro</th>
+                            <th>Vendedor</th>
+                            <th>Data</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="tbodyVendas">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- MODAL -->
+
+    <div class="modal-overlay" id="modalVenda">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h2>
+                    Nova venda
+                </h2>
+
+                <button id="fecharModal">
+
+                    <i class="fa-solid fa-xmark"></i>
+
+                </button>
+
+            </div>
+
+            <form id="formVenda">
+
+                <div class="form-grid">
+
+                    <input type="text" name="clienteNome" placeholder="Nome do cliente" required>
+
+                    <input type="text" name="clienteTelefone" placeholder="Telefone">
+
+                    <select name="veiculoId" id="selectVeiculos" required>
+
+                        <option value="">
+                            Selecione um veículo
+                        </option>
+
+                    </select>
+
+                    <input type="number" name="valorVenda" placeholder="Valor da venda" required>
+
+                    <select name="vendedorId" id="selectVendedores">
+
+                        <option value="">
+                            Sem vendedor
+                        </option>
+
+                    </select>
+
+                    <textarea name="observacoes" placeholder="Observações"></textarea>
+
+                </div>
+
+                <button type="submit" class="btn-primary full">
+
+                    Finalizar venda
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <script src="../assets/js/vendas.js"></script>
+
+</body>
+
+</html>

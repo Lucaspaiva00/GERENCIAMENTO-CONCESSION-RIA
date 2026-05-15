@@ -112,22 +112,25 @@ model HistoricoVeiculo {
 }
 
 model Venda {
-  vendaid       Int            @id @default(autoincrement())
-  lojaId        Int
-  loja          Loja           @relation(fields: [lojaId], references: [lojaid], onDelete: Cascade)
-  clienteId     Int
-  cliente       Cliente        @relation(fields: [clienteId], references: [clienteid], onDelete: Restrict)
-  veiculoId     Int            @unique
-  veiculo       Veiculo        @relation(fields: [veiculoId], references: [veiculoid], onDelete: Restrict)
-  vendedorId    Int?
-  vendedor      Usuario?       @relation(fields: [vendedorId], references: [usuarioid])
-  valorVenda    Float
-  valorCompra   Float
-  lucro         Float
-  observacoes   String?        @db.Text
-  createdAt     DateTime       @default(now())
-  contaRecebers ContaReceber[]
-  comissao      Comissao?
+  vendaid        Int            @id @default(autoincrement())
+  lojaId         Int
+  loja           Loja           @relation(fields: [lojaId], references: [lojaid], onDelete: Cascade)
+  clienteId      Int
+  cliente        Cliente        @relation(fields: [clienteId], references: [clienteid], onDelete: Restrict)
+  veiculoId      Int            @unique
+  veiculo        Veiculo        @relation(fields: [veiculoId], references: [veiculoid], onDelete: Restrict)
+  vendedorId     Int?
+  vendedor       Usuario?       @relation(fields: [vendedorId], references: [usuarioid])
+  valorVenda     Float
+  valorCompra    Float
+  lucro          Float
+  formaPagamento String?
+  entrada        Float?         @default(0)
+  parcelas       Int?           @default(1)
+  observacoes    String?        @db.Text
+  createdAt      DateTime       @default(now())
+  contaRecebers  ContaReceber[]
+  comissao       Comissao?
 }
 
 model Comissao {

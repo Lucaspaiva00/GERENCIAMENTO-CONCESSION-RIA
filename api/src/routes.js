@@ -14,6 +14,7 @@ const vendas = require("./controller/ctvendas");
 const historico = require("./controller/cthistorico");
 const contasReceber = require("./controller/ctcontasreceber");
 const comissao = require("./controller/ctcomissao");
+const clientes = require("./controller/ctclientes");
 
 const auth = require("./middlewares/auth");
 
@@ -140,13 +141,11 @@ routes.delete(
 
 routes.post(
     "/vendas",
-    auth,
-    vendas.vender
+    vendas.criar
 );
 
 routes.get(
     "/vendas",
-    auth,
     vendas.listar
 );
 
@@ -204,6 +203,18 @@ routes.get(
     "/comissoes",
     auth,
     comissao.listar
+);
+
+routes.post(
+    "/clientes",
+    auth,
+    clientes.cadastrar
+);
+
+routes.get(
+    "/clientes",
+    auth,
+    clientes.listar
 );
 
 module.exports = routes;

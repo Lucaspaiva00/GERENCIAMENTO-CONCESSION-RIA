@@ -7,7 +7,7 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Painel Central</title>
+    <title>Dashboard | Paiva Tech</title>
 
     <link rel="stylesheet" href="./assets/css/style.css">
 
@@ -25,72 +25,107 @@
 
         <aside class="sidebar">
 
-            <div class="sidebar-logo">
+            <div>
 
-                <div class="sidebar-icon">
-                    <i class="fa-solid fa-motorcycle"></i>
+                <div class="sidebar-logo">
+
+                    <div class="sidebar-icon">
+
+                        <i class="fa-solid fa-motorcycle"></i>
+
+                    </div>
+
+                    <span>
+                        PAIVA TECH
+                    </span>
+
                 </div>
 
-                <span>
-                    PAIVA TECH
-                </span>
+                <nav class="sidebar-menu">
+
+                    <a href="#" class="active">
+
+                        <i class="fa-solid fa-chart-line"></i>
+
+                        Dashboard
+
+                    </a>
+
+                    <a href="./pages/veiculos.html">
+
+                        <i class="fa-solid fa-car-side"></i>
+
+                        Veículos
+
+                    </a>
+
+                    <a href="./pages/vendas.html">
+
+                        <i class="fa-solid fa-cart-shopping"></i>
+
+                        Vendas
+
+                    </a>
+
+                    <a href="#">
+
+                        <i class="fa-solid fa-wallet"></i>
+
+                        Financeiro
+
+                    </a>
+
+                    <a href="#">
+
+                        <i class="fa-solid fa-users"></i>
+
+                        Clientes
+
+                    </a>
+
+                    <a href="#">
+
+                        <i class="fa-solid fa-file-invoice-dollar"></i>
+
+                        Parcelas
+
+                    </a>
+
+                    <a href="#">
+
+                        <i class="fa-solid fa-chart-pie"></i>
+
+                        Relatórios
+
+                    </a>
+
+                    <a href="#">
+
+                        <i class="fa-solid fa-gear"></i>
+
+                        Configurações
+
+                    </a>
+
+                </nav>
 
             </div>
 
-            <nav class="sidebar-menu">
-
-                <a href="#" class="active">
-                    <i class="fa-solid fa-chart-line"></i>
-                    Dashboard
-                </a>
-
-                <a href="pages/veiculos.html">
-                    <i class="fa-solid fa-motorcycle"></i>
-                    Veículos
-                </a>
-
-                <a href="#">
-                    <i class="fa-solid fa-cart-shopping"></i>
-                    Vendas
-                </a>
-
-                <a href="#">
-                    <i class="fa-solid fa-wallet"></i>
-                    Financeiro
-                </a>
-
-                <a href="#">
-                    <i class="fa-solid fa-users"></i>
-                    Clientes
-                </a>
-
-                <a href="#">
-                    <i class="fa-solid fa-file-invoice-dollar"></i>
-                    Parcelas
-                </a>
-
-                <a href="#">
-                    <i class="fa-solid fa-clock-rotate-left"></i>
-                    Histórico
-                </a>
-
-                <a href="#">
-                    <i class="fa-solid fa-gear"></i>
-                    Configurações
-                </a>
-
-            </nav>
-
             <button class="logout-btn" id="logoutBtn">
+
                 <i class="fa-solid fa-right-from-bracket"></i>
+
                 Sair
+
             </button>
 
         </aside>
 
-        <!-- CONTEÚDO -->
+        <!-- MAIN -->
 
         <main class="main-content">
+
+            <!-- TOPBAR -->
 
             <div class="topbar">
 
@@ -101,7 +136,7 @@
                     </h1>
 
                     <p class="page-subtitle">
-                        Painel geral do sistema
+                        Painel geral da concessionária
                     </p>
 
                 </div>
@@ -127,7 +162,7 @@
                     <div>
 
                         <span class="card-label">
-                            Veículos
+                            Veículos em estoque
                         </span>
 
                         <h2 id="totalVeiculos">
@@ -145,7 +180,7 @@
                     <div>
 
                         <span class="card-label">
-                            Vendidos
+                            Veículos vendidos
                         </span>
 
                         <h2 id="veiculosVendidos">
@@ -163,11 +198,29 @@
                     <div>
 
                         <span class="card-label">
+                            Veículos consignados
+                        </span>
+
+                        <h2 id="veiculosConsignados">
+                            0
+                        </h2>
+
+                    </div>
+
+                    <i class="fa-solid fa-handshake card-icon"></i>
+
+                </div>
+
+                <div class="dashboard-card">
+
+                    <div>
+
+                        <span class="card-label">
                             Entradas
                         </span>
 
                         <h2 id="totalEntradas">
-                            R$ 0
+                            R$ 0,00
                         </h2>
 
                     </div>
@@ -181,11 +234,11 @@
                     <div>
 
                         <span class="card-label">
-                            Saldo
+                            Saldo atual
                         </span>
 
                         <h2 id="saldo">
-                            R$ 0
+                            R$ 0,00
                         </h2>
 
                     </div>
@@ -203,7 +256,7 @@
                 <div class="chart-card">
 
                     <h3>
-                        Fluxo Financeiro
+                        Fluxo financeiro
                     </h3>
 
                     <canvas id="financeiroChart"></canvas>
@@ -213,7 +266,7 @@
                 <div class="chart-card">
 
                     <h3>
-                        Veículos
+                        Status dos veículos
                     </h3>
 
                     <canvas id="veiculosChart"></canvas>
