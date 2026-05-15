@@ -1,9 +1,11 @@
+const API = "http://localhost:3001";
+
 const token = localStorage.getItem("token");
 
 if (!token) {
 
     window.location.href =
-        "../pages/login.html";
+        "./login.html";
 
 }
 
@@ -13,287 +15,88 @@ const tbody =
 const modal =
     document.getElementById("modalVeiculo");
 
-const btnNovo =
-    document.getElementById("btnNovoVeiculo");
-
-const fecharModal =
-    document.getElementById("fecharModal");
-
 const form =
     document.getElementById("formVeiculo");
 
-const previewImagem =
+const preview =
     document.getElementById("previewImagem");
 
-btnNovo.addEventListener("click", () => {
+const modalHistorico =
+    document.getElementById("modalHistorico");
 
-    form.reset();
+const historicoLista =
+    document.getElementById("historicoLista");
 
-    document.getElementById(
-        "veiculoid"
-    ).value = "";
+/* LOGOUT */
 
-    previewImagem.style.display = "none";
+document.getElementById("logoutBtn")
+    .addEventListener("click", () => {
 
-    modal.style.display = "flex";
+        localStorage.clear();
 
-});
+        window.location.href =
+            "./login.html";
 
-fecharModal.addEventListener("click", () => {
+    });
 
-    modal.style.display = "none";
+/* MODAL */
 
-});
+document.getElementById("btnNovoVeiculo")
+    .addEventListener("click", () => {
 
-document.querySelector(
-    'input[name="imagem"]'
-).addEventListener("change", (e) => {
+        form.reset();
 
-    const file = e.target.files[0];
-
-    if (!file) return;
-
-    previewImagem.src =
-        URL.createObjectURL(file);
-
-    previewImagem.style.display = "block";
-
-});
-
-async function carregarVeiculos() {
-
-    try {
-
-        const busca =
-            document.getElementById("busca").value;
-
-        const status =
-            document.getElementById("status").value;
-
-        const tipoEstoque =
-            document.getElementById(
-                "tipoEstoque"
-            ).value;
-
-        const response = await fetch(
-            `http://localhost:3001/veiculos?busca=${busca}&status=${status}&tipoEstoque=${tipoEstoque}`,
-            {
-                headers: {
-                    Authorization:
-                        `Bearer ${token}`
-                }
-            }
-        );
-
-        const data = await response.json();
-
-        tbody.innerHTML = "";
-
-        data.forEach((veiculo) => {
-
-            let badgeStatus = "";
-
-            if (
-                veiculo.status === "DISPONIVEL"
-            ) {
-
-                badgeStatus =
-                    `<span class="badge badge-success">
-                        Disponível
-                    </span>`;
-
-            }
-
-            if (
-                veiculo.status === "VENDIDO"
-            ) {
-
-                badgeStatus =
-                    `<span class="badge badge-danger">
-                        Vendido
-                    </span>`;
-
-            }
-
-            if (
-                veiculo.status === "MANUTENCAO"
-            ) {
-
-                badgeStatus =
-                    `<span class="badge badge-warning">
-                        Manutenção
-                    </span>`;
-
-            }
-
-            tbody.innerHTML += `
-            
-                <tr>
-
-                    <td>
-
-                        <img
-                            src="http://localhost:3001/uploads/${veiculo.imagem}"
-                            class="vehicle-image"
-                        >
-
-                    </td>
-
-                    <td>
-
-                        ${veiculo.titulo}
-
-                    </td>
-
-                    <td>
-
-                        ${veiculo.placa || "-"}
-
-                    </td>
-
-                    <td>
-
-                        R$ ${Number(
-                veiculo.valorVenda
-            ).toLocaleString("pt-BR")}
-
-                    </td>
-
-                    <td>
-
-                        ${badgeStatus}
-
-                    </td>
-
-                    <td>
-
-                        ${veiculo.tipoEstoque}
-
-                    </td>
-
-                    <td>
-
-                        <div class="table-actions">
-
-                            <button
-                                class="btn-action btn-edit"
-                                onclick="editarVeiculo(${veiculo.veiculoid})"
-                            >
-                                <i class="fa-solid fa-pen"></i>
-                            </button>
-
-                            <button
-                                class="btn-action btn-delete"
-                                onclick="deletarVeiculo(${veiculo.veiculoid})"
-                            >
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
-
-                        </div>
-
-                    </td>
-
-                </tr>
-            
-            `;
-
-        });
-
-    } catch (error) {
-
-        console.log(error);
-
-    }
-
-}
-
-async function editarVeiculo(id) {
-
-    try {
-
-        const response = await fetch(
-            `http://localhost:3001/veiculos/${id}`,
-            {
-                headers: {
-                    Authorization:
-                        `Bearer ${token}`
-                }
-            }
-        );
-
-        const veiculo = await response.json();
+        preview.style.display =
+            "none";
 
         document.getElementById(
             "veiculoid"
-        ).value =
-            veiculo.veiculoid;
+        ).value = "";
 
-        form.titulo.value =
-            veiculo.titulo;
+        modal.classList.add("active");
 
-        form.marca.value =
-            veiculo.marca;
+    });
 
-        form.modelo.value =
-            veiculo.modelo;
+document.getElementById("fecharModal")
+    .addEventListener("click", () => {
 
-        form.ano.value =
-            veiculo.ano;
+        modal.classList.remove("active");
 
-        form.placa.value =
-            veiculo.placa;
+    });
 
-        form.km.value =
-            veiculo.km;
+document.getElementById("fecharHistorico")
+    .addEventListener("click", () => {
 
-        form.valorCompra.value =
-            veiculo.valorCompra;
+        modalHistorico.classList.remove("active");
 
-        form.valorVenda.value =
-            veiculo.valorVenda;
+    });
 
-        form.tipo.value =
-            veiculo.tipo;
+/* PREVIEW */
 
-        form.tipoEstoque.value =
-            veiculo.tipoEstoque;
+form.imagem.addEventListener("change", e => {
 
-        if (veiculo.imagem) {
+    const file =
+        e.target.files[0];
 
-            previewImagem.src =
-                `http://localhost:3001/uploads/${veiculo.imagem}`;
+    if (!file) return;
 
-            previewImagem.style.display =
-                "block";
+    preview.src =
+        URL.createObjectURL(file);
 
-        }
+    preview.style.display =
+        "block";
 
-        modal.style.display = "flex";
+});
 
-    } catch (error) {
+/* LISTAR */
 
-        console.log(error);
-
-    }
-
-}
-
-async function deletarVeiculo(id) {
-
-    const confirmar =
-        confirm(
-            "Deseja realmente deletar este veículo?"
-        );
-
-    if (!confirmar) return;
+async function listarVeiculos() {
 
     try {
 
-        await fetch(
-            `http://localhost:3001/veiculos/${id}`,
+        const response = await fetch(
+            `${API}/veiculos`,
             {
-                method: "DELETE",
-
                 headers: {
                     Authorization:
                         `Bearer ${token}`
@@ -301,7 +104,12 @@ async function deletarVeiculo(id) {
             }
         );
 
-        carregarVeiculos();
+        const data =
+            await response.json();
+
+        renderTabela(data);
+
+        atualizarKPIs(data);
 
     } catch (error) {
 
@@ -311,42 +119,173 @@ async function deletarVeiculo(id) {
 
 }
 
-document.getElementById("btnFiltrar")
-    .addEventListener("click", carregarVeiculos);
+/* KPIS */
 
-form.addEventListener("submit", async (e) => {
+function atualizarKPIs(data) {
+
+    document.getElementById(
+        "kpiTotal"
+    ).innerText = data.length;
+
+    document.getElementById(
+        "kpiDisponivel"
+    ).innerText =
+        data.filter(v =>
+            v.status === "DISPONIVEL"
+        ).length;
+
+    document.getElementById(
+        "kpiConsignado"
+    ).innerText =
+        data.filter(v =>
+            v.tipoEstoque === "CONSIGNADO"
+        ).length;
+
+    document.getElementById(
+        "kpiVendidos"
+    ).innerText =
+        data.filter(v =>
+            v.status === "VENDIDO"
+        ).length;
+
+}
+
+/* RENDER */
+
+function renderTabela(lista) {
+
+    tbody.innerHTML = "";
+
+    lista.forEach(veiculo => {
+
+        tbody.innerHTML += `
+        
+        <tr>
+
+            <td>
+
+                <img
+                    src="${veiculo.imagem
+                ? API + "/uploads/" + veiculo.imagem
+                : "https://placehold.co/100x70"}"
+                    class="vehicle-image">
+
+            </td>
+
+            <td>
+
+                <strong>
+                    ${veiculo.titulo}
+                </strong>
+
+                <br>
+
+                <small>
+                    ${veiculo.marca} • ${veiculo.modelo}
+                </small>
+
+            </td>
+
+            <td>
+                ${veiculo.placa || "-"}
+            </td>
+
+            <td>
+                R$ ${Number(
+                    veiculo.valorVenda
+                ).toLocaleString("pt-BR")}
+            </td>
+
+            <td>
+
+                <span class="badge ${badgeStatus(veiculo.status)}">
+
+                    ${veiculo.status}
+
+                </span>
+
+            </td>
+
+            <td>
+
+                <span class="badge ${badgeEstoque(veiculo.tipoEstoque)}">
+
+                    ${veiculo.tipoEstoque}
+
+                </span>
+
+            </td>
+
+            <td>
+
+                <div class="table-actions">
+
+                    <button
+                        class="btn-action btn-edit"
+                        onclick="verHistorico(${veiculo.veiculoid})">
+
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+
+                    </button>
+
+                    <button
+                        class="btn-action btn-delete"
+                        onclick="deletarVeiculo(${veiculo.veiculoid})">
+
+                        <i class="fa-solid fa-trash"></i>
+
+                    </button>
+
+                </div>
+
+            </td>
+
+        </tr>
+
+        `;
+
+    });
+
+}
+
+/* BADGES */
+
+function badgeStatus(status) {
+
+    if (status === "DISPONIVEL")
+        return "badge-success";
+
+    if (status === "VENDIDO")
+        return "badge-danger";
+
+    return "badge-warning";
+
+}
+
+function badgeEstoque(tipo) {
+
+    if (tipo === "CONSIGNADO")
+        return "badge-warning";
+
+    return "badge-success";
+
+}
+
+/* CADASTRAR */
+
+form.addEventListener("submit", async e => {
 
     e.preventDefault();
 
+    const formData =
+        new FormData(form);
+
     try {
 
-        const formData = new FormData(form);
-
-        formData.append("lojaId", 1);
-
-        const veiculoid =
-            document.getElementById(
-                "veiculoid"
-            ).value;
-
-        let url =
-            "http://localhost:3001/veiculos";
-
-        let method = "POST";
-
-        if (veiculoid) {
-
-            url =
-                `http://localhost:3001/veiculos/${veiculoid}`;
-
-            method = "PUT";
-
-        }
-
         const response = await fetch(
-            url,
+            `${API}/veiculos`,
             {
-                method,
+                method: "POST",
 
                 headers: {
                     Authorization:
@@ -357,15 +296,51 @@ form.addEventListener("submit", async (e) => {
             }
         );
 
-        if (response.ok) {
+        const veiculo =
+            await response.json();
 
-            modal.style.display = "none";
+        /* HISTÓRICO */
 
-            form.reset();
+        const descricao =
+            form.historicoDescricao.value;
 
-            carregarVeiculos();
+        const valor =
+            form.historicoValor.value;
+
+        if (descricao) {
+
+            await fetch(
+                `${API}/historico`,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json",
+
+                        Authorization:
+                            `Bearer ${token}`
+                    },
+
+                    body: JSON.stringify({
+
+                        veiculoId:
+                            veiculo.veiculoid,
+
+                        descricao,
+
+                        valor:
+                            Number(valor || 0)
+
+                    })
+                }
+            );
 
         }
+
+        modal.classList.remove("active");
+
+        listarVeiculos();
 
     } catch (error) {
 
@@ -375,4 +350,186 @@ form.addEventListener("submit", async (e) => {
 
 });
 
-carregarVeiculos();
+/* HISTÓRICO */
+
+async function verHistorico(id) {
+
+    try {
+
+        const response = await fetch(
+            `${API}/historico/${id}`,
+            {
+                headers: {
+                    Authorization:
+                        `Bearer ${token}`
+                }
+            }
+        );
+
+        const data =
+            await response.json();
+
+        historicoLista.innerHTML = "";
+
+        if (!data.length) {
+
+            historicoLista.innerHTML = `
+            
+            <div class="empty-state">
+
+                <i class="fa-solid fa-clock-rotate-left"></i>
+
+                <p>
+                    Nenhum histórico encontrado
+                </p>
+
+            </div>
+            
+            `;
+
+        }
+
+        data.forEach(item => {
+
+            historicoLista.innerHTML += `
+            
+            <div class="historico-card">
+
+                <div class="historico-topo">
+
+                    <span class="historico-data">
+
+                        ${new Date(item.createdAt)
+                    .toLocaleDateString("pt-BR")}
+
+                    </span>
+
+                    <span class="historico-valor">
+
+                        R$ ${Number(
+                        item.valor || 0
+                    ).toLocaleString("pt-BR")}
+
+                    </span>
+
+                </div>
+
+                <p>
+
+                    ${item.descricao}
+
+                </p>
+
+            </div>
+            
+            `;
+
+        });
+
+        modalHistorico.classList.add(
+            "active"
+        );
+
+    } catch (error) {
+
+        console.log(error);
+
+    }
+
+}
+
+/* DELETE */
+
+async function deletarVeiculo(id) {
+
+    const confirmar =
+        confirm(
+            "Deseja deletar este veículo?"
+        );
+
+    if (!confirmar) return;
+
+    try {
+
+        await fetch(
+            `${API}/veiculos/${id}`,
+            {
+                method: "DELETE",
+
+                headers: {
+                    Authorization:
+                        `Bearer ${token}`
+                }
+            }
+        );
+
+        listarVeiculos();
+
+    } catch (error) {
+
+        console.log(error);
+
+    }
+
+}
+
+/* FILTRO */
+
+document.getElementById("btnFiltrar")
+    .addEventListener("click", async () => {
+
+        const busca =
+            document.getElementById(
+                "busca"
+            ).value.toLowerCase();
+
+        const status =
+            document.getElementById(
+                "status"
+            ).value;
+
+        const estoque =
+            document.getElementById(
+                "tipoEstoque"
+            ).value;
+
+        const response = await fetch(
+            `${API}/veiculos`,
+            {
+                headers: {
+                    Authorization:
+                        `Bearer ${token}`
+                }
+            }
+        );
+
+        let data =
+            await response.json();
+
+        data = data.filter(v => {
+
+            const matchBusca =
+                v.titulo.toLowerCase()
+                    .includes(busca);
+
+            const matchStatus =
+                !status ||
+                v.status === status;
+
+            const matchEstoque =
+                !estoque ||
+                v.tipoEstoque === estoque;
+
+            return (
+                matchBusca &&
+                matchStatus &&
+                matchEstoque
+            );
+
+        });
+
+        renderTabela(data);
+
+    });
+
+listarVeiculos();
