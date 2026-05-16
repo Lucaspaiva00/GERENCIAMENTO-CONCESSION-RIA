@@ -86,8 +86,8 @@ model Veiculo {
   marca       String
   modelo      String
   ano         Int
-  placa       String?            @unique
-  chassi      String?            @unique
+  placa       String?
+  chassi      String?            
   cor         String?
   km          Int?
   valorCompra Float
