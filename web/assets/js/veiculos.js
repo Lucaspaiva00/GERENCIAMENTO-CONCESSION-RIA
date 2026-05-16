@@ -192,6 +192,12 @@ function renderTabela(lista) {
 
             <td>
                 R$ ${Number(
+                    veiculo.valorCompra
+                ).toLocaleString("pt-BR")}
+            </td>
+
+            <td>
+                R$ ${Number(
                     veiculo.valorVenda
                 ).toLocaleString("pt-BR")}
             </td>
