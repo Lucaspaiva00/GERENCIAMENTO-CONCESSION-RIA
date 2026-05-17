@@ -8,10 +8,16 @@ if (!token) {
 }
 
 const usuario =
-    JSON.parse(localStorage.getItem("usuario"));
+    JSON.parse(
+        localStorage.getItem("usuario")
+    );
 
-document.getElementById("usuarioNome")
-    .innerText = usuario.nome;
+if (usuario && usuario.nome) {
+
+    document.getElementById("usuarioNome")
+        .innerText = usuario.nome;
+
+}
 
 document.getElementById("logoutBtn")
     .addEventListener("click", () => {
@@ -25,21 +31,38 @@ document.getElementById("logoutBtn")
 
     });
 
+let financeiroChart = null;
+let veiculosChart = null;
+let estoqueChart = null;
+
 async function carregarDashboard() {
 
     try {
 
-        const response = await fetch(
-            "http://localhost:3001/dashboard",
-            {
-                headers: {
-                    Authorization:
-                        `Bearer ${token}`
+        const response =
+            await fetch(
+                "http://localhost:3001/dashboard",
+                {
+                    headers: {
+                        Authorization:
+                            `Bearer ${token}`
+                    }
                 }
-            }
-        );
+            );
 
-        const data = await response.json();
+        const data =
+            await response.json();
+
+        if (!response.ok || data.error) {
+
+            alert(
+                data.error ||
+                "Erro ao carregar dashboard"
+            );
+
+            return;
+
+        }
 
         document.getElementById(
             "totalVeiculos"
@@ -52,20 +75,54 @@ async function carregarDashboard() {
             data.veiculos.vendidos;
 
         document.getElementById(
+            "veiculosConsignados"
+        ).innerText =
+            data.veiculos.consignados;
+
+        document.getElementById(
+            "valorEstoque"
+        ).innerText =
+            formatarMoeda(
+                data.estoque.valorInvestido
+            );
+
+        document.getElementById(
+            "valorVendaEstoque"
+        ).innerText =
+            formatarMoeda(
+                data.estoque.valorVenda
+            );
+
+        document.getElementById(
+            "lucroEstoque"
+        ).innerText =
+            formatarMoeda(
+                data.estoque.lucroPrevisto
+            );
+
+        document.getElementById(
             "totalEntradas"
         ).innerText =
-            `R$ ${data.financeiro.entradas}`;
+            formatarMoeda(
+                data.financeiro.entradas
+            );
 
         document.getElementById(
             "saldo"
         ).innerText =
-            `R$ ${data.financeiro.saldo}`;
+            formatarMoeda(
+                data.financeiro.saldo
+            );
 
         criarGraficos(data);
 
     } catch (error) {
 
         console.log(error);
+
+        alert(
+            "Erro ao carregar dashboard"
+        );
 
     }
 
@@ -79,14 +136,24 @@ function criarGraficos(data) {
 
     Chart.defaults.plugins.legend.labels.usePointStyle = true;
 
-    /* FINANCEIRO */
+    if (financeiroChart) {
+        financeiroChart.destroy();
+    }
+
+    if (veiculosChart) {
+        veiculosChart.destroy();
+    }
+
+    if (estoqueChart) {
+        estoqueChart.destroy();
+    }
 
     const financeiroCtx =
         document.getElementById(
             "financeiroChart"
         );
 
-    new Chart(financeiroCtx, {
+    financeiroChart = new Chart(financeiroCtx, {
 
         type: "bar",
 
@@ -103,23 +170,15 @@ function criarGraficos(data) {
                 label: "Financeiro",
 
                 data: [
-
                     data.financeiro.entradas,
-
                     data.financeiro.saidas,
-
                     data.financeiro.saldo
-
                 ],
 
                 backgroundColor: [
-
                     "#22C55E",
-
                     "#EF4444",
-
                     "#2563EB"
-
                 ],
 
                 borderRadius: 12,
@@ -142,6 +201,16 @@ function criarGraficos(data) {
 
                 legend: {
                     display: false
+                },
+
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            return formatarMoeda(
+                                context.raw
+                            );
+                        }
+                    }
                 }
 
             },
@@ -174,9 +243,7 @@ function criarGraficos(data) {
                     ticks: {
 
                         callback: function (value) {
-
-                            return "R$ " + value;
-
+                            return formatarMoeda(value);
                         }
 
                     }
@@ -189,49 +256,35 @@ function criarGraficos(data) {
 
     });
 
-    /* VEÍCULOS */
-
     const veiculosCtx =
         document.getElementById(
             "veiculosChart"
         );
 
-    new Chart(veiculosCtx, {
+    veiculosChart = new Chart(veiculosCtx, {
 
         type: "doughnut",
 
         data: {
 
             labels: [
-
                 "Disponíveis",
-
                 "Vendidos",
-
                 "Manutenção"
-
             ],
 
             datasets: [{
 
                 data: [
-
                     data.veiculos.disponiveis,
-
                     data.veiculos.vendidos,
-
                     data.veiculos.manutencao
-
                 ],
 
                 backgroundColor: [
-
                     "#2563EB",
-
                     "#22C55E",
-
                     "#F59E0B"
-
                 ],
 
                 borderWidth: 0,
@@ -261,11 +314,8 @@ function criarGraficos(data) {
                         padding: 20,
 
                         font: {
-
                             size: 13,
-
                             weight: "600"
-
                         }
 
                     }
@@ -277,6 +327,116 @@ function criarGraficos(data) {
         }
 
     });
+
+    const estoqueCtx =
+        document.getElementById(
+            "estoqueChart"
+        );
+
+    estoqueChart = new Chart(estoqueCtx, {
+
+        type: "bar",
+
+        data: {
+
+            labels: [
+                "Investido",
+                "Venda prevista",
+                "Lucro previsto"
+            ],
+
+            datasets: [{
+
+                label: "Estoque",
+
+                data: [
+                    data.estoque.valorInvestido,
+                    data.estoque.valorVenda,
+                    data.estoque.lucroPrevisto
+                ],
+
+                backgroundColor: [
+                    "#F59E0B",
+                    "#2563EB",
+                    "#22C55E"
+                ],
+
+                borderRadius: 12,
+
+                borderSkipped: false,
+
+                maxBarThickness: 90
+
+            }]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            plugins: {
+
+                legend: {
+                    display: false
+                },
+
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            return formatarMoeda(
+                                context.raw
+                            );
+                        }
+                    }
+                }
+
+            },
+
+            scales: {
+
+                x: {
+                    grid: {
+                        display: false
+                    }
+                },
+
+                y: {
+
+                    beginAtZero: true,
+
+                    grid: {
+                        color: "#F3F4F6"
+                    },
+
+                    ticks: {
+                        callback: function (value) {
+                            return formatarMoeda(value);
+                        }
+                    }
+
+                }
+
+            }
+
+        }
+
+    });
+
+}
+
+function formatarMoeda(valor) {
+
+    return Number(valor || 0)
+        .toLocaleString(
+            "pt-BR",
+            {
+                style: "currency",
+                currency: "BRL"
+            }
+        );
 
 }
 

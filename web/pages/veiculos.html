@@ -477,7 +477,37 @@
                 </button>
 
             </div>
+            <form id="formHistorico" class="history-form">
 
+                <input type="hidden" id="historicoVeiculoId">
+
+                <div class="form-grid">
+
+                    <div class="form-group full-width">
+
+                        <label>Descrição</label>
+
+                        <textarea id="novaDescricaoHistorico" class="textarea-custom"
+                            placeholder="Ex: troca de óleo, revisão, pneu, documentação..." required></textarea>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Valor</label>
+
+                        <input type="number" id="novoValorHistorico" placeholder="0.00">
+
+                    </div>
+
+                </div>
+
+                <button type="submit" class="btn-primary full">
+                    <i class="fa-solid fa-plus"></i>
+                    Adicionar histórico
+                </button>
+
+            </form>
             <div id="historicoLista" class="historico-lista">
 
             </div>

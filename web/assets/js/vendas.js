@@ -99,6 +99,105 @@ document.getElementById(
 
 };
 
+/* TEMPLATE LINHA */
+
+function montarLinhaVenda(venda) {
+
+    return `
+
+        <tr>
+
+            <td>
+                ${venda.cliente?.nome || "-"}
+            </td>
+
+            <td>
+                ${venda.veiculo?.titulo || "-"}
+            </td>
+
+            <td>
+
+                ${venda.veiculo?.tipoEstoque === "CONSIGNADO"
+            ? `
+                    <span class="badge badge-warning">
+                        Consignado
+                    </span>
+                `
+            : `
+                    <span class="badge badge-success">
+                        Próprio
+                    </span>
+                `
+        }
+
+            </td>
+
+            <td>
+                ${formatarMoeda(venda.valorVenda)}
+            </td>
+
+            <td>
+                ${formatarMoeda(venda.lucro)}
+            </td>
+
+            <td>
+                ${venda.vendedor?.nome || "-"}
+            </td>
+
+            <td>
+                ${formatarData(venda.createdAt)}
+            </td>
+
+            <td>
+
+                <div class="table-actions">
+
+                    <button
+                        class="btn-action btn-edit"
+                        onclick="abrirDocumento('contrato', ${venda.vendaid})"
+                        title="Contrato">
+
+                        <i class="fa-solid fa-file-contract"></i>
+
+                    </button>
+
+                    <button
+                        class="btn-action btn-edit"
+                        onclick="abrirDocumento('recibo', ${venda.vendaid})"
+                        title="Recibo">
+
+                        <i class="fa-solid fa-receipt"></i>
+
+                    </button>
+
+                    <button
+                        class="btn-action btn-edit"
+                        onclick="abrirDocumento('termo-entrega', ${venda.vendaid})"
+                        title="Termo de entrega">
+
+                        <i class="fa-solid fa-file-signature"></i>
+
+                    </button>
+
+                    <button
+                        class="btn-action btn-edit"
+                        onclick="abrirDocumento('relatorio-interno', ${venda.vendaid})"
+                        title="Relatório interno">
+
+                        <i class="fa-solid fa-chart-pie"></i>
+
+                    </button>
+
+                </div>
+
+            </td>
+
+        </tr>
+
+    `;
+
+}
+
 /* LISTAR VENDAS */
 
 async function listarVendas() {
@@ -134,80 +233,20 @@ async function listarVendas() {
                 venda.lucro || 0
             );
 
-            tbodyVendas.innerHTML += `
-
-                <tr>
-
-                    <td>
-                        ${venda.cliente?.nome || "-"}
-                    </td>
-
-                    <td>
-                        ${venda.veiculo?.titulo || "-"}
-                    </td>
-
-                    <td>
-
-                        ${venda.veiculo?.tipoEstoque === "CONSIGNADO"
-                    ? `
-                            <span class="badge badge-warning">
-                                Consignado
-                            </span>
-                        `
-                    : `
-                            <span class="badge badge-success">
-                                Próprio
-                            </span>
-                        `
-                }
-
-                    </td>
-
-                    <td>
-                        R$ ${Number(
-                    venda.valorVenda
-                ).toLocaleString(
-                    "pt-BR"
-                )}
-                    </td>
-
-                    <td>
-                        R$ ${Number(
-                    venda.lucro
-                ).toLocaleString(
-                    "pt-BR"
-                )}
-                    </td>
-
-                    <td>
-                        ${venda.vendedor?.nome || "-"}
-                    </td>
-
-                    <td>
-                        ${formatarData(
-                    venda.createdAt
-                )}
-                    </td>
-
-                </tr>
-
-            `;
+            tbodyVendas.innerHTML +=
+                montarLinhaVenda(venda);
 
         });
 
         document.getElementById(
             "totalVendas"
         ).innerText =
-            `R$ ${total.toLocaleString(
-                "pt-BR"
-            )}`;
+            formatarMoeda(total);
 
         document.getElementById(
             "lucroTotal"
         ).innerText =
-            `R$ ${lucro.toLocaleString(
-                "pt-BR"
-            )}`;
+            formatarMoeda(lucro);
 
         document.getElementById(
             "quantidadeVendas"
@@ -308,6 +347,12 @@ async function listarVendedores() {
 
         `;
 
+        if (!Array.isArray(vendedores)) {
+
+            return;
+
+        }
+
         vendedores.forEach(vendedor => {
 
             selectVendedores.innerHTML += `
@@ -361,8 +406,6 @@ formVenda.addEventListener(
 
                         body: JSON.stringify({
 
-                            lojaId: 1,
-
                             nome:
                                 formData.get(
                                     "clienteNome"
@@ -381,6 +424,17 @@ formVenda.addEventListener(
             const cliente =
                 await clienteResponse.json();
 
+            if (!clienteResponse.ok || cliente.error) {
+
+                alert(
+                    cliente.error ||
+                    "Erro ao cadastrar cliente"
+                );
+
+                return;
+
+            }
+
             /* CRIAR VENDA */
 
             const vendaResponse =
@@ -398,8 +452,6 @@ formVenda.addEventListener(
                         },
 
                         body: JSON.stringify({
-
-                            lojaId: 1,
 
                             clienteId:
                                 cliente.clienteid,
@@ -442,9 +494,12 @@ formVenda.addEventListener(
             const venda =
                 await vendaResponse.json();
 
-            if (venda.error) {
+            if (!vendaResponse.ok || venda.error) {
 
-                alert(venda.error);
+                alert(
+                    venda.error ||
+                    "Erro ao realizar venda"
+                );
 
                 return;
 
@@ -468,6 +523,10 @@ formVenda.addEventListener(
 
             console.log(error);
 
+            alert(
+                "Erro ao realizar venda"
+            );
+
         }
 
     }
@@ -481,9 +540,71 @@ btnFiltrar.onclick =
         const termo =
             busca.value.toLowerCase();
 
+        try {
+
+            const response =
+                await fetch(
+                    `${API_URL}/vendas`,
+                    {
+                        headers: {
+                            Authorization:
+                                `Bearer ${token}`
+                        }
+                    }
+                );
+
+            const vendas =
+                await response.json();
+
+            const filtradas =
+                vendas.filter(venda => {
+
+                    const cliente =
+                        venda.cliente?.nome
+                            ?.toLowerCase() || "";
+
+                    const veiculo =
+                        venda.veiculo?.titulo
+                            ?.toLowerCase() || "";
+
+                    return (
+                        cliente.includes(
+                            termo
+                        )
+                        ||
+                        veiculo.includes(
+                            termo
+                        )
+                    );
+
+                });
+
+            tbodyVendas.innerHTML = "";
+
+            filtradas.forEach(venda => {
+
+                tbodyVendas.innerHTML +=
+                    montarLinhaVenda(venda);
+
+            });
+
+        } catch (error) {
+
+            console.log(error);
+
+        }
+
+    };
+
+/* ABRIR DOCUMENTO */
+
+async function abrirDocumento(tipo, vendaId) {
+
+    try {
+
         const response =
             await fetch(
-                `${API_URL}/vendas`,
+                `${API_URL}/documentos/${tipo}/${vendaId}`,
                 {
                     headers: {
                         Authorization:
@@ -492,106 +613,59 @@ btnFiltrar.onclick =
                 }
             );
 
-        const vendas =
-            await response.json();
+        if (!response.ok) {
 
-        const filtradas =
-            vendas.filter(venda => {
+            alert(
+                "Erro ao gerar documento"
+            );
 
-                const cliente =
-                    venda.cliente?.nome
-                        ?.toLowerCase() || "";
+            return;
 
-                const veiculo =
-                    venda.veiculo?.titulo
-                        ?.toLowerCase() || "";
+        }
 
-                return (
-                    cliente.includes(
-                        termo
-                    )
-                    ||
-                    veiculo.includes(
-                        termo
-                    )
-                );
+        const blob =
+            await response.blob();
 
-            });
+        const url =
+            window.URL.createObjectURL(blob);
 
-        tbodyVendas.innerHTML = "";
+        window.open(
+            url,
+            "_blank"
+        );
 
-        filtradas.forEach(venda => {
+    } catch (error) {
 
-            tbodyVendas.innerHTML += `
+        console.log(error);
 
-                <tr>
+        alert(
+            "Erro ao abrir documento"
+        );
 
-                    <td>
-                        ${venda.cliente?.nome || "-"}
-                    </td>
+    }
 
-                    <td>
-                        ${venda.veiculo?.titulo || "-"}
-                    </td>
+}
 
-                    <td>
-
-                        ${venda.veiculo?.tipoEstoque === "CONSIGNADO"
-                    ? `
-                            <span class="badge badge-warning">
-                                Consignado
-                            </span>
-                        `
-                    : `
-                            <span class="badge badge-success">
-                                Próprio
-                            </span>
-                        `
-                }
-
-                    </td>
-
-                    <td>
-                        R$ ${Number(
-                    venda.valorVenda
-                ).toLocaleString(
-                    "pt-BR"
-                )}
-                    </td>
-
-                    <td>
-                        R$ ${Number(
-                    venda.lucro
-                ).toLocaleString(
-                    "pt-BR"
-                )}
-                    </td>
-
-                    <td>
-                        ${venda.vendedor?.nome || "-"}
-                    </td>
-
-                    <td>
-                        ${formatarData(
-                    venda.createdAt
-                )}
-                    </td>
-
-                </tr>
-
-            `;
-
-        });
-
-    };
-
-/* FORMATAR DATA */
+/* HELPERS */
 
 function formatarData(data) {
 
     return new Date(data)
         .toLocaleDateString(
             "pt-BR"
+        );
+
+}
+
+function formatarMoeda(valor) {
+
+    return Number(valor || 0)
+        .toLocaleString(
+            "pt-BR",
+            {
+                style: "currency",
+                currency: "BRL"
+            }
         );
 
 }

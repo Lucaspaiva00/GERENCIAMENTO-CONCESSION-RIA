@@ -26,7 +26,9 @@ const form =
         "formUsuario"
     );
 
-/* LOGOUT */
+/* =========================================
+   LOGOUT
+========================================= */
 
 document.getElementById("logoutBtn")
     .addEventListener("click", () => {
@@ -38,7 +40,9 @@ document.getElementById("logoutBtn")
 
     });
 
-/* MODAL */
+/* =========================================
+   MODAL
+========================================= */
 
 document.getElementById("btnNovoUsuario")
     .addEventListener("click", () => {
@@ -60,7 +64,9 @@ document.getElementById("fecharModal")
 
     });
 
-/* LISTAR */
+/* =========================================
+   LISTAR USUÁRIOS
+========================================= */
 
 async function listarUsuarios() {
 
@@ -68,11 +74,21 @@ async function listarUsuarios() {
 
         const response =
             await fetch(
-                `${API}/usuarios`
+                `${API}/usuarios`,
+                {
+                    headers: {
+
+                        Authorization:
+                            `Bearer ${token}`
+
+                    }
+                }
             );
 
         const usuarios =
             await response.json();
+
+        console.log(usuarios);
 
         tbody.innerHTML = "";
 
@@ -114,6 +130,30 @@ async function listarUsuarios() {
 
                 </td>
 
+                <td>
+
+                    <div class="table-actions">
+
+                        <button
+                            class="btn-action btn-edit"
+                            onclick="editarUsuario(${usuario.usuarioid})">
+
+                            <i class="fa-solid fa-pen"></i>
+
+                        </button>
+
+                        <button
+                            class="btn-action btn-delete"
+                            onclick="deletarUsuario(${usuario.usuarioid})">
+
+                            <i class="fa-solid fa-trash"></i>
+
+                        </button>
+
+                    </div>
+
+                </td>
+
             </tr>
             
             `;
@@ -130,7 +170,9 @@ async function listarUsuarios() {
 
 }
 
-/* KPIS */
+/* =========================================
+   KPIS
+========================================= */
 
 function atualizarKPIs(lista) {
 
@@ -155,12 +197,17 @@ function atualizarKPIs(lista) {
 
 }
 
-/* CADASTRAR */
+/* =========================================
+   CADASTRAR / EDITAR
+========================================= */
 
 form.addEventListener("submit",
     async e => {
 
         e.preventDefault();
+
+        const usuarioid =
+            form.usuarioid.value;
 
         const dados = {
 
@@ -185,35 +232,91 @@ form.addEventListener("submit",
 
         try {
 
-            const response =
-                await fetch(
-                    `${API}/usuarios`,
-                    {
-                        method: "POST",
+            let response;
 
-                        headers: {
-                            "Content-Type":
-                                "application/json"
-                        },
+            /* EDITAR */
 
-                        body:
-                            JSON.stringify(dados)
-                    }
-                );
+            if (usuarioid) {
+
+                response =
+                    await fetch(
+                        `${API}/usuarios/${usuarioid}`,
+                        {
+                            method: "PUT",
+
+                            headers: {
+
+                                "Content-Type":
+                                    "application/json",
+
+                                Authorization:
+                                    `Bearer ${token}`
+
+                            },
+
+                            body:
+                                JSON.stringify(dados)
+
+                        }
+                    );
+
+            }
+
+            /* CADASTRAR */
+
+            else {
+
+                response =
+                    await fetch(
+                        `${API}/usuarios`,
+                        {
+                            method: "POST",
+
+                            headers: {
+
+                                "Content-Type":
+                                    "application/json",
+
+                                Authorization:
+                                    `Bearer ${token}`
+
+                            },
+
+                            body:
+                                JSON.stringify(dados)
+
+                        }
+                    );
+
+            }
+
+            const resultado =
+                await response.json();
+
+            console.log(resultado);
 
             if (!response.ok) {
 
                 alert(
-                    "Erro ao cadastrar usuário"
+                    resultado.error ||
+                    "Erro ao salvar usuário"
                 );
 
                 return;
 
             }
 
+            alert(
+                usuarioid
+                    ? "Usuário atualizado com sucesso"
+                    : "Usuário cadastrado com sucesso"
+            );
+
             modal.classList.remove(
                 "active"
             );
+
+            form.reset();
 
             listarUsuarios();
 
@@ -221,8 +324,116 @@ form.addEventListener("submit",
 
             console.log(error);
 
+            alert(
+                "Erro interno"
+            );
+
         }
 
     });
+
+/* =========================================
+   EDITAR
+========================================= */
+
+async function editarUsuario(id) {
+
+    try {
+
+        const response =
+            await fetch(
+                `${API}/usuarios/${id}`,
+                {
+                    headers: {
+
+                        Authorization:
+                            `Bearer ${token}`
+
+                    }
+                }
+            );
+
+        const usuario =
+            await response.json();
+
+        console.log(usuario);
+
+        form.usuarioid.value =
+            usuario.usuarioid;
+
+        form.nome.value =
+            usuario.nome;
+
+        form.email.value =
+            usuario.email;
+
+        form.tipo.value =
+            usuario.tipo;
+
+        form.comissaoPercentual.value =
+            usuario.comissaoPercentual || 0;
+
+        form.senha.value = "";
+
+        modal.classList.add(
+            "active"
+        );
+
+    } catch (error) {
+
+        console.log(error);
+
+    }
+
+}
+
+/* =========================================
+   DELETAR
+========================================= */
+
+async function deletarUsuario(id) {
+
+    const confirmar =
+        confirm(
+            "Deseja deletar este usuário?"
+        );
+
+    if (!confirmar) return;
+
+    try {
+
+        const response =
+            await fetch(
+                `${API}/usuarios/${id}`,
+                {
+                    method: "DELETE",
+
+                    headers: {
+
+                        Authorization:
+                            `Bearer ${token}`
+
+                    }
+                }
+            );
+
+        const resultado =
+            await response.json();
+
+        console.log(resultado);
+
+        listarUsuarios();
+
+    } catch (error) {
+
+        console.log(error);
+
+    }
+
+}
+
+/* =========================================
+   INIT
+========================================= */
 
 listarUsuarios();

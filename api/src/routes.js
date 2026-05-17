@@ -1,3 +1,5 @@
+// api/routes.js
+
 const express = require("express");
 
 const routes = express.Router();
@@ -15,20 +17,26 @@ const historico = require("./controller/cthistorico");
 const contasReceber = require("./controller/ctcontasreceber");
 const comissao = require("./controller/ctcomissao");
 const clientes = require("./controller/ctclientes");
+const documentos = require("./controller/ctdocumentos");
 
 const auth = require("./middlewares/auth");
 
-/* MULTER */
+/* =========================================
+   MULTER
+========================================= */
 
 const storage = multer.diskStorage({
 
     destination: (req, file, cb) => {
 
-        cb(null, path.resolve(
-            __dirname,
-            "..",
-            "uploads"
-        ));
+        cb(
+            null,
+            path.resolve(
+                __dirname,
+                "..",
+                "uploads"
+            )
+        );
 
     },
 
@@ -49,7 +57,9 @@ const upload = multer({
     storage
 });
 
-/* API */
+/* =========================================
+   API
+========================================= */
 
 routes.get("/", (req, res) => {
 
@@ -59,19 +69,61 @@ routes.get("/", (req, res) => {
 
 });
 
-/* ROTAS PÚBLICAS */
+/* =========================================
+   ROTAS PÚBLICAS
+========================================= */
+
+/* REGISTER */
 
 routes.post(
-    "/usuarios",
-    usuarios.cadastrar
+    "/auth/register",
+    usuarios.register
 );
 
+/* LOGIN */
+
 routes.post(
-    "/login",
+    "/usuarios/login",
     usuarios.login
 );
 
-/* VEÍCULOS */
+/* =========================================
+   USUÁRIOS
+========================================= */
+
+routes.post(
+    "/usuarios",
+    auth,
+    usuarios.cadastrar
+);
+
+routes.get(
+    "/usuarios",
+    auth,
+    usuarios.listar
+);
+
+routes.get(
+    "/usuarios/:id",
+    auth,
+    usuarios.detalhar
+);
+
+routes.put(
+    "/usuarios/:id",
+    auth,
+    usuarios.atualizar
+);
+
+routes.delete(
+    "/usuarios/:id",
+    auth,
+    usuarios.deletar
+);
+
+/* =========================================
+   VEÍCULOS
+========================================= */
 
 routes.post(
     "/veiculos",
@@ -105,7 +157,9 @@ routes.delete(
     veiculos.deletar
 );
 
-/* FINANCEIRO */
+/* =========================================
+   FINANCEIRO
+========================================= */
 
 routes.post(
     "/financeiro",
@@ -137,7 +191,9 @@ routes.delete(
     financeiro.deletar
 );
 
-/* VENDAS */
+/* =========================================
+   VENDAS
+========================================= */
 
 routes.post(
     "/vendas",
@@ -151,7 +207,9 @@ routes.get(
     vendas.listar
 );
 
-/* DASHBOARD */
+/* =========================================
+   DASHBOARD
+========================================= */
 
 routes.get(
     "/dashboard",
@@ -159,7 +217,9 @@ routes.get(
     dashboard.indicadores
 );
 
-/* HISTÓRICO */
+/* =========================================
+   HISTÓRICO
+========================================= */
 
 routes.post(
     "/historico",
@@ -179,7 +239,9 @@ routes.delete(
     historico.deletar
 );
 
-/* CONTAS A RECEBER */
+/* =========================================
+   CONTAS A RECEBER
+========================================= */
 
 routes.post(
     "/contas-receber",
@@ -199,13 +261,19 @@ routes.put(
     contasReceber.receber
 );
 
-/* COMISSÕES */
+/* =========================================
+   COMISSÕES
+========================================= */
 
 routes.get(
     "/comissoes",
     auth,
     comissao.listar
 );
+
+/* =========================================
+   CLIENTES
+========================================= */
 
 routes.post(
     "/clientes",
@@ -217,6 +285,34 @@ routes.get(
     "/clientes",
     auth,
     clientes.listar
+);
+
+/* =========================================
+   DOCUMENTOS
+========================================= */
+
+routes.get(
+    "/documentos/contrato/:vendaId",
+    auth,
+    documentos.contratoCompraVenda
+);
+
+routes.get(
+    "/documentos/recibo/:vendaId",
+    auth,
+    documentos.reciboPagamento
+);
+
+routes.get(
+    "/documentos/termo-entrega/:vendaId",
+    auth,
+    documentos.termoEntrega
+);
+
+routes.get(
+    "/documentos/relatorio-interno/:vendaId",
+    auth,
+    documentos.relatorioInternoVenda
 );
 
 module.exports = routes;
