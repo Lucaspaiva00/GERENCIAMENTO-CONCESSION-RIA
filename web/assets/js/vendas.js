@@ -1,14 +1,7 @@
-// assets/js/vendas.js
-
 const API_URL = "http://localhost:3001";
 
 const token =
     localStorage.getItem("token");
-
-const usuario =
-    JSON.parse(
-        localStorage.getItem("usuario")
-    );
 
 if (!token) {
 
@@ -57,10 +50,18 @@ const busca =
         "busca"
     );
 
-const btnFiltrar =
-    document.getElementById(
-        "btnFiltrar"
-    );
+/* LOGOUT */
+
+document.getElementById(
+    "logoutBtn"
+).onclick = () => {
+
+    localStorage.clear();
+
+    window.location.href =
+        "./login.html";
+
+};
 
 /* MODAL */
 
@@ -80,26 +81,7 @@ fecharModal.onclick = () => {
 
 };
 
-/* LOGOUT */
-
-document.getElementById(
-    "logoutBtn"
-).onclick = () => {
-
-    localStorage.removeItem(
-        "token"
-    );
-
-    localStorage.removeItem(
-        "usuario"
-    );
-
-    window.location.href =
-        "./login.html";
-
-};
-
-/* TEMPLATE LINHA */
+/* TEMPLATE */
 
 function montarLinhaVenda(venda) {
 
@@ -118,11 +100,13 @@ function montarLinhaVenda(venda) {
             <td>
 
                 ${venda.veiculo?.tipoEstoque === "CONSIGNADO"
+
             ? `
                     <span class="badge badge-warning">
                         Consignado
                     </span>
                 `
+
             : `
                     <span class="badge badge-success">
                         Próprio
@@ -141,6 +125,27 @@ function montarLinhaVenda(venda) {
             </td>
 
             <td>
+                ${venda.formaPagamento || "-"}
+            </td>
+
+            <td>
+                ${formatarMoeda(venda.entrada)}
+            </td>
+
+            <td>
+                ${venda.parcelas || 1}x
+            </td>
+
+            <td>
+                ${venda.comissao
+            ? formatarMoeda(
+                venda.comissao.valor
+            )
+            : "-"
+        }
+            </td>
+
+            <td>
                 ${venda.vendedor?.nome || "-"}
             </td>
 
@@ -154,8 +159,7 @@ function montarLinhaVenda(venda) {
 
                     <button
                         class="btn-action btn-edit"
-                        onclick="abrirDocumento('contrato', ${venda.vendaid})"
-                        title="Contrato">
+                        onclick="abrirDocumento('contrato', ${venda.vendaid})">
 
                         <i class="fa-solid fa-file-contract"></i>
 
@@ -163,28 +167,9 @@ function montarLinhaVenda(venda) {
 
                     <button
                         class="btn-action btn-edit"
-                        onclick="abrirDocumento('recibo', ${venda.vendaid})"
-                        title="Recibo">
+                        onclick="abrirDocumento('recibo', ${venda.vendaid})">
 
                         <i class="fa-solid fa-receipt"></i>
-
-                    </button>
-
-                    <button
-                        class="btn-action btn-edit"
-                        onclick="abrirDocumento('termo-entrega', ${venda.vendaid})"
-                        title="Termo de entrega">
-
-                        <i class="fa-solid fa-file-signature"></i>
-
-                    </button>
-
-                    <button
-                        class="btn-action btn-edit"
-                        onclick="abrirDocumento('relatorio-interno', ${venda.vendaid})"
-                        title="Relatório interno">
-
-                        <i class="fa-solid fa-chart-pie"></i>
 
                     </button>
 
@@ -198,7 +183,7 @@ function montarLinhaVenda(venda) {
 
 }
 
-/* LISTAR VENDAS */
+/* LISTAR */
 
 async function listarVendas() {
 
@@ -261,105 +246,47 @@ async function listarVendas() {
 
 }
 
-/* LISTAR VEÍCULOS */
+/* VEICULOS */
 
 async function listarVeiculos() {
 
-    try {
-
-        const response =
-            await fetch(
-                `${API_URL}/veiculos`,
-                {
-                    headers: {
-                        Authorization:
-                            `Bearer ${token}`
-                    }
+    const response =
+        await fetch(
+            `${API_URL}/veiculos`,
+            {
+                headers: {
+                    Authorization:
+                        `Bearer ${token}`
                 }
-            );
+            }
+        );
 
-        const veiculos =
-            await response.json();
+    const veiculos =
+        await response.json();
 
-        selectVeiculos.innerHTML = `
+    selectVeiculos.innerHTML = `
 
-            <option value="">
-                Selecione um veículo
-            </option>
+        <option value="">
+            Selecione um veículo
+        </option>
 
-        `;
+    `;
 
-        veiculos
-            .filter(
-                veiculo =>
-                    veiculo.status ===
-                    "DISPONIVEL"
-            )
-            .forEach(veiculo => {
+    veiculos
+        .filter(v =>
+            v.status === "DISPONIVEL"
+        )
+        .forEach(veiculo => {
 
-                selectVeiculos.innerHTML += `
+            selectVeiculos.innerHTML += `
 
-                    <option value="${veiculo.veiculoid}">
+                <option value="${veiculo.veiculoid}">
 
-                        ${veiculo.titulo}
-                        -
-                        ${veiculo.placa || "Sem placa"}
-
-                    </option>
-
-                `;
-
-            });
-
-    } catch (error) {
-
-        console.log(error);
-
-    }
-
-}
-
-/* LISTAR VENDEDORES */
-
-async function listarVendedores() {
-
-    try {
-
-        const response =
-            await fetch(
-                `${API_URL}/usuarios`,
-                {
-                    headers: {
-                        Authorization:
-                            `Bearer ${token}`
-                    }
-                }
-            );
-
-        const vendedores =
-            await response.json();
-
-        selectVendedores.innerHTML = `
-
-            <option value="">
-                Sem vendedor
-            </option>
-
-        `;
-
-        if (!Array.isArray(vendedores)) {
-
-            return;
-
-        }
-
-        vendedores.forEach(vendedor => {
-
-            selectVendedores.innerHTML += `
-
-                <option value="${vendedor.usuarioid}">
-
-                    ${vendedor.nome}
+                    ${veiculo.titulo}
+                    -
+                    ${formatarMoeda(
+                veiculo.valorVenda
+            )}
 
                 </option>
 
@@ -367,11 +294,47 @@ async function listarVendedores() {
 
         });
 
-    } catch (error) {
+}
 
-        console.log(error);
+/* VENDEDORES */
 
-    }
+async function listarVendedores() {
+
+    const response =
+        await fetch(
+            `${API_URL}/usuarios`,
+            {
+                headers: {
+                    Authorization:
+                        `Bearer ${token}`
+                }
+            }
+        );
+
+    const vendedores =
+        await response.json();
+
+    selectVendedores.innerHTML = `
+
+        <option value="">
+            Sem vendedor
+        </option>
+
+    `;
+
+    vendedores.forEach(vendedor => {
+
+        selectVendedores.innerHTML += `
+
+            <option value="${vendedor.usuarioid}">
+
+                ${vendedor.nome}
+
+            </option>
+
+        `;
+
+    });
 
 }
 
@@ -388,7 +351,7 @@ formVenda.addEventListener(
             const formData =
                 new FormData(formVenda);
 
-            /* CRIAR CLIENTE */
+            /* CLIENTE */
 
             const clienteResponse =
                 await fetch(
@@ -414,6 +377,16 @@ formVenda.addEventListener(
                             telefone:
                                 formData.get(
                                     "clienteTelefone"
+                                ),
+
+                            cpf:
+                                formData.get(
+                                    "cpf"
+                                ),
+
+                            cidade:
+                                formData.get(
+                                    "cidade"
                                 )
 
                         })
@@ -424,18 +397,7 @@ formVenda.addEventListener(
             const cliente =
                 await clienteResponse.json();
 
-            if (!clienteResponse.ok || cliente.error) {
-
-                alert(
-                    cliente.error ||
-                    "Erro ao cadastrar cliente"
-                );
-
-                return;
-
-            }
-
-            /* CRIAR VENDA */
+            /* VENDA */
 
             const vendaResponse =
                 await fetch(
@@ -481,6 +443,25 @@ formVenda.addEventListener(
                                     )
                                 ),
 
+                            formaPagamento:
+                                formData.get(
+                                    "formaPagamento"
+                                ),
+
+                            entrada:
+                                Number(
+                                    formData.get(
+                                        "entrada"
+                                    ) || 0
+                                ),
+
+                            parcelas:
+                                Number(
+                                    formData.get(
+                                        "parcelas"
+                                    ) || 1
+                                ),
+
                             observacoes:
                                 formData.get(
                                     "observacoes"
@@ -494,12 +475,9 @@ formVenda.addEventListener(
             const venda =
                 await vendaResponse.json();
 
-            if (!vendaResponse.ok || venda.error) {
+            if (venda.error) {
 
-                alert(
-                    venda.error ||
-                    "Erro ao realizar venda"
-                );
+                alert(venda.error);
 
                 return;
 
@@ -523,10 +501,6 @@ formVenda.addEventListener(
 
             console.log(error);
 
-            alert(
-                "Erro ao realizar venda"
-            );
-
         }
 
     }
@@ -534,69 +508,58 @@ formVenda.addEventListener(
 
 /* FILTRO */
 
-btnFiltrar.onclick =
-    async () => {
+document.getElementById(
+    "btnFiltrar"
+).onclick = async () => {
 
-        const termo =
-            busca.value.toLowerCase();
+    const termo =
+        busca.value.toLowerCase();
 
-        try {
+    const response =
+        await fetch(
+            `${API_URL}/vendas`,
+            {
+                headers: {
+                    Authorization:
+                        `Bearer ${token}`
+                }
+            }
+        );
 
-            const response =
-                await fetch(
-                    `${API_URL}/vendas`,
-                    {
-                        headers: {
-                            Authorization:
-                                `Bearer ${token}`
-                        }
-                    }
-                );
+    const vendas =
+        await response.json();
 
-            const vendas =
-                await response.json();
+    const filtradas =
+        vendas.filter(venda => {
 
-            const filtradas =
-                vendas.filter(venda => {
+            const cliente =
+                venda.cliente?.nome
+                    ?.toLowerCase() || "";
 
-                    const cliente =
-                        venda.cliente?.nome
-                            ?.toLowerCase() || "";
+            const veiculo =
+                venda.veiculo?.titulo
+                    ?.toLowerCase() || "";
 
-                    const veiculo =
-                        venda.veiculo?.titulo
-                            ?.toLowerCase() || "";
+            return (
+                cliente.includes(termo)
+                ||
+                veiculo.includes(termo)
+            );
 
-                    return (
-                        cliente.includes(
-                            termo
-                        )
-                        ||
-                        veiculo.includes(
-                            termo
-                        )
-                    );
+        });
 
-                });
+    tbodyVendas.innerHTML = "";
 
-            tbodyVendas.innerHTML = "";
+    filtradas.forEach(venda => {
 
-            filtradas.forEach(venda => {
+        tbodyVendas.innerHTML +=
+            montarLinhaVenda(venda);
 
-                tbodyVendas.innerHTML +=
-                    montarLinhaVenda(venda);
+    });
 
-            });
+};
 
-        } catch (error) {
-
-            console.log(error);
-
-        }
-
-    };
-
-/* ABRIR DOCUMENTO */
+/* DOCUMENTOS */
 
 async function abrirDocumento(tipo, vendaId) {
 
@@ -627,7 +590,9 @@ async function abrirDocumento(tipo, vendaId) {
             await response.blob();
 
         const url =
-            window.URL.createObjectURL(blob);
+            window.URL.createObjectURL(
+                blob
+            );
 
         window.open(
             url,

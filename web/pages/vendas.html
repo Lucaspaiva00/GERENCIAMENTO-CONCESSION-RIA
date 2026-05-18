@@ -41,52 +41,43 @@
 
                 <nav class="sidebar-menu">
 
-                    <a href="../index.html">
-
+                    <a href="#" class="active">
                         <i class="fa-solid fa-chart-line"></i>
-
                         Dashboard
-
                     </a>
 
-                    <a href="veiculos.html">
-
+                    <a href="./pages/veiculos.html">
                         <i class="fa-solid fa-car-side"></i>
-
                         Veículos
-
                     </a>
 
-                    <a href="vendas.html" class="active">
-
+                    <a href="./pages/vendas.html">
                         <i class="fa-solid fa-cart-shopping"></i>
-
                         Vendas
-
+                    </a>
+                    <a href="./pages/vendedores.html">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        Comissões
                     </a>
 
-                    <a href="financeiro.html">
-
+                    <a href="./pages/financeiro.html">
                         <i class="fa-solid fa-wallet"></i>
-
                         Financeiro
-
                     </a>
 
-                    <a href="clientes.html">
-
+                    <a href="./pages/clientes.html">
                         <i class="fa-solid fa-users"></i>
-
                         Clientes
-
                     </a>
 
-                    <a href="relatorios.html">
-
+                    <a href="./pages/relatorios.html">
                         <i class="fa-solid fa-chart-pie"></i>
-
                         Relatórios
+                    </a>
 
+                    <a href="./pages/usuarios.html">
+                        <i class="fa-solid fa-user"></i>
+                        Cadastrar Vendedor
                     </a>
 
                 </nav>
@@ -222,6 +213,10 @@
                             <th>Tipo</th>
                             <th>Venda</th>
                             <th>Lucro</th>
+                            <th>Pagamento</th>
+                            <th>Entrada</th>
+                            <th>Parcelas</th>
+                            <th>Comissão</th>
                             <th>Vendedor</th>
                             <th>Data</th>
                             <th>Documentos</th>
@@ -246,7 +241,7 @@
 
     <div class="modal-overlay" id="modalVenda">
 
-        <div class="modal-content">
+        <div class="modal-content modal-large">
 
             <div class="modal-header">
 
@@ -270,6 +265,10 @@
 
                     <input type="text" name="clienteTelefone" placeholder="Telefone">
 
+                    <input type="text" name="cpf" placeholder="CPF">
+
+                    <input type="text" name="cidade" placeholder="Cidade">
+
                     <select name="veiculoId" id="selectVeiculos" required>
 
                         <option value="">
@@ -279,6 +278,34 @@
                     </select>
 
                     <input type="number" name="valorVenda" placeholder="Valor da venda" required>
+
+                    <input type="number" name="entrada" placeholder="Valor de entrada">
+
+                    <select name="formaPagamento">
+
+                        <option value="PIX">
+                            PIX
+                        </option>
+
+                        <option value="FINANCIAMENTO">
+                            Financiamento
+                        </option>
+
+                        <option value="BOLETO">
+                            Boleto
+                        </option>
+
+                        <option value="DINHEIRO">
+                            Dinheiro
+                        </option>
+
+                        <option value="CARTAO">
+                            Cartão
+                        </option>
+
+                    </select>
+
+                    <input type="number" name="parcelas" placeholder="Quantidade de parcelas">
 
                     <select name="vendedorId" id="selectVendedores">
 

@@ -1,66 +1,94 @@
-const form = document.getElementById("loginForm");
+const form =
+    document.getElementById(
+        "loginForm"
+    );
 
 const errorMessage =
-    document.getElementById("errorMessage");
+    document.getElementById(
+        "errorMessage"
+    );
 
-form.addEventListener("submit", async (e) => {
+form.addEventListener(
+    "submit",
+    async (e) => {
 
-    e.preventDefault();
+        e.preventDefault();
 
-    errorMessage.style.display = "none";
+        errorMessage.style.display =
+            "none";
 
-    const email =
-        document.getElementById("email").value;
+        const data = {
 
-    const senha =
-        document.getElementById("senha").value;
+            email:
+                form.email.value,
 
-    try {
+            senha:
+                form.senha.value
 
-        const response = await fetch(
-            "http://localhost:3001/login",
-            {
-                method: "POST",
+        };
 
-                headers: {
-                    "Content-Type": "application/json"
-                },
+        try {
 
-                body: JSON.stringify({
-                    email,
-                    senha
-                })
+            const response =
+                await fetch(
+                    "http://localhost:3001/usuarios/login",
+                    {
+
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify(data)
+
+                    }
+                );
+
+            const result =
+                await response.json();
+
+            if (!response.ok) {
+
+                errorMessage.style.display =
+                    "block";
+
+                errorMessage.innerText =
+                    result.error ||
+                    "Email ou senha inválidos";
+
+                return;
+
             }
-        );
 
-        const data = await response.json();
+            localStorage.setItem(
+                "token",
+                result.token
+            );
 
-        if (!response.ok) {
+            localStorage.setItem(
+                "usuario",
+                JSON.stringify(
+                    result.usuario
+                )
+            );
 
-            errorMessage.style.display = "block";
+            window.location.href =
+                "../index.html";
 
-            return;
+        } catch (error) {
+
+            console.log(error);
+
+            errorMessage.style.display =
+                "block";
+
+            errorMessage.innerText =
+                "Erro ao realizar login";
+
         }
 
-        localStorage.setItem(
-            "token",
-            data.token
-        );
-
-        localStorage.setItem(
-            "usuario",
-            JSON.stringify(data.usuario)
-        );
-
-        window.location.href =
-            "../index.html";
-
-    } catch (error) {
-
-        console.log(error);
-
-        errorMessage.style.display = "block";
-
     }
-
-});
+);

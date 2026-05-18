@@ -1,4 +1,5 @@
-const prisma = require("../database/prisma");
+const prisma =
+    require("../database/prisma");
 
 module.exports = {
 
@@ -6,25 +7,66 @@ module.exports = {
 
         try {
 
-            const comissoes = await prisma.comissao.findMany({
+            const vendedores =
+                await prisma.usuario.findMany({
 
-                include: {
-                    vendedor: true,
-                    venda: {
-                        include: {
-                            cliente: true,
-                            veiculo: true
-                        }
+                    where: {
+
+                        lojaId:
+                            req.usuario.lojaId,
+
+                        tipo:
+                            "VENDEDOR"
+
+                    },
+
+                    include: {
+
+                        vendas: true,
+
+                        comissaos: true
+
                     }
-                },
 
-                orderBy: {
-                    comissaoid: "desc"
-                }
+                });
 
-            });
+            const resultado =
+                vendedores.map(vendedor => {
 
-            return res.json(comissoes);
+                    const totalVendido =
+                        vendedor.vendas.reduce(
+                            (acc, venda) =>
+                                acc + Number(venda.valorVenda || 0),
+                            0
+                        );
+
+                    const totalComissao =
+                        vendedor.comissaos.reduce(
+                            (acc, item) =>
+                                acc + Number(item.valor || 0),
+                            0
+                        );
+
+                    return {
+
+                        vendedorId:
+                            vendedor.usuarioid,
+
+                        nome:
+                            vendedor.nome,
+
+                        quantidadeVendas:
+                            vendedor.vendas.length,
+
+                        totalVendido,
+
+                        totalComissao
+
+                    };
+
+                });
+
+            return res.json(resultado);
 
         } catch (error) {
 

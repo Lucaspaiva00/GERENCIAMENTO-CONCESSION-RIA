@@ -14,6 +14,9 @@ form.addEventListener(
 
         e.preventDefault();
 
+        errorMessage.style.display =
+            "none";
+
         const formData =
             new FormData(form);
 
@@ -26,7 +29,7 @@ form.addEventListener(
 
             const response =
                 await fetch(
-                    "http://localhost:3001/usuarios",
+                    "http://localhost:3001/auth/register",
                     {
 
                         method: "POST",
@@ -50,7 +53,8 @@ form.addEventListener(
                     "block";
 
                 errorMessage.innerText =
-                    result.error;
+                    result.error ||
+                    "Erro ao criar conta";
 
                 return;
 

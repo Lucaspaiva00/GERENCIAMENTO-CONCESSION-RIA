@@ -7,11 +7,14 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Clientes</title>
+    <title>Vendedores</title>
 
     <link rel="stylesheet" href="../assets/css/style.css">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 </head>
 
@@ -28,7 +31,9 @@
                 <div class="sidebar-logo">
 
                     <div class="sidebar-icon">
+
                         <i class="fa-solid fa-motorcycle"></i>
+
                     </div>
 
                     <span>
@@ -39,7 +44,7 @@
 
                 <nav class="sidebar-menu">
 
-                    <a href="#" class="active">
+                   <a href="#" class="active">
                         <i class="fa-solid fa-chart-line"></i>
                         Dashboard
                     </a>
@@ -53,7 +58,7 @@
                         <i class="fa-solid fa-cart-shopping"></i>
                         Vendas
                     </a>
-                    <a href="./pages/vendedores.html">
+                     <a href="./pages/vendedores.html">
                         <i class="fa-solid fa-cart-shopping"></i>
                         Comissões
                     </a>
@@ -96,27 +101,21 @@
 
         <main class="main-content">
 
+            <!-- TOPO -->
+
             <div class="topbar">
 
                 <div>
 
                     <h1 class="page-title">
-                        Clientes
+                        Vendedores
                     </h1>
 
                     <p class="page-subtitle">
-                        Gerencie os clientes da loja
+                        Performance comercial da equipe
                     </p>
 
                 </div>
-
-                <button class="btn-primary" id="btnNovoCliente">
-
-                    <i class="fa-solid fa-plus"></i>
-
-                    Novo cliente
-
-                </button>
 
             </div>
 
@@ -129,10 +128,10 @@
                     <div>
 
                         <span class="card-label">
-                            Total clientes
+                            Total vendedores
                         </span>
 
-                        <h2 id="totalClientes">
+                        <h2 id="kpiVendedores">
                             0
                         </h2>
 
@@ -147,34 +146,66 @@
                     <div>
 
                         <span class="card-label">
-                            Clientes ativos
+                            Total vendido
                         </span>
 
-                        <h2 id="clientesAtivos">
-                            0
+                        <h2 id="kpiVendido">
+                            R$ 0,00
                         </h2>
 
                     </div>
 
-                    <i class="fa-solid fa-user-check card-icon"></i>
+                    <i class="fa-solid fa-sack-dollar card-icon"></i>
+
+                </div>
+
+                <div class="dashboard-card">
+
+                    <div>
+
+                        <span class="card-label">
+                            Comissões
+                        </span>
+
+                        <h2 id="kpiComissao">
+                            R$ 0,00
+                        </h2>
+
+                    </div>
+
+                    <i class="fa-solid fa-money-bill-wave card-icon"></i>
+
+                </div>
+
+                <div class="dashboard-card">
+
+                    <div>
+
+                        <span class="card-label">
+                            Melhor vendedor
+                        </span>
+
+                        <h2 id="kpiMelhor">
+                            -
+                        </h2>
+
+                    </div>
+
+                    <i class="fa-solid fa-trophy card-icon"></i>
 
                 </div>
 
             </div>
 
-            <!-- FILTRO -->
+            <!-- GRÁFICO -->
 
-            <div class="filters-card">
+            <div class="chart-card mb-20">
 
-                <input type="text" id="busca" class="filter-input" placeholder="Buscar cliente...">
+                <h3>
+                    Ranking de vendas
+                </h3>
 
-                <button class="btn-primary" id="btnFiltrar">
-
-                    <i class="fa-solid fa-filter"></i>
-
-                    Filtrar
-
-                </button>
+                <canvas id="rankingChart"></canvas>
 
             </div>
 
@@ -188,18 +219,17 @@
 
                         <tr>
 
-                            <th>Nome</th>
-                            <th>Telefone</th>
-                            <th>CPF</th>
-                            <th>Cidade</th>
-                            <th>Compras</th>
-                            <th>Cadastro</th>
+                            <th>Vendedor</th>
+                            <th>Vendas</th>
+                            <th>Total vendido</th>
+                            <th>Comissão</th>
+                            <th>Ticket médio</th>
 
                         </tr>
 
                     </thead>
 
-                    <tbody id="tbodyClientes">
+                    <tbody id="tbodyVendedores">
 
                     </tbody>
 
@@ -211,53 +241,7 @@
 
     </div>
 
-    <!-- MODAL -->
-
-    <div class="modal-overlay" id="modalCliente">
-
-        <div class="modal-content">
-
-            <div class="modal-header">
-
-                <h2>
-                    Novo cliente
-                </h2>
-
-                <button id="fecharModal">
-
-                    <i class="fa-solid fa-xmark"></i>
-
-                </button>
-
-            </div>
-
-            <form id="formCliente">
-
-                <div class="form-grid">
-
-                    <input type="text" name="nome" placeholder="Nome" required>
-
-                    <input type="text" name="telefone" placeholder="Telefone">
-
-                    <input type="text" name="cpf" placeholder="CPF">
-
-                    <input type="text" name="cidade" placeholder="Cidade">
-
-                </div>
-
-                <button type="submit" class="btn-primary full">
-
-                    Salvar cliente
-
-                </button>
-
-            </form>
-
-        </div>
-
-    </div>
-
-    <script src="../assets/js/clientes.js"></script>
+    <script src="../assets/js/vendedores.js"></script>
 
 </body>
 
