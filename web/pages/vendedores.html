@@ -2,49 +2,33 @@
 <html lang="pt-BR">
 
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Vendedores</title>
+    <title>Comissões | Vendedores</title>
 
     <link rel="stylesheet" href="../assets/css/style.css">
-
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 </head>
 
 <body>
 
     <div class="dashboard-container">
 
-        <!-- SIDEBAR -->
-
         <aside class="sidebar">
 
             <div>
 
                 <div class="sidebar-logo">
-
                     <div class="sidebar-icon">
-
                         <i class="fa-solid fa-motorcycle"></i>
-
                     </div>
-
-                    <span>
-                        PAIVA TECH
-                    </span>
-
+                    <span>PAIVA TECH</span>
                 </div>
 
                 <nav class="sidebar-menu">
 
-                   <a href="../index.html">
+                    <a href="../index.html">
                         <i class="fa-solid fa-chart-line"></i>
                         Dashboard
                     </a>
@@ -58,8 +42,9 @@
                         <i class="fa-solid fa-cart-shopping"></i>
                         Vendas
                     </a>
-                     <a href="vendedores.html" class="active">
-                        <i class="fa-solid fa-cart-shopping"></i>
+
+                    <a href="vendedores.html" class="active">
+                        <i class="fa-solid fa-user-tie"></i>
                         Comissões
                     </a>
 
@@ -79,7 +64,7 @@
                     </a>
 
                     <a href="usuarios.html">
-                        <i class="fa-solid fa-user"></i>
+                        <i class="fa-solid fa-user-plus"></i>
                         Cadastrar Vendedor
                     </a>
 
@@ -88,150 +73,124 @@
             </div>
 
             <button class="logout-btn" id="logoutBtn">
-
                 <i class="fa-solid fa-right-from-bracket"></i>
-
                 Sair
-
             </button>
 
         </aside>
 
-        <!-- MAIN -->
-
         <main class="main-content">
 
-            <!-- TOPO -->
-
             <div class="topbar">
-
                 <div>
-
-                    <h1 class="page-title">
-                        Vendedores
-                    </h1>
-
-                    <p class="page-subtitle">
-                        Performance comercial da equipe
-                    </p>
-
+                    <h1 class="page-title">Comissões</h1>
+                    <p class="page-subtitle">Performance comercial dos vendedores</p>
                 </div>
-
             </div>
-
-            <!-- KPIS -->
 
             <div class="cards-grid">
 
                 <div class="dashboard-card">
-
                     <div>
-
-                        <span class="card-label">
-                            Total vendedores
-                        </span>
-
-                        <h2 id="kpiVendedores">
-                            0
-                        </h2>
-
+                        <span class="card-label">Total vendedores</span>
+                        <h2 id="kpiVendedores">0</h2>
                     </div>
-
                     <i class="fa-solid fa-users card-icon"></i>
-
                 </div>
 
                 <div class="dashboard-card">
-
                     <div>
-
-                        <span class="card-label">
-                            Total vendido
-                        </span>
-
-                        <h2 id="kpiVendido">
-                            R$ 0,00
-                        </h2>
-
+                        <span class="card-label">Total vendido</span>
+                        <h2 id="kpiVendido">R$ 0,00</h2>
                     </div>
-
                     <i class="fa-solid fa-sack-dollar card-icon"></i>
-
                 </div>
 
                 <div class="dashboard-card">
-
                     <div>
-
-                        <span class="card-label">
-                            Comissões
-                        </span>
-
-                        <h2 id="kpiComissao">
-                            R$ 0,00
-                        </h2>
-
+                        <span class="card-label">Comissões</span>
+                        <h2 id="kpiComissao">R$ 0,00</h2>
                     </div>
-
                     <i class="fa-solid fa-money-bill-wave card-icon"></i>
-
                 </div>
 
                 <div class="dashboard-card">
-
                     <div>
-
-                        <span class="card-label">
-                            Melhor vendedor
-                        </span>
-
-                        <h2 id="kpiMelhor">
-                            -
-                        </h2>
-
+                        <span class="card-label">Ticket médio geral</span>
+                        <h2 id="kpiTicketMedio">R$ 0,00</h2>
                     </div>
+                    <i class="fa-solid fa-chart-simple card-icon"></i>
+                </div>
 
+                <div class="dashboard-card">
+                    <div>
+                        <span class="card-label">Melhor vendedor</span>
+                        <h2 id="kpiMelhor">-</h2>
+                    </div>
                     <i class="fa-solid fa-trophy card-icon"></i>
-
                 </div>
 
             </div>
 
-            <!-- GRÁFICO -->
+            <div class="filters-card">
+
+                <div class="filter-group">
+                    <label>Buscar vendedor</label>
+                    <input type="text" id="filtroBusca" class="filter-input" placeholder="Nome do vendedor">
+                </div>
+
+                <div class="filter-group">
+                    <label>Período</label>
+                    <select id="filtroPeriodo" class="filter-input">
+                        <option value="todos">Todos</option>
+                        <option value="hoje">Hoje</option>
+                        <option value="7">Últimos 7 dias</option>
+                        <option value="30">Últimos 30 dias</option>
+                        <option value="mes">Mês atual</option>
+                        <option value="personalizado">Personalizado</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>Data inicial</label>
+                    <input type="date" id="dataInicio" class="filter-input">
+                </div>
+
+                <div class="filter-group">
+                    <label>Data final</label>
+                    <input type="date" id="dataFim" class="filter-input">
+                </div>
+
+                <div class="filter-actions">
+                    <button class="btn-primary" id="btnFiltrar">
+                        <i class="fa-solid fa-filter"></i>
+                        Filtrar
+                    </button>
+                </div>
+
+            </div>
 
             <div class="chart-card mb-20">
-
-                <h3>
-                    Ranking de vendas
-                </h3>
-
+                <h3>Ranking de vendas</h3>
                 <canvas id="rankingChart"></canvas>
-
             </div>
-
-            <!-- TABELA -->
 
             <div class="table-card">
 
                 <table class="custom-table">
 
                     <thead>
-
                         <tr>
-
                             <th>Vendedor</th>
                             <th>Vendas</th>
                             <th>Total vendido</th>
                             <th>Comissão</th>
                             <th>Ticket médio</th>
-
+                            <th>Participação</th>
                         </tr>
-
                     </thead>
 
-                    <tbody id="tbodyVendedores">
-
-                    </tbody>
+                    <tbody id="tbodyVendedores"></tbody>
 
                 </table>
 
