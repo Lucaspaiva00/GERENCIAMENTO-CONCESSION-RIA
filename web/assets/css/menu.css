@@ -1,4 +1,6 @@
-/* BOTÃO MENU */
+/* =========================================
+   MENU MOBILE
+========================================= */
 
 .menu-toggle {
 
@@ -11,8 +13,7 @@
 
     background: white;
 
-    box-shadow:
-        0 4px 12px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 
     display: none;
 
@@ -24,6 +25,8 @@
     cursor: pointer;
 
     color: #111827;
+
+    z-index: 1100;
 
 }
 
@@ -37,13 +40,15 @@
 
     background: rgba(0, 0, 0, 0.45);
 
+    backdrop-filter: blur(2px);
+
     opacity: 0;
 
     visibility: hidden;
 
-    transition: 0.3s;
+    transition: .3s;
 
-    z-index: 90;
+    z-index: 998;
 
 }
 
@@ -67,11 +72,27 @@
 
     .sidebar {
 
+        position: fixed;
+
+        top: 0;
+        left: 0;
+
+        width: 75%;
+
+        max-width: 290px;
+
+        height: 100vh;
+
         transform: translateX(-100%);
 
-        transition: 0.3s;
+        transition: .3s ease;
 
-        display: flex !important;
+        z-index: 999;
+
+        border-top-right-radius: 24px;
+        border-bottom-right-radius: 24px;
+
+        overflow-y: auto;
 
     }
 
@@ -81,9 +102,23 @@
 
     }
 
+    .main-content {
+
+        margin-left: 0 !important;
+
+        width: 100%;
+
+        padding: 16px;
+
+    }
+
     .topbar {
 
+        display: flex;
+
         align-items: center;
+
+        gap: 14px;
 
     }
 

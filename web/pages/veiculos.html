@@ -10,13 +10,13 @@
     <title>Veículos</title>
 
     <link rel="stylesheet" href="../assets/css/style.css">
-
+    <link rel="stylesheet" href="../assets/css/menu.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
 </head>
 
 <body>
-
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
     <div class="dashboard-container">
 
         <!-- SIDEBAR -->
@@ -89,7 +89,9 @@
         <!-- MAIN -->
 
         <main class="main-content">
-
+            <button class="menu-toggle" id="menuToggle">
+                <i class="fa-solid fa-bars"></i>
+            </button>
             <!-- TOPO -->
 
             <div class="topbar">
@@ -525,7 +527,7 @@
     </div>
 
     <script src="../assets/js/veiculos.js"></script>
-
+    <script src="../assets/js/menu.js"></script>
 </body>
 
 </html>
