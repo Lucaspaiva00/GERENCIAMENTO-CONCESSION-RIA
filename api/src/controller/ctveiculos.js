@@ -18,10 +18,14 @@ module.exports = {
                 marca,
                 modelo,
                 ano,
+                anoModelo,
                 placa,
+                renavam,
                 chassi,
                 cor,
                 km,
+                possuiManual,
+                possuiChaveReserva,
                 valorCompra,
                 valorVenda,
                 tipo,
@@ -48,7 +52,14 @@ module.exports = {
                                 ? Number(ano)
                                 : null,
 
+                        anoModelo:
+                            anoModelo
+                                ? Number(anoModelo)
+                                : null,
+
                         placa,
+
+                        renavam,
 
                         chassi,
 
@@ -58,6 +69,16 @@ module.exports = {
                             km
                                 ? Number(km)
                                 : null,
+
+                        possuiManual:
+                            possuiManual === "true"
+                            ||
+                            possuiManual === true,
+
+                        possuiChaveReserva:
+                            possuiChaveReserva === "true"
+                            ||
+                            possuiChaveReserva === true,
 
                         valorCompra:
                             valorCompra
@@ -87,7 +108,9 @@ module.exports = {
 
             console.log(error);
 
-            return res.status(500).json(error);
+            return res.status(500).json({
+                error: "Erro ao cadastrar veículo"
+            });
 
         }
 
@@ -125,6 +148,24 @@ module.exports = {
                         placa: {
                             contains: busca
                         }
+                    },
+
+                    {
+                        chassi: {
+                            contains: busca
+                        }
+                    },
+
+                    {
+                        renavam: {
+                            contains: busca
+                        }
+                    },
+
+                    {
+                        modelo: {
+                            contains: busca
+                        }
                     }
 
                 ];
@@ -155,6 +196,14 @@ module.exports = {
 
                     where: filtros,
 
+                    include: {
+
+                        historicos: true,
+
+                        vendas: true
+
+                    },
+
                     orderBy: {
                         veiculoid: "desc"
                     }
@@ -167,7 +216,9 @@ module.exports = {
 
             console.log(error);
 
-            return res.status(500).json(error);
+            return res.status(500).json({
+                error: "Erro ao listar veículos"
+            });
 
         }
 
@@ -190,6 +241,32 @@ module.exports = {
                         lojaId:
                             req.usuario.lojaId
 
+                    },
+
+                    include: {
+
+                        historicos: {
+
+                            orderBy: {
+                                historicoid: "desc"
+                            }
+
+                        },
+
+                        vendas: {
+
+                            include: {
+
+                                cliente: true,
+
+                                vendedor: true,
+
+                                comissao: true
+
+                            }
+
+                        }
+
                     }
 
                 });
@@ -208,7 +285,9 @@ module.exports = {
 
             console.log(error);
 
-            return res.status(500).json(error);
+            return res.status(500).json({
+                error: "Erro ao detalhar veículo"
+            });
 
         }
 
@@ -253,10 +332,14 @@ module.exports = {
                 marca,
                 modelo,
                 ano,
+                anoModelo,
                 placa,
+                renavam,
                 chassi,
                 cor,
                 km,
+                possuiManual,
+                possuiChaveReserva,
                 valorCompra,
                 valorVenda,
                 tipo,
@@ -278,7 +361,14 @@ module.exports = {
                         ? Number(ano)
                         : null,
 
+                anoModelo:
+                    anoModelo
+                        ? Number(anoModelo)
+                        : null,
+
                 placa,
+
+                renavam,
 
                 chassi,
 
@@ -288,6 +378,16 @@ module.exports = {
                     km
                         ? Number(km)
                         : null,
+
+                possuiManual:
+                    possuiManual === "true"
+                    ||
+                    possuiManual === true,
+
+                possuiChaveReserva:
+                    possuiChaveReserva === "true"
+                    ||
+                    possuiChaveReserva === true,
 
                 valorCompra:
                     valorCompra
@@ -335,7 +435,9 @@ module.exports = {
 
             console.log(error);
 
-            return res.status(500).json(error);
+            return res.status(500).json({
+                error: "Erro ao atualizar veículo"
+            });
 
         }
 
@@ -392,7 +494,9 @@ module.exports = {
 
             console.log(error);
 
-            return res.status(500).json(error);
+            return res.status(500).json({
+                error: "Erro ao deletar veículo"
+            });
 
         }
 
