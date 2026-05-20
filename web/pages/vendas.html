@@ -13,12 +13,15 @@
 
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/menu.css">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
 </head>
 
 <body>
+
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
     <div class="dashboard-container">
 
         <!-- SIDEBAR -->
@@ -55,8 +58,9 @@
                         <i class="fa-solid fa-cart-shopping"></i>
                         Vendas
                     </a>
+
                     <a href="vendedores.html">
-                        <i class="fa-solid fa-cart-shopping"></i>
+                        <i class="fa-solid fa-money-bill-wave"></i>
                         Comissões
                     </a>
 
@@ -77,9 +81,8 @@
 
                     <a href="usuarios.html">
                         <i class="fa-solid fa-user"></i>
-                        Cadastrar Vendedor
+                        Cadastrar vendedor
                     </a>
-
 
                 </nav>
 
@@ -98,9 +101,13 @@
         <!-- MAIN -->
 
         <main class="main-content">
+
             <button class="menu-toggle" id="menuToggle">
                 <i class="fa-solid fa-bars"></i>
             </button>
+
+            <!-- TOPO -->
+
             <div class="topbar">
 
                 <div>
@@ -110,7 +117,7 @@
                     </h1>
 
                     <p class="page-subtitle">
-                        Controle de vendas da loja
+                        Controle completo das vendas da loja
                     </p>
 
                 </div>
@@ -143,7 +150,9 @@
 
                     </div>
 
-                    <i class="fa-solid fa-sack-dollar card-icon"></i>
+                    <div class="card-icon-box green">
+                        <i class="fa-solid fa-sack-dollar"></i>
+                    </div>
 
                 </div>
 
@@ -161,7 +170,9 @@
 
                     </div>
 
-                    <i class="fa-solid fa-chart-line card-icon"></i>
+                    <div class="card-icon-box blue">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
 
                 </div>
 
@@ -170,7 +181,7 @@
                     <div>
 
                         <span class="card-label">
-                            Quantidade
+                            Quantidade vendas
                         </span>
 
                         <h2 id="quantidadeVendas">
@@ -179,112 +190,39 @@
 
                     </div>
 
-                    <i class="fa-solid fa-cart-shopping card-icon"></i>
+                    <div class="card-icon-box orange">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                    </div>
 
                 </div>
 
             </div>
 
-            <!-- FILTRO -->
+            <!-- FILTROS -->
 
             <div class="filters-card">
 
-                <input type="text" id="busca" class="filter-input" placeholder="Buscar cliente ou veículo">
+                <div class="filter-group">
 
-                <button class="btn-primary" id="btnFiltrar">
+                    <label>
+                        Buscar
+                    </label>
 
-                    <i class="fa-solid fa-filter"></i>
+                    <input type="text" id="busca" class="filter-input" placeholder="Cliente, CPF, placa ou veículo">
 
-                    Filtrar
+                </div>
 
-                </button>
+                <div class="filter-group">
 
-            </div>
+                    <label>
+                        Forma pagamento
+                    </label>
 
-            <!-- TABELA -->
-
-            <div class="table-card">
-
-                <table class="custom-table">
-
-                    <thead>
-
-                        <tr>
-
-                            <th>Cliente</th>
-                            <th>Veículo</th>
-                            <th>Tipo</th>
-                            <th>Venda</th>
-                            <th>Lucro</th>
-                            <th>Pagamento</th>
-                            <th>Entrada</th>
-                            <th>Parcelas</th>
-                            <th>Comissão</th>
-                            <th>Vendedor</th>
-                            <th>Data</th>
-                            <th>Documentos</th>
-
-                        </tr>
-
-                    </thead>
-
-                    <tbody id="tbodyVendas">
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </main>
-
-    </div>
-
-    <!-- MODAL -->
-
-    <div class="modal-overlay" id="modalVenda">
-
-        <div class="modal-content modal-large">
-
-            <div class="modal-header">
-
-                <h2>
-                    Nova venda
-                </h2>
-
-                <button id="fecharModal">
-
-                    <i class="fa-solid fa-xmark"></i>
-
-                </button>
-
-            </div>
-
-            <form id="formVenda">
-
-                <div class="form-grid">
-
-                    <input type="text" name="clienteNome" placeholder="Nome do cliente" required>
-
-                    <input type="text" name="clienteTelefone" placeholder="Telefone">
-
-                    <input type="text" name="cpf" placeholder="CPF">
-
-                    <input type="text" name="cidade" placeholder="Cidade">
-
-                    <select name="veiculoId" id="selectVeiculos" required>
+                    <select id="filtroPagamento" class="filter-input">
 
                         <option value="">
-                            Selecione um veículo
+                            Todos
                         </option>
-
-                    </select>
-
-                    <input type="number" name="valorVenda" placeholder="Valor da venda" required>
-
-                    <input type="number" name="entrada" placeholder="Valor de entrada">
-
-                    <select name="formaPagamento">
 
                         <option value="PIX">
                             PIX
@@ -308,21 +246,368 @@
 
                     </select>
 
-                    <input type="number" name="parcelas" placeholder="Quantidade de parcelas">
+                </div>
 
-                    <select name="vendedorId" id="selectVendedores">
+                <div class="filter-group">
 
-                        <option value="">
-                            Sem vendedor
-                        </option>
+                    <label>
+                        Data inicial
+                    </label>
 
-                    </select>
+                    <input type="date" id="dataInicio" class="filter-input">
 
-                    <textarea name="observacoes" placeholder="Observações"></textarea>
+                </div>
+
+                <div class="filter-group">
+
+                    <label>
+                        Data final
+                    </label>
+
+                    <input type="date" id="dataFim" class="filter-input">
+
+                </div>
+
+                <div class="filter-actions">
+
+                    <button class="btn-primary" id="btnFiltrar">
+
+                        <i class="fa-solid fa-filter"></i>
+
+                        Filtrar
+
+                    </button>
+
+                </div>
+
+            </div>
+
+            <!-- VIEW SWITCH -->
+
+            <!-- VIEW SWITCH -->
+
+            <div class="view-switch-premium">
+
+                <button class="btn-view-premium active" id="btnTabela">
+
+                    <i class="fa-solid fa-table"></i>
+
+                    <span>Tabela</span>
+
+                </button>
+
+                <button class="btn-view-premium" id="btnCards">
+
+                    <i class="fa-solid fa-id-card"></i>
+
+                    <span>Cards</span>
+
+                </button>
+
+            </div>
+
+            <!-- TABELA -->
+
+            <div class="table-card" id="tableContainer">
+
+                <table class="custom-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Cliente</th>
+                            <th>Veículo</th>
+                            <th>Venda</th>
+                            <th>Compra</th>
+                            <th>Lucro</th>
+                            <th>Pagamento</th>
+                            <th>Entrada</th>
+                            <th>Parcelas</th>
+                            <th>Comissão</th>
+                            <th>Vendedor</th>
+                            <th>Data</th>
+                            <th>Documentos</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="tbodyVendas">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <!-- CARDS PREMIUM -->
+
+            <div class="cards-vendas-grid" id="cardsContainer" style="display:none;">
+
+            </div>
+            <!-- TABELA -->
+
+            <div class="table-card" id="tableContainer">
+
+                <table class="custom-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Cliente</th>
+                            <th>Veículo</th>
+                            <th>Venda</th>
+                            <th>Compra</th>
+                            <th>Lucro</th>
+                            <th>Pagamento</th>
+                            <th>Entrada</th>
+                            <th>Parcelas</th>
+                            <th>Comissão</th>
+                            <th>Vendedor</th>
+                            <th>Data</th>
+                            <th>Documentos</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="tbodyVendas">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <!-- CARDS -->
+
+            <div class="cards-vendas-grid" id="cardsContainer" style="display:none;">
+
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- MODAL VENDA -->
+
+    <div class="modal-overlay" id="modalVenda">
+
+        <div class="modal-content modal-large">
+
+            <div class="modal-header">
+
+                <div>
+
+                    <h2>
+                        Nova venda
+                    </h2>
+
+                    <p class="modal-subtitle">
+                        Finalize a venda do veículo
+                    </p>
+
+                </div>
+
+                <button id="fecharModal">
+
+                    <i class="fa-solid fa-xmark"></i>
+
+                </button>
+
+            </div>
+
+            <!-- FORM -->
+
+            <form id="formVenda">
+
+                <div class="form-grid">
+
+                    <!-- CLIENTE -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Nome cliente
+                        </label>
+
+                        <input type="text" name="clienteNome" required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Telefone
+                        </label>
+
+                        <input type="text" name="clienteTelefone">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Segundo telefone
+                        </label>
+
+                        <input type="text" name="clienteTelefone2">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            RG
+                        </label>
+
+                        <input type="text" name="rg">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            CPF
+                        </label>
+
+                        <input type="text" name="cpf">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Cidade
+                        </label>
+
+                        <input type="text" name="cidade">
+
+                    </div>
+
+                    <div class="form-group full-width">
+
+                        <label>
+                            Endereço completo
+                        </label>
+
+                        <input type="text" name="endereco">
+
+                    </div>
+
+                    <!-- VEÍCULO -->
+
+                    <div class="form-group full-width">
+
+                        <label>
+                            Veículo
+                        </label>
+
+                        <select name="veiculoId" id="selectVeiculos" required>
+
+                            <option value="">
+                                Selecione um veículo
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Valor venda
+                        </label>
+
+                        <input type="number" name="valorVenda" required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Entrada
+                        </label>
+
+                        <input type="number" name="entrada">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Parcelas
+                        </label>
+
+                        <input type="number" name="parcelas">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Forma pagamento
+                        </label>
+
+                        <select name="formaPagamento">
+
+                            <option value="PIX">
+                                PIX
+                            </option>
+
+                            <option value="FINANCIAMENTO">
+                                Financiamento
+                            </option>
+
+                            <option value="BOLETO">
+                                Boleto
+                            </option>
+
+                            <option value="DINHEIRO">
+                                Dinheiro
+                            </option>
+
+                            <option value="CARTAO">
+                                Cartão
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Vendedor
+                        </label>
+
+                        <select name="vendedorId" id="selectVendedores">
+
+                            <option value="">
+                                Sem vendedor
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="form-group full-width">
+
+                        <label>
+                            Observações
+                        </label>
+
+                        <textarea name="observacoes"></textarea>
+
+                    </div>
 
                 </div>
 
                 <button type="submit" class="btn-primary full">
+
+                    <i class="fa-solid fa-floppy-disk"></i>
 
                     Finalizar venda
 
@@ -336,6 +621,7 @@
 
     <script src="../assets/js/vendas.js"></script>
     <script src="../assets/js/menu.js"></script>
+
 </body>
 
 </html>

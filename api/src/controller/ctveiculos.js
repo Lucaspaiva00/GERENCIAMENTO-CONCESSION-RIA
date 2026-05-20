@@ -293,6 +293,70 @@ module.exports = {
 
     },
 
+    async buscarPorPlaca(req, res) {
+
+        try {
+
+            const { placa } = req.params;
+
+            const veiculo =
+                await prisma.veiculo.findFirst({
+
+                    where: {
+
+                        placa: {
+                            contains: placa
+                        },
+
+                        lojaId:
+                            req.usuario.lojaId
+
+                    },
+
+                    include: {
+
+                        historicos: true,
+
+                        vendas: {
+
+                            include: {
+
+                                cliente: true,
+
+                                vendedor: true,
+
+                                comissao: true
+
+                            }
+
+                        }
+
+                    }
+
+                });
+
+            if (!veiculo) {
+
+                return res.status(404).json({
+                    error: "Veículo não encontrado"
+                });
+
+            }
+
+            return res.json(veiculo);
+
+        } catch (error) {
+
+            console.log(error);
+
+            return res.status(500).json({
+                error: "Erro ao buscar veículo"
+            });
+
+        }
+
+    },
+
     async atualizar(req, res) {
 
         try {

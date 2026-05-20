@@ -144,6 +144,18 @@ routes.get(
     veiculos.detalhar
 );
 
+routes.get(
+    "/veiculos/busca/:placa",
+    auth,
+    veiculos.buscarPorPlaca
+);
+
+routes.get(
+    "/veiculos/cards",
+    auth,
+    veiculos.listar
+);
+
 routes.put(
     "/veiculos/:id",
     auth,
@@ -195,6 +207,10 @@ routes.delete(
    VENDAS
 ========================================= */
 
+/* =========================================
+   VENDAS
+========================================= */
+
 routes.post(
     "/vendas",
     auth,
@@ -205,6 +221,22 @@ routes.get(
     "/vendas",
     auth,
     vendas.listar
+);
+
+/* NOVO - DETALHAR VENDA */
+
+routes.get(
+    "/vendas/:id",
+    auth,
+    vendas.detalhar
+);
+
+/* NOVO - CANCELAR VENDA */
+
+routes.delete(
+    "/vendas/:id",
+    auth,
+    vendas.cancelar
 );
 
 /* =========================================
@@ -262,16 +294,6 @@ routes.put(
 );
 
 /* =========================================
-   COMISSÕES
-========================================= */
-
-routes.get(
-    "/comissoes",
-    auth,
-    comissao.listar
-);
-
-/* =========================================
    CLIENTES
 ========================================= */
 
@@ -287,6 +309,23 @@ routes.get(
     clientes.listar
 );
 
+routes.get(
+    "/clientes/:id",
+    auth,
+    clientes.detalhar
+);
+
+routes.put(
+    "/clientes/:id",
+    auth,
+    clientes.atualizar
+);
+
+routes.delete(
+    "/clientes/:id",
+    auth,
+    clientes.deletar
+);
 /* =========================================
    DOCUMENTOS
 ========================================= */
@@ -310,9 +349,22 @@ routes.get(
 );
 
 routes.get(
+    "/documentos/termo-responsabilidade/:vendaId",
+    auth,
+    documentos.termoResponsabilidade
+);
+
+routes.get(
     "/documentos/relatorio-interno/:vendaId",
     auth,
     documentos.relatorioInternoVenda
 );
+
+routes.get(
+    "/comissoes",
+    auth,
+    comissao.listar
+);
+
 
 module.exports = routes;

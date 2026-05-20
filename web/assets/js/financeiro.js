@@ -369,6 +369,45 @@ function aplicarFiltros() {
         document.getElementById("filtroStatus")
             .value;
 
+    const periodo =
+        document.getElementById("filtroPeriodo")
+            .value;
+
+    const inicio =
+        document.getElementById("dataInicio")
+            .value;
+
+    const fim =
+        document.getElementById("dataFim")
+            .value;
+
+    const hoje =
+        new Date();
+
+    const primeiroDiaMes =
+        new Date(
+            hoje.getFullYear(),
+            hoje.getMonth(),
+            1
+        );
+
+    const ultimoDiaMes =
+        new Date(
+            hoje.getFullYear(),
+            hoje.getMonth() + 1,
+            0,
+            23,
+            59,
+            59
+        );
+
+    const trintaDias =
+        new Date();
+
+    trintaDias.setDate(
+        trintaDias.getDate() - 30
+    );
+
     const filtrado =
         movimentacoes.filter(item => {
 
@@ -385,15 +424,122 @@ function aplicarFiltros() {
                 !status ||
                 item.status === status;
 
+            let matchPeriodo = true;
+
+            const dataMov =
+                item.createdAt
+                    ? new Date(item.createdAt)
+                    : null;
+
+            if (dataMov) {
+
+                if (periodo === "mesAtual") {
+
+                    matchPeriodo =
+                        dataMov >= primeiroDiaMes &&
+                        dataMov <= ultimoDiaMes;
+
+                }
+
+                else if (periodo === "ultimos30") {
+
+                    matchPeriodo =
+                        dataMov >= trintaDias;
+
+                }
+
+                else if (
+                    periodo === "personalizado"
+                ) {
+
+                    const dataInicio =
+                        inicio
+                            ? new Date(
+                                `${inicio}T00:00:00`
+                            )
+                            : null;
+
+                    const dataFim =
+                        fim
+                            ? new Date(
+                                `${fim}T23:59:59`
+                            )
+                            : null;
+
+                    if (
+                        dataInicio &&
+                        dataMov < dataInicio
+                    ) {
+                        matchPeriodo = false;
+                    }
+
+                    if (
+                        dataFim &&
+                        dataMov > dataFim
+                    ) {
+                        matchPeriodo = false;
+                    }
+
+                }
+
+            }
+
             return (
                 matchBusca &&
                 matchTipo &&
-                matchStatus
+                matchStatus &&
+                matchPeriodo
             );
 
         });
 
     renderizarTabela(filtrado);
+
+    atualizarKPIsFiltrados(filtrado);
+
+}
+
+function atualizarKPIsFiltrados(lista) {
+
+    const entradas =
+        lista
+            .filter(item =>
+                item.tipo === "ENTRADA"
+            )
+            .reduce(
+                (acc, item) =>
+                    acc + Number(item.valor),
+                0
+            );
+
+    const saidas =
+        lista
+            .filter(item =>
+                item.tipo === "SAIDA"
+            )
+            .reduce(
+                (acc, item) =>
+                    acc + Number(item.valor),
+                0
+            );
+
+    const saldo =
+        entradas - saidas;
+
+    document.getElementById(
+        "totalEntradas"
+    ).innerText =
+        formatarMoeda(entradas);
+
+    document.getElementById(
+        "totalSaidas"
+    ).innerText =
+        formatarMoeda(saidas);
+
+    document.getElementById(
+        "saldoAtual"
+    ).innerText =
+        formatarMoeda(saldo);
 
 }
 
@@ -431,5 +577,43 @@ function retornarBadgeStatus(status) {
 }
 
 /* INIT */
+document
+    .getElementById("filtroPeriodo")
+    .addEventListener(
+        "change",
+        () => {
 
+            const personalizado =
+                document.getElementById(
+                    "filtroPeriodo"
+                ).value === "personalizado";
+
+            document.getElementById(
+                "dataInicio"
+            ).disabled =
+                !personalizado;
+
+            document.getElementById(
+                "dataFim"
+            ).disabled =
+                !personalizado;
+
+            aplicarFiltros();
+
+        }
+    );
+
+document
+    .getElementById("dataInicio")
+    .addEventListener(
+        "change",
+        aplicarFiltros
+    );
+
+document
+    .getElementById("dataFim")
+    .addEventListener(
+        "change",
+        aplicarFiltros
+    );
 carregarFinanceiro();

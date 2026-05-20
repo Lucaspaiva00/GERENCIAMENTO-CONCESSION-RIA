@@ -11,12 +11,15 @@
 
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/menu.css">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
 </head>
 
 <body>
+
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
     <div class="dashboard-container">
 
         <!-- SIDEBAR -->
@@ -31,7 +34,9 @@
                         <i class="fa-solid fa-motorcycle"></i>
                     </div>
 
-                    <span>PAIVA TECH</span>
+                    <span>
+                        PAIVA TECH
+                    </span>
 
                 </div>
 
@@ -51,8 +56,9 @@
                         <i class="fa-solid fa-cart-shopping"></i>
                         Vendas
                     </a>
+
                     <a href="vendedores.html">
-                        <i class="fa-solid fa-cart-shopping"></i>
+                        <i class="fa-solid fa-money-bill-wave"></i>
                         Comissões
                     </a>
 
@@ -73,15 +79,19 @@
 
                     <a href="usuarios.html">
                         <i class="fa-solid fa-user"></i>
-                        Cadastrar Vendedor
+                        Cadastrar vendedor
                     </a>
+
                 </nav>
 
             </div>
 
             <button class="logout-btn" id="logoutBtn">
+
                 <i class="fa-solid fa-right-from-bracket"></i>
+
                 Sair
+
             </button>
 
         </aside>
@@ -89,9 +99,15 @@
         <!-- MAIN -->
 
         <main class="main-content">
+
+            <!-- MENU MOBILE -->
+
             <button class="menu-toggle" id="menuToggle">
+
                 <i class="fa-solid fa-bars"></i>
+
             </button>
+
             <!-- TOPO -->
 
             <div class="topbar">
@@ -103,15 +119,31 @@
                     </h1>
 
                     <p class="page-subtitle">
-                        Gerencie os veículos da loja
+                        Gerencie o estoque da concessionária
                     </p>
 
                 </div>
 
-                <button class="btn-primary" id="btnNovoVeiculo">
-                    <i class="fa-solid fa-plus"></i>
-                    Novo veículo
-                </button>
+                <div class="topbar-actions">
+
+                    <a href="https://sistemadeprotecaoaocredito.com/consulta/?url=/consulta/home" target="_blank"
+                        class="btn-secondary">
+
+                        <i class="fa-solid fa-magnifying-glass"></i>
+
+                        Consultar placa
+
+                    </a>
+
+                    <button class="btn-primary" id="btnNovoVeiculo">
+
+                        <i class="fa-solid fa-plus"></i>
+
+                        Novo veículo
+
+                    </button>
+
+                </div>
 
             </div>
 
@@ -122,12 +154,21 @@
                 <div class="dashboard-card">
 
                     <div>
-                        <span class="card-label">Total veículos</span>
-                        <h2 id="kpiTotal">0</h2>
+
+                        <span class="card-label">
+                            Total veículos
+                        </span>
+
+                        <h2 id="kpiTotal">
+                            0
+                        </h2>
+
                     </div>
 
                     <div class="card-icon-box blue">
+
                         <i class="fa-solid fa-car-side"></i>
+
                     </div>
 
                 </div>
@@ -135,12 +176,21 @@
                 <div class="dashboard-card">
 
                     <div>
-                        <span class="card-label">Disponíveis</span>
-                        <h2 id="kpiDisponivel">0</h2>
+
+                        <span class="card-label">
+                            Disponíveis
+                        </span>
+
+                        <h2 id="kpiDisponivel">
+                            0
+                        </h2>
+
                     </div>
 
                     <div class="card-icon-box green">
+
                         <i class="fa-solid fa-circle-check"></i>
+
                     </div>
 
                 </div>
@@ -148,12 +198,21 @@
                 <div class="dashboard-card">
 
                     <div>
-                        <span class="card-label">Consignados</span>
-                        <h2 id="kpiConsignado">0</h2>
+
+                        <span class="card-label">
+                            Consignados
+                        </span>
+
+                        <h2 id="kpiConsignado">
+                            0
+                        </h2>
+
                     </div>
 
                     <div class="card-icon-box orange">
+
                         <i class="fa-solid fa-handshake"></i>
+
                     </div>
 
                 </div>
@@ -161,12 +220,21 @@
                 <div class="dashboard-card">
 
                     <div>
-                        <span class="card-label">Vendidos</span>
-                        <h2 id="kpiVendidos">0</h2>
+
+                        <span class="card-label">
+                            Vendidos
+                        </span>
+
+                        <h2 id="kpiVendidos">
+                            0
+                        </h2>
+
                     </div>
 
                     <div class="card-icon-box red">
+
                         <i class="fa-solid fa-money-bill-wave"></i>
+
                     </div>
 
                 </div>
@@ -178,12 +246,20 @@
             <div class="filters-card">
 
                 <div class="filter-group">
-                    <label>Buscar</label>
-                    <input type="text" placeholder="Buscar veículo..." id="busca" class="filter-input">
+
+                    <label>
+                        Buscar
+                    </label>
+
+                    <input type="text" placeholder="Título, placa, renavam, chassi..." id="busca" class="filter-input">
+
                 </div>
 
                 <div class="filter-group">
-                    <label>Status</label>
+
+                    <label>
+                        Status
+                    </label>
 
                     <select id="status" class="filter-input">
 
@@ -203,11 +279,19 @@
                             Manutenção
                         </option>
 
+                        <option value="RESERVADO">
+                            Reservado
+                        </option>
+
                     </select>
+
                 </div>
 
                 <div class="filter-group">
-                    <label>Estoque</label>
+
+                    <label>
+                        Estoque
+                    </label>
 
                     <select id="tipoEstoque" class="filter-input">
 
@@ -224,13 +308,17 @@
                         </option>
 
                     </select>
+
                 </div>
 
                 <div class="filter-actions">
 
                     <button class="btn-primary" id="btnFiltrar">
+
                         <i class="fa-solid fa-filter"></i>
+
                         Filtrar
+
                     </button>
 
                 </div>
@@ -249,11 +337,12 @@
 
                             <th>Imagem</th>
                             <th>Veículo</th>
+                            <th>Ano/Modelo</th>
                             <th>Placa</th>
-                            <th>Valor d. Compra</th>
-                            <th>Valor</th>
+                            <th>KM</th>
+                            <th>Compra</th>
+                            <th>Venda</th>
                             <th>Status</th>
-                            <th>Estoque</th>
                             <th>Ações</th>
 
                         </tr>
@@ -289,13 +378,15 @@
                     </h2>
 
                     <p class="modal-subtitle">
-                        Preencha os dados do veículo
+                        Cadastro completo do veículo
                     </p>
 
                 </div>
 
                 <button id="fecharModal">
+
                     <i class="fa-solid fa-xmark"></i>
+
                 </button>
 
             </div>
@@ -310,80 +401,138 @@
 
                     <div class="form-group">
 
-                        <label>Título</label>
+                        <label>
+                            Título
+                        </label>
 
-                        <input type="text" placeholder="Honda CG 160" name="titulo" required>
-
-                    </div>
-
-                    <div class="form-group">
-
-                        <label>Marca</label>
-
-                        <input type="text" placeholder="Honda" name="marca" required>
+                        <input type="text" name="titulo" placeholder="Honda Civic EXL" required>
 
                     </div>
 
                     <div class="form-group">
 
-                        <label>Modelo</label>
+                        <label>
+                            Marca
+                        </label>
 
-                        <input type="text" placeholder="CG 160" name="modelo" required>
-
-                    </div>
-
-                    <div class="form-group">
-
-                        <label>Ano</label>
-
-                        <input type="number" placeholder="2024" name="ano">
+                        <input type="text" name="marca" placeholder="Honda" required>
 
                     </div>
 
                     <div class="form-group">
 
-                        <label>Placa</label>
+                        <label>
+                            Modelo
+                        </label>
 
-                        <input type="text" placeholder="ABC-1234" name="placa">
-
-                    </div>
-
-                    <div class="form-group">
-
-                        <label>KM</label>
-
-                        <input type="number" placeholder="12000" name="km">
+                        <input type="text" name="modelo" placeholder="Civic EXL" required>
 
                     </div>
 
                     <div class="form-group">
 
-                        <label>Valor compra</label>
+                        <label>
+                            Ano fabricação
+                        </label>
 
-                        <input type="number" placeholder="15000" name="valorCompra">
-
-                    </div>
-
-                    <div class="form-group">
-
-                        <label>Valor venda</label>
-
-                        <input type="number" placeholder="18000" name="valorVenda">
+                        <input type="number" name="ano" placeholder="2022">
 
                     </div>
 
                     <div class="form-group">
 
-                        <label>Tipo</label>
+                        <label>
+                            Ano modelo
+                        </label>
+
+                        <input type="number" name="anoModelo" placeholder="2023">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Placa
+                        </label>
+
+                        <input type="text" name="placa" placeholder="ABC1D23">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            RENAVAM
+                        </label>
+
+                        <input type="text" name="renavam" placeholder="00000000000">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Chassi
+                        </label>
+
+                        <input type="text" name="chassi" placeholder="9BWZZZ377VT004251">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Cor
+                        </label>
+
+                        <input type="text" name="cor" placeholder="Prata">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            KM
+                        </label>
+
+                        <input type="number" name="km" placeholder="35000">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Valor compra
+                        </label>
+
+                        <input type="number" name="valorCompra" placeholder="65000">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Valor venda
+                        </label>
+
+                        <input type="number" name="valorVenda" placeholder="72000">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Tipo
+                        </label>
 
                         <select name="tipo">
 
-                            <option value="MOTO">
-                                Moto
-                            </option>
-
                             <option value="CARRO">
                                 Carro
+                            </option>
+
+                            <option value="MOTO">
+                                Moto
                             </option>
 
                         </select>
@@ -392,7 +541,9 @@
 
                     <div class="form-group">
 
-                        <label>Estoque</label>
+                        <label>
+                            Estoque
+                        </label>
 
                         <select name="tipoEstoque">
 
@@ -408,9 +559,90 @@
 
                     </div>
 
+                    <div class="form-group">
+
+                        <label>
+                            Status
+                        </label>
+
+                        <select name="status">
+
+                            <option value="DISPONIVEL">
+                                Disponível
+                            </option>
+
+                            <option value="RESERVADO">
+                                Reservado
+                            </option>
+
+                            <option value="MANUTENCAO">
+                                Manutenção
+                            </option>
+
+                            <option value="VENDIDO">
+                                Vendido
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Possui manual?
+                        </label>
+
+                        <select name="possuiManual">
+
+                            <option value="true">
+                                Sim
+                            </option>
+
+                            <option value="false">
+                                Não
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>
+                            Possui chave reserva?
+                        </label>
+
+                        <select name="possuiChaveReserva">
+
+                            <option value="true">
+                                Sim
+                            </option>
+
+                            <option value="false">
+                                Não
+                            </option>
+
+                        </select>
+
+                    </div>
+
                     <div class="form-group full-width">
 
-                        <label>Imagem</label>
+                        <label>
+                            Observações
+                        </label>
+
+                        <textarea name="observacoes" class="textarea-custom"
+                            placeholder="Observações gerais do veículo..."></textarea>
+
+                    </div>
+
+                    <div class="form-group full-width">
+
+                        <label>
+                            Imagem
+                        </label>
 
                         <input type="file" name="imagem" accept="image/*">
 
@@ -424,9 +656,8 @@
                             Histórico do veículo
                         </label>
 
-                        <textarea name="historicoDescricao" id="historicoDescricao"
-                            placeholder="Ex: troca de óleo, revisão, peças trocadas, observações..."
-                            class="textarea-custom"></textarea>
+                        <textarea name="historicoDescricao" id="historicoDescricao" class="textarea-custom"
+                            placeholder="Troca de óleo, revisão, observações..."></textarea>
 
                     </div>
 
@@ -483,10 +714,13 @@
                 </div>
 
                 <button id="fecharHistorico">
+
                     <i class="fa-solid fa-xmark"></i>
+
                 </button>
 
             </div>
+
             <form id="formHistorico" class="history-form">
 
                 <input type="hidden" id="historicoVeiculoId">
@@ -495,16 +729,20 @@
 
                     <div class="form-group full-width">
 
-                        <label>Descrição</label>
+                        <label>
+                            Descrição
+                        </label>
 
                         <textarea id="novaDescricaoHistorico" class="textarea-custom"
-                            placeholder="Ex: troca de óleo, revisão, pneu, documentação..." required></textarea>
+                            placeholder="Ex: troca de óleo, revisão, documentação..." required></textarea>
 
                     </div>
 
                     <div class="form-group">
 
-                        <label>Valor</label>
+                        <label>
+                            Valor
+                        </label>
 
                         <input type="number" id="novoValorHistorico" placeholder="0.00">
 
@@ -513,11 +751,15 @@
                 </div>
 
                 <button type="submit" class="btn-primary full">
+
                     <i class="fa-solid fa-plus"></i>
+
                     Adicionar histórico
+
                 </button>
 
             </form>
+
             <div id="historicoLista" class="historico-lista">
 
             </div>
@@ -528,6 +770,7 @@
 
     <script src="../assets/js/veiculos.js"></script>
     <script src="../assets/js/menu.js"></script>
+
 </body>
 
 </html>

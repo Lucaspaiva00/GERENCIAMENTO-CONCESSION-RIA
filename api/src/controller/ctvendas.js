@@ -33,7 +33,9 @@ const criar = async (req, res) => {
 
         } = req.body;
 
+        /* ========================= */
         /* VEÍCULO */
+        /* ========================= */
 
         const veiculo =
             await prisma.veiculo.findFirst({
@@ -65,7 +67,9 @@ const criar = async (req, res) => {
 
         }
 
+        /* ========================= */
         /* CLIENTE */
+        /* ========================= */
 
         const cliente =
             await prisma.cliente.findFirst({
@@ -89,7 +93,9 @@ const criar = async (req, res) => {
 
         }
 
+        /* ========================= */
         /* VENDEDOR */
+        /* ========================= */
 
         let vendedor = null;
 
@@ -119,16 +125,24 @@ const criar = async (req, res) => {
 
         }
 
+        /* ========================= */
+        /* LUCRO */
+        /* ========================= */
+
         const lucro =
             Number(valorVenda) -
-            Number(veiculo.valorCompra);
+            Number(veiculo.valorCompra || 0);
 
+        /* ========================= */
         /* TRANSACTION */
+        /* ========================= */
 
         const venda =
             await prisma.$transaction(async (tx) => {
 
+                /* ========================= */
                 /* VENDA */
+                /* ========================= */
 
                 const novaVenda =
                     await tx.venda.create({
@@ -152,7 +166,9 @@ const criar = async (req, res) => {
                                 Number(valorVenda),
 
                             valorCompra:
-                                Number(veiculo.valorCompra),
+                                Number(
+                                    veiculo.valorCompra || 0
+                                ),
 
                             lucro,
 
@@ -170,7 +186,9 @@ const criar = async (req, res) => {
 
                     });
 
-                /* ALTERAR STATUS */
+                /* ========================= */
+                /* ALTERAR STATUS VEÍCULO */
+                /* ========================= */
 
                 await tx.veiculo.update({
 
@@ -189,7 +207,9 @@ const criar = async (req, res) => {
 
                 });
 
+                /* ========================= */
                 /* FINANCEIRO */
+                /* ========================= */
 
                 await tx.financeiro.create({
 
@@ -203,15 +223,22 @@ const criar = async (req, res) => {
                         tipo: "ENTRADA",
 
                         valor:
-                            Number(entrada || valorVenda),
+                            Number(
+                                entrada || valorVenda
+                            ),
 
-                        status: "PAGO"
+                        status: "PAGO",
+
+                        vencimento:
+                            new Date()
 
                     }
 
                 });
 
-                /* PARCELAS */
+                /* ========================= */
+                /* CONTAS A RECEBER */
+                /* ========================= */
 
                 if (
                     Number(parcelas) > 1
@@ -249,9 +276,13 @@ const criar = async (req, res) => {
                                     `Parcela ${i}/${parcelas}`,
 
                                 valor:
-                                    Number(valorParcela),
+                                    Number(
+                                        valorParcela
+                                    ),
 
-                                vencimento
+                                vencimento,
+
+                                status: "PENDENTE"
 
                             }
 
@@ -261,7 +292,9 @@ const criar = async (req, res) => {
 
                 }
 
+                /* ========================= */
                 /* COMISSÃO */
+                /* ========================= */
 
                 if (
                     vendedor &&
@@ -328,14 +361,124 @@ const listar = async (req, res) => {
         const lojaId =
             req.usuario.lojaId;
 
+        const {
+            busca,
+            dataInicio,
+            dataFim,
+            vendedorId,
+            formaPagamento
+        } = req.query;
+
+        const filtros = {
+
+            lojaId
+
+        };
+
+        /* ========================= */
+        /* FILTRO BUSCA */
+        /* ========================= */
+
+        if (busca) {
+
+            filtros.OR = [
+
+                {
+                    cliente: {
+                        nome: {
+                            contains: busca
+                        }
+                    }
+                },
+
+                {
+                    veiculo: {
+                        titulo: {
+                            contains: busca
+                        }
+                    }
+                },
+
+                {
+                    cliente: {
+                        cpf: {
+                            contains: busca
+                        }
+                    }
+                },
+
+                {
+                    veiculo: {
+                        placa: {
+                            contains: busca
+                        }
+                    }
+                }
+
+            ];
+
+        }
+
+        /* ========================= */
+        /* FILTRO DATA */
+        /* ========================= */
+
+        if (dataInicio || dataFim) {
+
+            filtros.createdAt = {};
+
+            if (dataInicio) {
+
+                filtros.createdAt.gte =
+                    new Date(dataInicio);
+
+            }
+
+            if (dataFim) {
+
+                const dataFinal =
+                    new Date(dataFim);
+
+                dataFinal.setHours(
+                    23,
+                    59,
+                    59,
+                    999
+                );
+
+                filtros.createdAt.lte =
+                    dataFinal;
+
+            }
+
+        }
+
+        /* ========================= */
+        /* FILTRO VENDEDOR */
+        /* ========================= */
+
+        if (vendedorId) {
+
+            filtros.vendedorId =
+                Number(vendedorId);
+
+        }
+
+        /* ========================= */
+        /* FORMA PAGAMENTO */
+        /* ========================= */
+
+        if (formaPagamento) {
+
+            filtros.formaPagamento =
+                formaPagamento;
+
+        }
+
         const vendas =
             await prisma.venda.findMany({
 
-                where: {
-
-                    lojaId
-
-                },
+                where: filtros,
 
                 include: {
 
@@ -373,10 +516,192 @@ const listar = async (req, res) => {
 
 };
 
+/* ========================= */
+/* DETALHAR */
+/* ========================= */
+
+const detalhar = async (req, res) => {
+
+    try {
+
+        const lojaId =
+            req.usuario.lojaId;
+
+        const { id } =
+            req.params;
+
+        const venda =
+            await prisma.venda.findFirst({
+
+                where: {
+
+                    vendaid:
+                        Number(id),
+
+                    lojaId
+
+                },
+
+                include: {
+
+                    cliente: true,
+
+                    veiculo: true,
+
+                    vendedor: true,
+
+                    contaRecebers: true,
+
+                    comissao: true
+
+                }
+
+            });
+
+        if (!venda) {
+
+            return res.status(404).json({
+                error: "Venda não encontrada"
+            });
+
+        }
+
+        return res.json(venda);
+
+    } catch (error) {
+
+        console.log(error);
+
+        return res.status(500).json({
+            error: "Erro ao detalhar venda"
+        });
+
+    }
+
+};
+
+/* ========================= */
+/* CANCELAR VENDA */
+/* ========================= */
+
+const cancelar = async (req, res) => {
+
+    try {
+
+        const lojaId =
+            req.usuario.lojaId;
+
+        const { id } =
+            req.params;
+
+        const venda =
+            await prisma.venda.findFirst({
+
+                where: {
+
+                    vendaid:
+                        Number(id),
+
+                    lojaId
+
+                }
+
+            });
+
+        if (!venda) {
+
+            return res.status(404).json({
+                error: "Venda não encontrada"
+            });
+
+        }
+
+        await prisma.$transaction(async (tx) => {
+
+            /* VEÍCULO VOLTA DISPONÍVEL */
+
+            await tx.veiculo.update({
+
+                where: {
+
+                    veiculoid:
+                        venda.veiculoId
+
+                },
+
+                data: {
+
+                    status: "DISPONIVEL"
+
+                }
+
+            });
+
+            /* REMOVE CONTAS */
+
+            await tx.contaReceber.deleteMany({
+
+                where: {
+
+                    vendaId:
+                        venda.vendaid
+
+                }
+
+            });
+
+            /* REMOVE COMISSÃO */
+
+            await tx.comissao.deleteMany({
+
+                where: {
+
+                    vendaId:
+                        venda.vendaid
+
+                }
+
+            });
+
+            /* REMOVE VENDA */
+
+            await tx.venda.delete({
+
+                where: {
+
+                    vendaid:
+                        venda.vendaid
+
+                }
+
+            });
+
+        });
+
+        return res.json({
+
+            message:
+                "Venda cancelada com sucesso"
+
+        });
+
+    } catch (error) {
+
+        console.log(error);
+
+        return res.status(500).json({
+            error: "Erro ao cancelar venda"
+        });
+
+    }
+
+};
+
 module.exports = {
 
     criar,
-
-    listar
+    listar,
+    detalhar,
+    cancelar
 
 };

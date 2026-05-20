@@ -1257,3 +1257,1057 @@ body {
     }
 
 }
+
+.cards-vendas-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fill, minmax(380px, 1fr));
+
+    gap: 24px;
+
+    margin-top: 25px;
+
+}
+
+.venda-card-premium {
+
+    background: white;
+
+    border-radius: 22px;
+
+    padding: 24px;
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.06);
+
+    border-left:
+        6px solid #2563eb;
+
+    transition: .25s ease;
+
+}
+
+.venda-card-premium:hover {
+
+    transform: translateY(-5px);
+
+    box-shadow:
+        0 18px 40px rgba(0, 0, 0, 0.12);
+
+}
+
+.venda-card-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: start;
+
+    margin-bottom: 22px;
+
+}
+
+.venda-status {
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    color: #2563eb;
+
+    letter-spacing: 1px;
+
+}
+
+.venda-card-header h3 {
+
+    margin-top: 6px;
+
+    font-size: 22px;
+
+    color: #111827;
+
+}
+
+.venda-card-header small {
+
+    color: #6b7280;
+
+}
+
+.badge-card {
+
+    padding: 8px 14px;
+
+    border-radius: 999px;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+}
+
+.venda-card-body {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+
+}
+
+.info-row {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    font-size: 14px;
+
+}
+
+.info-row span {
+
+    color: #6b7280;
+
+}
+
+.info-row strong {
+
+    color: #111827;
+
+}
+
+.venda-valores-grid {
+
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 14px;
+
+    margin-top: 25px;
+
+}
+
+.valor-box {
+
+    background: #f8fafc;
+
+    border-radius: 16px;
+
+    padding: 18px;
+
+    text-align: center;
+
+}
+
+.valor-box span {
+
+    font-size: 12px;
+
+    color: #64748b;
+
+}
+
+.valor-box h2 {
+
+    margin-top: 10px;
+
+    font-size: 20px;
+
+    color: #111827;
+
+}
+
+.valor-compra {
+
+    color: #ef4444 !important;
+
+}
+
+.valor-lucro {
+
+    color: #22c55e !important;
+
+}
+
+.venda-card-footer {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 12px;
+
+    margin-top: 28px;
+
+}
+
+.btn-doc {
+
+    border: none;
+
+    background: #2563eb;
+
+    color: white;
+
+    padding: 12px 18px;
+
+    border-radius: 12px;
+
+    cursor: pointer;
+
+    font-weight: 600;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    transition: .2s;
+
+}
+
+.btn-doc:hover {
+
+    background: #1d4ed8;
+
+}
+
+@media(max-width: 768px) {
+
+    .cards-vendas-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+    .venda-valores-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+}
+
+/* =========================================
+   VIEW SWITCH PREMIUM
+========================================= */
+
+.view-switch-premium {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+    margin-bottom: 24px;
+
+}
+
+.btn-view-premium {
+
+    border: none;
+
+    background: white;
+
+    height: 54px;
+
+    padding: 0 22px;
+
+    border-radius: 16px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    cursor: pointer;
+
+    font-weight: 700;
+
+    color: #64748b;
+
+    border: 1px solid #e5e7eb;
+
+    transition: .25s ease;
+
+    box-shadow:
+        0 4px 14px rgba(0, 0, 0, 0.03);
+
+}
+
+.btn-view-premium i {
+
+    font-size: 16px;
+
+}
+
+.btn-view-premium:hover {
+
+    transform: translateY(-2px);
+
+}
+
+.btn-view-premium.active {
+
+    background:
+        linear-gradient(135deg,
+            #2563eb,
+            #3b82f6);
+
+    color: white;
+
+    border-color: transparent;
+
+    box-shadow:
+        0 12px 24px rgba(37, 99, 235, 0.25);
+
+}
+
+/* =========================================
+   CARDS VENDAS PREMIUM
+========================================= */
+
+.cards-vendas-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fill, minmax(420px, 1fr));
+
+    gap: 24px;
+
+    margin-top: 10px;
+
+}
+
+.venda-card-premium {
+
+    position: relative;
+
+    overflow: hidden;
+
+    background:
+        linear-gradient(180deg,
+            #ffffff 0%,
+            #f8fafc 100%);
+
+    border-radius: 28px;
+
+    padding: 26px;
+
+    border: 1px solid #e5e7eb;
+
+    box-shadow:
+        0 12px 35px rgba(15, 23, 42, 0.06);
+
+    transition: .3s ease;
+
+}
+
+.venda-card-premium::before {
+
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
+    right: 0;
+
+    height: 5px;
+
+    background:
+        linear-gradient(90deg,
+            #2563eb,
+            #60a5fa);
+
+}
+
+.venda-card-premium:hover {
+
+    transform: translateY(-6px);
+
+    box-shadow:
+        0 18px 45px rgba(15, 23, 42, 0.12);
+
+}
+
+.venda-card-header {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    justify-content: space-between;
+
+    gap: 16px;
+
+    margin-bottom: 24px;
+
+}
+
+.venda-card-cliente {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+}
+
+.venda-avatar {
+
+    width: 58px;
+    height: 58px;
+
+    border-radius: 18px;
+
+    background:
+        linear-gradient(135deg,
+            #2563eb,
+            #60a5fa);
+
+    color: white;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 22px;
+
+    font-weight: 800;
+
+    flex-shrink: 0;
+
+}
+
+.venda-card-header h3 {
+
+    font-size: 22px;
+
+    color: #111827;
+
+    margin-bottom: 6px;
+
+}
+
+.venda-card-header p {
+
+    color: #64748b;
+
+    font-size: 14px;
+
+    line-height: 1.5;
+
+}
+
+.badge-card {
+
+    padding: 10px 16px;
+
+    border-radius: 999px;
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+    text-transform: uppercase;
+
+    letter-spacing: .5px;
+
+    white-space: nowrap;
+
+}
+
+.badge-proprio {
+
+    background: #dcfce7;
+
+    color: #166534;
+
+}
+
+.badge-consignado {
+
+    background: #fef3c7;
+
+    color: #92400e;
+
+}
+
+/* INFO GRID */
+
+.venda-info-grid {
+
+    display: grid;
+
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 16px;
+
+    margin-bottom: 24px;
+
+}
+
+.info-box {
+
+    background: white;
+
+    border: 1px solid #eef2f7;
+
+    border-radius: 18px;
+
+    padding: 16px;
+
+}
+
+.info-box span {
+
+    display: block;
+
+    font-size: 12px;
+
+    color: #64748b;
+
+    margin-bottom: 10px;
+
+    font-weight: 600;
+
+    text-transform: uppercase;
+
+    letter-spacing: .5px;
+
+}
+
+.info-box strong {
+
+    font-size: 16px;
+
+    color: #111827;
+
+    line-height: 1.5;
+
+}
+
+/* VALORES */
+
+.venda-valores-grid {
+
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 16px;
+
+    margin-bottom: 24px;
+
+}
+
+.valor-box {
+
+    border-radius: 22px;
+
+    padding: 20px;
+
+    text-align: center;
+
+    position: relative;
+
+    overflow: hidden;
+
+}
+
+.valor-box::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    opacity: .08;
+
+}
+
+.valor-box.venda {
+
+    background: #eff6ff;
+
+}
+
+.valor-box.venda::before {
+
+    background: #2563eb;
+
+}
+
+.valor-box.compra {
+
+    background: #fef2f2;
+
+}
+
+.valor-box.compra::before {
+
+    background: #ef4444;
+
+}
+
+.valor-box.lucro {
+
+    background: #f0fdf4;
+
+}
+
+.valor-box.lucro::before {
+
+    background: #22c55e;
+
+}
+
+.valor-box span {
+
+    display: block;
+
+    font-size: 12px;
+
+    margin-bottom: 10px;
+
+    color: #64748b;
+
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+    letter-spacing: .6px;
+
+}
+
+.valor-box h2 {
+
+    position: relative;
+
+    z-index: 2;
+
+    font-size: 22px;
+
+    font-weight: 800;
+
+}
+
+.valor-venda {
+
+    color: #2563eb;
+
+}
+
+.valor-compra {
+
+    color: #ef4444;
+
+}
+
+.valor-lucro {
+
+    color: #16a34a;
+
+}
+
+/* FOOTER */
+
+.venda-card-footer {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 12px;
+
+}
+
+.btn-doc {
+
+    flex: 1;
+
+    min-width: 140px;
+
+    height: 50px;
+
+    border: none;
+
+    border-radius: 16px;
+
+    background:
+        linear-gradient(135deg,
+            #2563eb,
+            #3b82f6);
+
+    color: white;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 10px;
+
+    transition: .25s ease;
+
+}
+
+.btn-doc:hover {
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 14px 24px rgba(37, 99, 235, 0.22);
+
+}
+
+.btn-doc.secondary {
+
+    background:
+        linear-gradient(135deg,
+            #0f172a,
+            #1e293b);
+
+}
+
+.btn-doc.green {
+
+    background:
+        linear-gradient(135deg,
+            #16a34a,
+            #22c55e);
+
+}
+
+/* RESPONSIVO */
+
+@media(max-width: 768px) {
+
+    .cards-vendas-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+    .venda-info-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+    .venda-valores-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+    .venda-card-footer {
+
+        flex-direction: column;
+
+    }
+
+    .btn-doc {
+
+        width: 100%;
+
+    }
+
+}
+
+/* =========================================
+   CARDS VENDAS PREMIUM - CORRIGIDO
+========================================= */
+
+.cards-vendas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(520px, 1fr));
+    gap: 28px;
+    margin-top: 28px;
+}
+
+.venda-card-premium {
+    background: white;
+    border-radius: 30px;
+    padding: 28px;
+    border: 1px solid #e5e7eb;
+    border-top: 6px solid #2563eb;
+    box-shadow: 0 15px 40px rgba(15, 23, 42, 0.08);
+    transition: .25s ease;
+    min-width: 0;
+}
+
+.venda-card-premium:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 50px rgba(15, 23, 42, 0.13);
+}
+
+.venda-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 18px;
+    margin-bottom: 26px;
+}
+
+.venda-cliente-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    min-width: 0;
+}
+
+.cliente-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #2563eb, #3b82f6);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 800;
+    flex-shrink: 0;
+}
+
+.venda-cliente-box h2 {
+    font-size: 21px;
+    line-height: 1.15;
+    margin-bottom: 6px;
+    color: #111827;
+    word-break: break-word;
+}
+
+.venda-cliente-box p {
+    color: #374151;
+    font-weight: 700;
+    margin-bottom: 4px;
+    line-height: 1.25;
+    word-break: break-word;
+}
+
+.venda-cliente-box small {
+    color: #6b7280;
+}
+
+.badge-card {
+    padding: 9px 14px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.badge-proprio {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.badge-consignado {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.venda-info-grid-premium {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 22px;
+}
+
+.info-card-mini {
+    background: #f8fafc;
+    border-radius: 18px;
+    padding: 15px;
+    min-width: 0;
+}
+
+.info-card-mini span {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 11px;
+    color: #64748b;
+    text-transform: uppercase;
+    font-weight: 800;
+}
+
+.info-card-mini strong {
+    color: #111827;
+    font-size: 14px;
+    line-height: 1.35;
+    word-break: break-word;
+}
+
+.valores-premium-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.valor-premium {
+    border-radius: 20px;
+    padding: 18px 12px;
+    text-align: center;
+    min-width: 0;
+}
+
+.valor-premium span {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.valor-premium h3 {
+    font-size: clamp(18px, 1.4vw, 24px);
+    font-weight: 800;
+    line-height: 1.1;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+.valor-premium.venda {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.valor-premium.compra {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.valor-premium.lucro {
+    background: #f0fdf4;
+    color: #16a34a;
+}
+
+.extra-venda-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 22px;
+}
+
+.extra-box {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    padding: 16px;
+    min-width: 0;
+}
+
+.extra-box span {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 11px;
+    font-weight: 800;
+    color: #64748b;
+    text-transform: uppercase;
+}
+
+.extra-box strong {
+    font-size: 16px;
+    color: #111827;
+    overflow-wrap: anywhere;
+}
+
+.documentos-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.btn-doc-premium {
+    min-height: 50px;
+    border: none;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #2563eb, #3b82f6);
+    color: white;
+    font-weight: 800;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px;
+    transition: .25s;
+    font-size: 13px;
+    text-align: center;
+}
+
+.btn-doc-premium:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(37, 99, 235, 0.22);
+}
+
+/* FORÇA SOMENTE CARDS NA TELA DE VENDAS */
+#tableContainer,
+#btnTabela,
+.view-switch-premium #btnTabela {
+    display: none !important;
+}
+
+#cardsContainer {
+    display: grid !important;
+}
+
+/* RESPONSIVO */
+
+@media(max-width: 1200px) {
+    .cards-vendas-grid {
+        grid-template-columns: repeat(auto-fit, minmax(460px, 1fr));
+    }
+}
+
+@media(max-width: 768px) {
+    .cards-vendas-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .venda-card-premium {
+        padding: 22px;
+        border-radius: 24px;
+    }
+
+    .venda-card-top {
+        flex-direction: column;
+    }
+
+    .venda-info-grid-premium,
+    .valores-premium-grid,
+    .extra-venda-grid,
+    .documentos-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .cliente-avatar {
+        width: 56px;
+        height: 56px;
+    }
+}
