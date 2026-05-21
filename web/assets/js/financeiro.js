@@ -10,7 +10,7 @@ if (!token) {
 }
 
 const API =
-    "http://localhost:3001";
+    API_BASE_URL;
 
 const tabela =
     document.getElementById("financeiroTabela");

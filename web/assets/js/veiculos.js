@@ -1,4 +1,4 @@
-const API = "http://localhost:3001";
+const API = API_BASE_URL;
 
 const CLOUDINARY_URL =
     "https://api.cloudinary.com/v1_1/dfdinbti3/image/upload";

@@ -41,7 +41,7 @@ async function carregarDashboard() {
 
         const response =
             await fetch(
-                "http://localhost:3001/dashboard",
+                `${API_BASE_URL}/dashboard`,
                 {
                     headers: {
                         Authorization:
