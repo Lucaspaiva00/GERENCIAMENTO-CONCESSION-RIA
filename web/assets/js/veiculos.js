@@ -1,5 +1,11 @@
 const API = "http://localhost:3001";
 
+const CLOUDINARY_URL =
+    "https://api.cloudinary.com/v1_1/dfdinbti3/image/upload";
+
+const CLOUDINARY_UPLOAD_PRESET =
+    "concessionaria";
+
 const token =
     localStorage.getItem("token");
 
@@ -29,6 +35,32 @@ const preview =
     document.getElementById(
         "previewImagem"
     );
+
+const inputImagem =
+    document.getElementById(
+        "inputImagem"
+    );
+
+const imagemUrl =
+    document.getElementById(
+        "imagemUrl"
+    );
+
+function urlImagemVeiculo(imagem) {
+
+    if (!imagem) {
+        return "https://placehold.co/120x80";
+    }
+
+    if (
+        imagem.startsWith("http://") ||
+        imagem.startsWith("https://")
+    ) {
+        return imagem;
+    }
+
+    return `${API}/files/${imagem}`;
+}
 
 const modalHistorico =
     document.getElementById(
@@ -79,6 +111,14 @@ document.getElementById(
 
         preview.style.display =
             "none";
+
+        if (inputImagem) {
+            inputImagem.value = "";
+        }
+
+        if (imagemUrl) {
+            imagemUrl.value = "";
+        }
 
         if (form.historicoDescricao) {
 
@@ -132,11 +172,11 @@ document.getElementById(
     }
 );
 
-/* PREVIEW */
+/* UPLOAD CLOUDINARY */
 
-form.imagem.addEventListener(
+inputImagem.addEventListener(
     "change",
-    (e) => {
+    async (e) => {
 
         const file =
             e.target.files[0];
@@ -149,8 +189,100 @@ form.imagem.addEventListener(
         preview.style.display =
             "block";
 
+        try {
+
+            const formData =
+                new FormData();
+
+            formData.append(
+                "file",
+                file
+            );
+
+            formData.append(
+                "upload_preset",
+                CLOUDINARY_UPLOAD_PRESET
+            );
+
+            formData.append(
+                "folder",
+                "concessionaria"
+            );
+
+            const responseUpload =
+                await fetch(
+                    CLOUDINARY_URL,
+                    {
+                        method: "POST",
+                        body: formData
+                    }
+                ).then((res) =>
+                    res.json()
+                );
+
+            if (
+                !responseUpload.secure_url
+            ) {
+
+                alert(
+                    responseUpload.error?.message ||
+                    "Erro ao enviar imagem"
+                );
+
+                return;
+
+            }
+
+            imagemUrl.value =
+                responseUpload.secure_url;
+
+            preview.src =
+                responseUpload.secure_url;
+
+        } catch (error) {
+
+            console.log(error);
+
+            alert(
+                "Erro ao enviar imagem"
+            );
+
+        }
+
     }
 );
+
+function dadosVeiculoForm() {
+
+    const payload = {
+        titulo: form.titulo.value,
+        marca: form.marca.value,
+        modelo: form.modelo.value,
+        ano: form.ano.value,
+        anoModelo: form.anoModelo.value,
+        placa: form.placa.value,
+        renavam: form.renavam.value,
+        chassi: form.chassi.value,
+        cor: form.cor.value,
+        km: form.km.value,
+        possuiManual: form.possuiManual.value,
+        possuiChaveReserva:
+            form.possuiChaveReserva.value,
+        valorCompra: form.valorCompra.value,
+        valorVenda: form.valorVenda.value,
+        tipo: form.tipo.value,
+        tipoEstoque: form.tipoEstoque.value,
+        observacoes: form.observacoes.value,
+        imagem:
+            imagemUrl?.value?.trim() || null
+    };
+
+    if (form.status) {
+        payload.status = form.status.value;
+    }
+
+    return payload;
+}
 
 /* LISTAR */
 
@@ -272,9 +404,7 @@ function renderTabela(lista) {
                 <td>
 
                     <img
-                        src="${veiculo.imagem
-                ? API + "/uploads/" + veiculo.imagem
-                : "https://placehold.co/120x80"}"
+                        src="${urlImagemVeiculo(veiculo.imagem)}"
                         class="vehicle-image">
 
                 </td>
@@ -557,15 +687,26 @@ async function editarVeiculo(id) {
 
         }
 
+        if (inputImagem) {
+            inputImagem.value = "";
+        }
+
         if (veiculo.imagem) {
 
+            imagemUrl.value =
+                veiculo.imagem;
+
             preview.src =
-                `${API}/uploads/${veiculo.imagem}`;
+                urlImagemVeiculo(
+                    veiculo.imagem
+                );
 
             preview.style.display =
                 "block";
 
         } else {
+
+            imagemUrl.value = "";
 
             preview.src = "";
 
@@ -598,11 +739,8 @@ form.addEventListener(
 
         e.preventDefault();
 
-        const formData =
-            new FormData(form);
-
         const veiculoId =
-            formData.get("veiculoid");
+            form.veiculoid.value;
 
         const url =
             veiculoId
@@ -614,6 +752,9 @@ form.addEventListener(
                 ? "PUT"
                 : "POST";
 
+        const payload =
+            dadosVeiculoForm();
+
         try {
 
             const response =
@@ -622,11 +763,15 @@ form.addEventListener(
                     method,
 
                     headers: {
+                        "Content-Type":
+                            "application/json",
                         Authorization:
                             `Bearer ${token}`
                     },
 
-                    body: formData
+                    body: JSON.stringify(
+                        payload
+                    )
 
                 });
 
@@ -645,14 +790,10 @@ form.addEventListener(
             }
 
             const descricao =
-                formData.get(
-                    "historicoDescricao"
-                );
+                form.historicoDescricao?.value;
 
             const valor =
-                formData.get(
-                    "historicoValor"
-                );
+                form.historicoValor?.value;
 
             if (!veiculoId && descricao) {
 
@@ -696,6 +837,14 @@ form.addEventListener(
             );
 
             form.reset();
+
+            if (inputImagem) {
+                inputImagem.value = "";
+            }
+
+            if (imagemUrl) {
+                imagemUrl.value = "";
+            }
 
             preview.src = "";
 
