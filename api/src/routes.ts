@@ -10,7 +10,6 @@ import comissao from "./controller/ctcomissao";
 import clientes from "./controller/ctclientes";
 import documentos from "./controller/ctdocumentos";
 import auth from "./middlewares/auth";
-import upload from "./middlewares/upload";
 
 const routes = Router();
 
@@ -27,12 +26,12 @@ routes.get("/usuarios/:id", auth, usuarios.detalhar);
 routes.put("/usuarios/:id", auth, usuarios.atualizar);
 routes.delete("/usuarios/:id", auth, usuarios.deletar);
 
-routes.post("/veiculos", auth, upload.single("imagem"), veiculos.cadastrar);
+routes.post("/veiculos", auth, veiculos.cadastrar);
 routes.get("/veiculos", auth, veiculos.listar);
 routes.get("/veiculos/busca/:placa", auth, veiculos.buscarPorPlaca);
 routes.get("/veiculos/cards", auth, veiculos.listar);
 routes.get("/veiculos/:id", auth, veiculos.detalhar);
-routes.put("/veiculos/:id", auth, upload.single("imagem"), veiculos.atualizar);
+routes.put("/veiculos/:id", auth, veiculos.atualizar);
 routes.delete("/veiculos/:id", auth, veiculos.deletar);
 
 routes.post("/financeiro", auth, financeiro.cadastrar);

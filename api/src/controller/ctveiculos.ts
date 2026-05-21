@@ -9,8 +9,6 @@ function parseBool(value: unknown): boolean {
 export default {
     async cadastrar(req: Request, res: Response) {
         try {
-            const imagem = req.file ? req.file.filename : null;
-
             const {
                 titulo,
                 marca,
@@ -28,8 +26,14 @@ export default {
                 valorVenda,
                 tipo,
                 tipoEstoque,
-                observacoes
+                observacoes,
+                imagem
             } = req.body;
+
+            const imagemUrl =
+                imagem && String(imagem).trim()
+                    ? String(imagem).trim()
+                    : null;
 
             const veiculo = await prisma.veiculo.create({
                 data: {
@@ -48,7 +52,7 @@ export default {
                     possuiChaveReserva: parseBool(possuiChaveReserva),
                     valorCompra: valorCompra ? Number(valorCompra) : 0,
                     valorVenda: valorVenda ? Number(valorVenda) : 0,
-                    imagem,
+                    imagem: imagemUrl,
                     tipo,
                     tipoEstoque,
                     observacoes
@@ -193,8 +197,6 @@ export default {
                 });
             }
 
-            const imagem = req.file ? req.file.filename : undefined;
-
             const {
                 titulo,
                 marca,
@@ -213,7 +215,8 @@ export default {
                 tipo,
                 tipoEstoque,
                 status,
-                observacoes
+                observacoes,
+                imagem
             } = req.body;
 
             const data: Prisma.VeiculoUpdateInput = {
@@ -237,7 +240,12 @@ export default {
                 observacoes
             };
 
-            if (imagem) data.imagem = imagem;
+            if (imagem !== undefined) {
+                data.imagem =
+                    imagem && String(imagem).trim()
+                        ? String(imagem).trim()
+                        : null;
+            }
 
             const veiculo = await prisma.veiculo.update({
                 where: { veiculoid: Number(id) },
