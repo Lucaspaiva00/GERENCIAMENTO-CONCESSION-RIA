@@ -60,79 +60,119 @@ const criar = async (req: Request, res: Response) => {
 
         const lucro = Number(valorVenda) - Number(veiculo.valorCompra || 0);
 
-        const venda = await prisma.$transaction(async (tx) => {
-            const novaVenda = await tx.venda.create({
-                data: {
-                    lojaId,
-                    clienteId: Number(clienteId),
-                    veiculoId: Number(veiculoId),
-                    vendedorId: vendedorId ? Number(vendedorId) : null,
-                    valorVenda: Number(valorVenda),
-                    valorCompra: Number(veiculo.valorCompra || 0),
-                    lucro,
-                    formaPagamento,
-                    entrada: Number(entrada || 0),
-                    parcelas: Number(parcelas || 1),
-                    observacoes
-                }
-            });
+        const venda =
+            await prisma.$transaction(
 
-            await tx.veiculo.update({
-                where: { veiculoid: Number(veiculoId) },
-                data: { status: StatusVeiculo.VENDIDO }
-            });
-
-            await tx.financeiro.create({
-                data: {
-                    lojaId,
-                    descricao: `Venda do veículo ${veiculo.titulo}`,
-                    tipo: TipoMovimentacao.ENTRADA,
-                    valor: Number(entrada || valorVenda),
-                    status: StatusConta.PAGO,
-                    vencimento: new Date()
-                }
-            });
-
-            if (Number(parcelas) > 1) {
-                const valorRestante = Number(valorVenda) - Number(entrada || 0);
-                const valorParcela = valorRestante / Number(parcelas);
-
-                for (let i = 1; i <= Number(parcelas); i++) {
-                    const vencimento = new Date();
-                    vencimento.setMonth(vencimento.getMonth() + i);
-
-                    await tx.contaReceber.create({
+                async (tx) => {
+                    const novaVenda = await tx.venda.create({
                         data: {
-                            vendaId: novaVenda.vendaid,
-                            descricao: `Parcela ${i}/${parcelas}`,
-                            valor: Number(valorParcela),
-                            vencimento,
-                            status: StatusConta.PENDENTE
+                            lojaId,
+                            clienteId: Number(clienteId),
+                            veiculoId: Number(veiculoId),
+                            vendedorId: vendedorId ? Number(vendedorId) : null,
+                            valorVenda: Number(valorVenda),
+                            valorCompra: Number(veiculo.valorCompra || 0),
+                            lucro,
+                            formaPagamento,
+                            entrada: Number(entrada || 0),
+                            parcelas: Number(parcelas || 1),
+                            observacoes
                         }
                     });
-                }
-            }
 
-            if (vendedor && vendedor.comissaoPercentual) {
-                const valorComissao =
-                    (Number(valorVenda) * Number(vendedor.comissaoPercentual)) / 100;
+                    await tx.veiculo.update({
+                        where: { veiculoid: Number(veiculoId) },
+                        data: { status: StatusVeiculo.VENDIDO }
+                    });
 
-                await tx.comissao.create({
-                    data: {
-                        vendaId: novaVenda.vendaid,
-                        vendedorId: vendedor.usuarioid,
-                        percentual: vendedor.comissaoPercentual,
-                        valor: valorComissao
+                    await tx.financeiro.create({
+                        data: {
+                            lojaId,
+                            descricao: `Venda do veículo ${veiculo.titulo}`,
+                            tipo: TipoMovimentacao.ENTRADA,
+                            valor: Number(entrada || valorVenda),
+                            status: StatusConta.PAGO,
+                            vencimento: new Date()
+                        }
+                    });
+
+                    if (Number(parcelas) > 1) {
+
+                        const valorRestante =
+                            Number(valorVenda) -
+                            Number(entrada || 0);
+
+                        const valorParcela =
+                            valorRestante /
+                            Number(parcelas);
+
+                        const parcelasCriar = [];
+
+                        for (
+                            let i = 1;
+                            i <= Number(parcelas);
+                            i++
+                        ) {
+
+                            const vencimento =
+                                new Date();
+
+                            vencimento.setMonth(
+                                vencimento.getMonth() + i
+                            );
+
+                            parcelasCriar.push({
+
+                                vendaId:
+                                    novaVenda.vendaid,
+
+                                descricao:
+                                    `Parcela ${i}/${parcelas}`,
+
+                                valor:
+                                    Number(valorParcela),
+
+                                vencimento,
+
+                                status:
+                                    StatusConta.PENDENTE
+
+                            });
+
+                        }
+
+                        await tx.contaReceber.createMany({
+
+                            data:
+                                parcelasCriar
+
+                        });
+
                     }
-                });
-            }
 
-            return novaVenda;
-        });
+                    if (vendedor && vendedor.comissaoPercentual) {
+                        const valorComissao =
+                            (Number(valorVenda) * Number(vendedor.comissaoPercentual)) / 100;
+
+                        await tx.comissao.create({
+                            data: {
+                                vendaId: novaVenda.vendaid,
+                                vendedorId: vendedor.usuarioid,
+                                percentual: vendedor.comissaoPercentual,
+                                valor: valorComissao
+                            }
+                        });
+                    }
+
+                    return novaVenda;
+
+                },
+                {
+                    timeout: 30000
+                });
 
         return res.json(venda);
     } catch (error) {
-        console.log(error);
         return res.status(500).json({ error: "Erro ao criar venda" });
     }
 };
