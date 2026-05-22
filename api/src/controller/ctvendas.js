@@ -133,141 +133,138 @@ const criar = async (req, res) => {
             Number(valorVenda) -
             Number(veiculo.valorCompra || 0);
 
-        /* ========================= */
-        /* TRANSACTION */
-        /* ========================= */
-
         const venda =
-            await prisma.$transaction(async (tx) => {
+            await prisma.$transaction(
 
-                /* ========================= */
-                /* VENDA */
-                /* ========================= */
+                async (tx) => {
 
-                const novaVenda =
-                    await tx.venda.create({
+                    const novaVenda =
+                        await tx.venda.create({
+
+                            data: {
+
+                                lojaId,
+
+                                clienteId:
+                                    Number(clienteId),
+
+                                veiculoId:
+                                    Number(veiculoId),
+
+                                vendedorId:
+                                    vendedorId
+                                        ? Number(vendedorId)
+                                        : null,
+
+                                valorVenda:
+                                    Number(valorVenda),
+
+                                valorCompra:
+                                    Number(
+                                        veiculo.valorCompra || 0
+                                    ),
+
+                                lucro,
+
+                                formaPagamento,
+
+                                entrada:
+                                    Number(entrada || 0),
+
+                                parcelas:
+                                    Number(parcelas || 1),
+
+                                observacoes
+
+                            }
+
+                        });
+
+                    /* ========================= */
+                    /* ALTERAR STATUS VEÍCULO */
+                    /* ========================= */
+
+                    await tx.veiculo.update({
+
+                        where: {
+
+                            veiculoid:
+                                Number(veiculoId)
+
+                        },
 
                         data: {
 
-                            lojaId,
-
-                            clienteId:
-                                Number(clienteId),
-
-                            veiculoId:
-                                Number(veiculoId),
-
-                            vendedorId:
-                                vendedorId
-                                    ? Number(vendedorId)
-                                    : null,
-
-                            valorVenda:
-                                Number(valorVenda),
-
-                            valorCompra:
-                                Number(
-                                    veiculo.valorCompra || 0
-                                ),
-
-                            lucro,
-
-                            formaPagamento,
-
-                            entrada:
-                                Number(entrada || 0),
-
-                            parcelas:
-                                Number(parcelas || 1),
-
-                            observacoes
+                            status: "VENDIDO"
 
                         }
 
                     });
 
-                /* ========================= */
-                /* ALTERAR STATUS VEÍCULO */
-                /* ========================= */
+                    /* ========================= */
+                    /* FINANCEIRO */
+                    /* ========================= */
 
-                await tx.veiculo.update({
+                    await tx.financeiro.create({
 
-                    where: {
+                        data: {
 
-                        veiculoid:
-                            Number(veiculoId)
+                            lojaId,
 
-                    },
+                            descricao:
+                                `Venda do veículo ${veiculo.titulo}`,
 
-                    data: {
+                            tipo: "ENTRADA",
 
-                        status: "VENDIDO"
+                            valor:
+                                Number(
+                                    entrada || valorVenda
+                                ),
 
-                    }
+                            status: "PAGO",
 
-                });
+                            vencimento:
+                                new Date()
 
-                /* ========================= */
-                /* FINANCEIRO */
-                /* ========================= */
+                        }
 
-                await tx.financeiro.create({
+                    });
 
-                    data: {
+                    /* ========================= */
+                    /* CONTAS A RECEBER */
+                    /* ========================= */
+                    /* ========================= */
+                    /* CONTAS A RECEBER */
+                    /* ========================= */
 
-                        lojaId,
-
-                        descricao:
-                            `Venda do veículo ${veiculo.titulo}`,
-
-                        tipo: "ENTRADA",
-
-                        valor:
-                            Number(
-                                entrada || valorVenda
-                            ),
-
-                        status: "PAGO",
-
-                        vencimento:
-                            new Date()
-
-                    }
-
-                });
-
-                /* ========================= */
-                /* CONTAS A RECEBER */
-                /* ========================= */
-
-                if (
-                    Number(parcelas) > 1
-                ) {
-
-                    const valorRestante =
-                        Number(valorVenda) -
-                        Number(entrada || 0);
-
-                    const valorParcela =
-                        valorRestante /
-                        Number(parcelas);
-
-                    for (
-                        let i = 1;
-                        i <= Number(parcelas);
-                        i++
+                    if (
+                        Number(parcelas) > 1
                     ) {
 
-                        const vencimento =
-                            new Date();
+                        const valorRestante =
+                            Number(valorVenda) -
+                            Number(entrada || 0);
 
-                        vencimento.setMonth(
-                            vencimento.getMonth() + i
-                        );
+                        const valorParcela =
+                            valorRestante /
+                            Number(parcelas);
 
-                        await tx.contaReceber.create({
+                        const parcelasCriar = [];
 
-                            data: {
+                        for (
+                            let i = 1;
+                            i <= Number(parcelas);
+                            i++
+                        ) {
+
+                            const vencimento =
+                                new Date();
+
+                            vencimento.setMonth(
+                                vencimento.getMonth() + i
+                            );
+
+                            parcelasCriar.push({
 
                                 vendaId:
                                     novaVenda.vendaid,
@@ -276,13 +273,59 @@ const criar = async (req, res) => {
                                     `Parcela ${i}/${parcelas}`,
 
                                 valor:
-                                    Number(
-                                        valorParcela
-                                    ),
+                                    Number(valorParcela),
 
                                 vencimento,
 
-                                status: "PENDENTE"
+                                status:
+                                    "PENDENTE"
+
+                            });
+
+                        }
+
+                        await tx.contaReceber.createMany({
+
+                            data:
+                                parcelasCriar
+
+                        });
+
+                    }
+
+                    /* ========================= */
+                    /* COMISSÃO */
+                    /* ========================= */
+
+                    if (
+                        vendedor &&
+                        vendedor.comissaoPercentual
+                    ) {
+
+                        const valorComissao =
+                            (
+                                Number(valorVenda)
+                                *
+                                Number(
+                                    vendedor.comissaoPercentual
+                                )
+                            ) / 100;
+
+                        await tx.comissao.create({
+
+                            data: {
+
+                                vendaId:
+                                    novaVenda.vendaid,
+
+                                vendedorId:
+                                    vendedor.usuarioid,
+
+                                percentual:
+                                    vendedor.comissaoPercentual,
+
+                                valor:
+                                    valorComissao
 
                             }
 
@@ -290,51 +333,13 @@ const criar = async (req, res) => {
 
                     }
 
-                }
+                    return novaVenda;
 
-                /* ========================= */
-                /* COMISSÃO */
-                /* ========================= */
+                },
+                {
+                    timeout: 30000
+                });
 
-                if (
-                    vendedor &&
-                    vendedor.comissaoPercentual
-                ) {
-
-                    const valorComissao =
-                        (
-                            Number(valorVenda)
-                            *
-                            Number(
-                                vendedor.comissaoPercentual
-                            )
-                        ) / 100;
-
-                    await tx.comissao.create({
-
-                        data: {
-
-                            vendaId:
-                                novaVenda.vendaid,
-
-                            vendedorId:
-                                vendedor.usuarioid,
-
-                            percentual:
-                                vendedor.comissaoPercentual,
-
-                            valor:
-                                valorComissao
-
-                        }
-
-                    });
-
-                }
-
-                return novaVenda;
-
-            });
 
         return res.json(venda);
 
@@ -616,67 +621,71 @@ const cancelar = async (req, res) => {
 
         }
 
-        await prisma.$transaction(async (tx) => {
+        await prisma.$transaction(
+            async (tx) => {
 
-            /* VEÍCULO VOLTA DISPONÍVEL */
+                /* VEÍCULO VOLTA DISPONÍVEL */
 
-            await tx.veiculo.update({
+                await tx.veiculo.update({
 
-                where: {
+                    where: {
 
-                    veiculoid:
-                        venda.veiculoId
+                        veiculoid:
+                            venda.veiculoId
 
-                },
+                    },
 
-                data: {
+                    data: {
 
-                    status: "DISPONIVEL"
+                        status: "DISPONIVEL"
 
-                }
+                    }
 
+                });
+
+                /* REMOVE CONTAS */
+
+                await tx.contaReceber.deleteMany({
+
+                    where: {
+
+                        vendaId:
+                            venda.vendaid
+
+                    }
+
+                });
+
+                /* REMOVE COMISSÃO */
+
+                await tx.comissao.deleteMany({
+
+                    where: {
+
+                        vendaId:
+                            venda.vendaid
+
+                    }
+
+                });
+
+                /* REMOVE VENDA */
+
+                await tx.venda.delete({
+
+                    where: {
+
+                        vendaid:
+                            venda.vendaid
+
+                    }
+
+                });
+
+            },
+            {
+                timeout: 30000
             });
-
-            /* REMOVE CONTAS */
-
-            await tx.contaReceber.deleteMany({
-
-                where: {
-
-                    vendaId:
-                        venda.vendaid
-
-                }
-
-            });
-
-            /* REMOVE COMISSÃO */
-
-            await tx.comissao.deleteMany({
-
-                where: {
-
-                    vendaId:
-                        venda.vendaid
-
-                }
-
-            });
-
-            /* REMOVE VENDA */
-
-            await tx.venda.delete({
-
-                where: {
-
-                    vendaid:
-                        venda.vendaid
-
-                }
-
-            });
-
-        });
 
         return res.json({
 
