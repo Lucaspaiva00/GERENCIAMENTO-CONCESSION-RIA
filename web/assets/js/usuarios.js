@@ -1,5 +1,5 @@
 const API =
-    "http://localhost:3001";
+    API_BASE_URL;
 
 const token =
     localStorage.getItem("token");
