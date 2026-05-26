@@ -389,34 +389,157 @@ export default {
 
     async termoResponsabilidade(req: Request, res: Response) {
         try {
+
             const { vendaId } = req.params;
-            const venda = await buscarVenda(vendaId, req.usuario.lojaId);
+
+            const venda =
+                await buscarVenda(
+                    vendaId,
+                    req.usuario.lojaId
+                );
 
             if (!venda) {
-                return res.status(404).json({ error: "Venda não encontrada" });
+                return res.status(404).json({
+                    error: "Venda não encontrada"
+                });
             }
 
-            const doc = criarPdf(res, `termo-responsabilidade-${venda.vendaid}`);
-
-            titulo(doc, "TERMO DE RESPONSABILIDADE");
-            doc.fontSize(11)
-                .font("Helvetica")
-                .text(
-                    `Eu, ${venda.cliente.nome}, CPF ${venda.cliente.cpf || "-"}, declaro que recebi o veículo ${venda.veiculo.titulo}, placa ${venda.veiculo.placa || "-"}, estando ciente das condições gerais do automóvel.`,
-                    { align: "justify" }
+            const doc =
+                criarPdf(
+                    res,
+                    `termo-responsabilidade-${venda.vendaid}`
                 );
-            doc.moveDown();
+
+            /* =========================
+               CABEÇALHO
+            ========================= */
+
+            doc
+                .font("Helvetica-Bold")
+                .fontSize(20)
+                .text(
+                    venda.loja.nome.toUpperCase(),
+                    {
+                        align: "center"
+                    }
+                );
+
+            doc
+                .font("Helvetica")
+                .fontSize(10)
+                .text(
+                    `Telefone: ${venda.loja.telefone || "-"
+                    }`,
+                    {
+                        align: "center"
+                    }
+                );
+
+            doc.moveDown(2);
+
+            /* =========================
+               TITULO
+            ========================= */
+
+            doc
+                .font("Helvetica-Bold")
+                .fontSize(18)
+                .text(
+                    "TERMO DE RESPONSABILIDADE",
+                    {
+                        align: "center"
+                    }
+                );
+
             doc.text(
-                "Declaro também que realizei conferência visual e mecânica do veículo antes da retirada.",
-                { align: "justify" }
+                "SOBRE MULTAS",
+                {
+                    align: "center"
+                }
             );
-            doc.moveDown(6);
-            doc.text("__________________________________", { align: "center" });
-            doc.text("Assinatura comprador", { align: "center" });
+
+            doc.moveDown(2);
+
+            /* =========================
+               TEXTO
+            ========================= */
+
+            doc
+                .font("Helvetica")
+                .fontSize(11)
+                .text(
+                    `Eu, ${venda.cliente.nome}, portador(a) da cédula de identidade RG nº ${venda.cliente.rg || "-"
+                    } e do CPF/MF sob o nº ${venda.cliente.cpf || "-"
+                    }, residente e domiciliado(a) em ${venda.cliente.endereco || "-"
+                    } ${venda.cliente.numero || ""
+                    }, bairro ${venda.cliente.bairro || "-"
+                    }, cidade de ${venda.cliente.cidade || "-"
+                    } - ${venda.cliente.estado || "-"
+                    }, CEP ${venda.cliente.cep || "-"
+                    }, declaro para os devidos fins civis, administrativos e criminais que, a partir desta data, me responsabilizo por qualquer ato praticado na condução do veículo de marca ${venda.veiculo.marca
+                    } ${venda.veiculo.modelo}, Ano ${venda.veiculo.ano}${venda.veiculo.anoModelo
+                        ? `/${venda.veiculo.anoModelo}`
+                        : ""
+                    }, Placa ${venda.veiculo.placa || "-"
+                    }, RENAVAM ${venda.veiculo.renavam || "-"
+                    }, Cor ${venda.veiculo.cor || "-"
+                    }, CHASSI ${venda.veiculo.chassi || "-"
+                    }, bem como pela propriedade do mesmo, adquirido de ${venda.loja.nome}.`,
+                    {
+                        align: "justify"
+                    }
+                );
+
+            doc.moveDown();
+
+            doc.text(
+                "O presente termo isenta o vendedor das responsabilidades inerentes às infrações de trânsito cometidas após a data de assinatura deste documento.",
+                {
+                    align: "justify"
+                }
+            );
+
+            doc.moveDown(3);
+
+            doc.text(
+                `${venda.cliente.cidade || "Jaguariúna"}, ${dataBR(
+                    venda.createdAt
+                )}.`,
+                {
+                    align: "left"
+                }
+            );
+
+            doc.moveDown(5);
+
+            /* =========================
+               ASSINATURA
+            ========================= */
+
+            doc.text(
+                "________________________________________",
+                {
+                    align: "center"
+                }
+            );
+
+            doc.text(
+                venda.cliente.nome,
+                {
+                    align: "center"
+                }
+            );
+
             doc.end();
+
         } catch (error) {
+
             console.log(error);
-            return res.status(500).json({ error: "Erro ao gerar termo" });
+
+            return res.status(500).json({
+                error: "Erro ao gerar termo"
+            });
+
         }
     },
 
