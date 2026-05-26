@@ -347,7 +347,7 @@ export default {
             });
 
         }
-    }
+    },
 
     async termoEntrega(req: Request, res: Response) {
         try {
