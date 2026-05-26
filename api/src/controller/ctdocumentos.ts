@@ -148,36 +148,169 @@ export default {
 
     async reciboPagamento(req: Request, res: Response) {
         try {
+
             const { vendaId } = req.params;
-            const venda = await buscarVenda(vendaId, req.usuario.lojaId);
+
+            const venda =
+                await buscarVenda(
+                    vendaId,
+                    req.usuario.lojaId
+                );
 
             if (!venda) {
-                return res.status(404).json({ error: "Venda não encontrada" });
+                return res.status(404).json({
+                    error: "Venda não encontrada"
+                });
             }
 
-            const doc = criarPdf(res, `recibo-${venda.vendaid}`);
+            const doc =
+                criarPdf(
+                    res,
+                    `recibo-${venda.vendaid}`
+                );
 
-            titulo(doc, "RECIBO DE PAGAMENTO");
-            doc.fontSize(11)
+            /*
+            CABEÇALHO
+            */
+
+            doc.fontSize(18)
+                .font("Helvetica-Bold")
+                .text(
+                    venda.loja.nome.toUpperCase(),
+                    {
+                        align: "center"
+                    }
+                );
+
+            doc.fontSize(10)
                 .font("Helvetica")
                 .text(
-                    `Recebemos de ${venda.cliente.nome}, CPF ${venda.cliente.cpf || "-"}, o valor de ${moeda(venda.entrada || venda.valorVenda)}, referente à compra do veículo ${venda.veiculo.titulo}, placa ${venda.veiculo.placa || "-"} realizada em ${dataBR(venda.createdAt)}.`,
-                    { align: "justify" }
+                    `${venda.cliente.endereco || ""}`,
+                    {
+                        align: "center"
+                    }
+                );
+
+            doc.text(
+                `Telefone: ${venda.loja.telefone || "-"}`,
+                {
+                    align: "center"
+                }
+            );
+
+            doc.moveDown();
+
+            /*
+            TÍTULO
+            */
+
+            doc.fontSize(20)
+                .font("Helvetica-Bold")
+                .text(
+                    "RECIBO",
+                    {
+                        align: "center"
+                    }
                 );
 
             doc.moveDown();
-            linha(doc, "Valor venda", moeda(venda.valorVenda));
-            linha(doc, "Valor recebido", moeda(venda.entrada || venda.valorVenda));
-            linha(doc, "Forma pagamento", venda.formaPagamento);
-            doc.moveDown(5);
-            doc.text("__________________________________", { align: "center" });
-            doc.text("Assinatura responsável", { align: "center" });
+
+            /*
+            VALOR
+            */
+
+            doc.fontSize(16)
+                .font("Helvetica-Bold")
+                .text(
+                    moeda(venda.valorVenda),
+                    {
+                        align: "right"
+                    }
+                );
+
+            doc.moveDown(2);
+
+            /*
+            TEXTO PRINCIPAL
+            */
+
+            doc.fontSize(11)
+                .font("Helvetica")
+                .text(
+                    `Recebi de ${venda.cliente.nome}, inscrito(a) no CPF/MF ${venda.cliente.cpf || "-"
+                    }, a importância de ${moeda(venda.valorVenda)}, referente à aquisição do veículo ${venda.veiculo.marca
+                    } ${venda.veiculo.modelo}, ano ${venda.veiculo.ano}, cor ${venda.veiculo.cor || "-"
+                    }, RENAVAM ${venda.veiculo.renavam || "-"
+                    }, CHASSI ${venda.veiculo.chassi || "-"
+                    }, tendo sido o pagamento realizado da seguinte forma:`,
+                    {
+                        align: "justify"
+                    }
+                );
+
+            doc.moveDown();
+
+            /*
+            FORMA PAGAMENTO
+            */
+
+            doc.font("Helvetica-Bold")
+                .text("Forma de pagamento:");
+
+            doc.font("Helvetica")
+                .text(
+                    venda.observacoes ||
+                    venda.formaPagamento ||
+                    "-"
+                );
+
+            doc.moveDown(2);
+
+            /*
+            DATA
+            */
+
+            doc.text(
+                `Jaguariúna, ${dataBR(
+                    venda.createdAt
+                )}.`,
+                {
+                    align: "left"
+                }
+            );
+
+            doc.moveDown(4);
+
+            /*
+            ASSINATURA
+            */
+
+            doc.text(
+                "_________________________________________",
+                {
+                    align: "center"
+                }
+            );
+
+            doc.text(
+                venda.loja.nome,
+                {
+                    align: "center"
+                }
+            );
+
             doc.end();
+
         } catch (error) {
+
             console.log(error);
-            return res.status(500).json({ error: "Erro ao gerar recibo" });
+
+            return res.status(500).json({
+                error: "Erro ao gerar recibo"
+            });
+
         }
-    },
+    }
 
     async termoEntrega(req: Request, res: Response) {
         try {
