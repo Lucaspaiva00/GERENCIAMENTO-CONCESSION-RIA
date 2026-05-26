@@ -151,11 +151,10 @@ export default {
 
             const { vendaId } = req.params;
 
-            const venda =
-                await buscarVenda(
-                    vendaId,
-                    req.usuario.lojaId
-                );
+            const venda = await buscarVenda(
+                vendaId,
+                req.usuario.lojaId
+            );
 
             if (!venda) {
                 return res.status(404).json({
@@ -163,18 +162,18 @@ export default {
                 });
             }
 
-            const doc =
-                criarPdf(
-                    res,
-                    `recibo-${venda.vendaid}`
-                );
+            const doc = criarPdf(
+                res,
+                `recibo-${venda.vendaid}`
+            );
 
-            /*
-            CABEÇALHO
-            */
+            /* =========================
+               CABEÇALHO EMPRESA
+            ========================= */
 
-            doc.fontSize(18)
+            doc
                 .font("Helvetica-Bold")
+                .fontSize(20)
                 .text(
                     venda.loja.nome.toUpperCase(),
                     {
@@ -182,32 +181,56 @@ export default {
                     }
                 );
 
-            doc.fontSize(10)
+            doc
                 .font("Helvetica")
+                .fontSize(10)
                 .text(
-                    `${venda.cliente.endereco || ""}`,
+                    venda.cliente.endereco
+                        ? `${venda.cliente.endereco}${venda.cliente.numero ? `, ${venda.cliente.numero}` : ""
+                        }`
+                        : "",
                     {
                         align: "center"
                     }
                 );
 
             doc.text(
-                `Telefone: ${venda.loja.telefone || "-"}`,
+                venda.cliente.bairro || "",
                 {
                     align: "center"
                 }
             );
 
-            doc.moveDown();
+            doc.text(
+                `${venda.cliente.cidade || ""}${venda.cliente.estado
+                    ? ` - ${venda.cliente.estado}`
+                    : ""
+                }`,
+                {
+                    align: "center"
+                }
+            );
 
-            /*
-            TÍTULO
-            */
+            doc.text(
+                `CEP: ${venda.cliente.cep || "-"
+                }   Tel: ${venda.loja.telefone || "-"
+                }`,
+                {
+                    align: "center"
+                }
+            );
 
-            doc.fontSize(20)
+            doc.moveDown(2);
+
+            /* =========================
+               TITULO
+            ========================= */
+
+            doc
                 .font("Helvetica-Bold")
+                .fontSize(22)
                 .text(
-                    "RECIBO",
+                    "R E C I B O",
                     {
                         align: "center"
                     }
@@ -215,33 +238,35 @@ export default {
 
             doc.moveDown();
 
-            /*
-            VALOR
-            */
+            /* =========================
+               VALOR
+            ========================= */
 
-            doc.fontSize(16)
+            doc
                 .font("Helvetica-Bold")
+                .fontSize(18)
                 .text(
                     moeda(venda.valorVenda),
                     {
-                        align: "right"
+                        align: "left"
                     }
                 );
 
-            doc.moveDown(2);
+            doc.moveDown();
 
-            /*
-            TEXTO PRINCIPAL
-            */
+            /* =========================
+               TEXTO PRINCIPAL
+            ========================= */
 
-            doc.fontSize(11)
+            doc
                 .font("Helvetica")
+                .fontSize(11)
                 .text(
                     `Recebi de ${venda.cliente.nome}, inscrito(a) no CPF/MF ${venda.cliente.cpf || "-"
                     }, a importância de ${moeda(venda.valorVenda)}, referente à aquisição do veículo ${venda.veiculo.marca
-                    } ${venda.veiculo.modelo}, ano ${venda.veiculo.ano}, cor ${venda.veiculo.cor || "-"
-                    }, RENAVAM ${venda.veiculo.renavam || "-"
-                    }, CHASSI ${venda.veiculo.chassi || "-"
+                    } ${venda.veiculo.modelo}, Ano ${venda.veiculo.ano}, Cor ${venda.veiculo.cor || "-"
+                    }, Renavam ${venda.veiculo.renavam || "-"
+                    }, Chassi ${venda.veiculo.chassi || "-"
                     }, tendo sido o pagamento realizado da seguinte forma:`,
                     {
                         align: "justify"
@@ -250,30 +275,42 @@ export default {
 
             doc.moveDown();
 
-            /*
-            FORMA PAGAMENTO
-            */
+            /* =========================
+               PAGAMENTO
+            ========================= */
 
-            doc.font("Helvetica-Bold")
-                .text("Forma de pagamento:");
+            doc
+                .font("Helvetica")
+                .fontSize(11);
 
-            doc.font("Helvetica")
-                .text(
-                    venda.observacoes ||
-                    venda.formaPagamento ||
-                    "-"
+            if (venda.observacoes) {
+
+                const linhas =
+                    venda.observacoes
+                        .split("\n")
+                        .filter(Boolean);
+
+                linhas.forEach(linha => {
+                    doc.text(`- ${linha}`);
+                });
+
+            } else {
+
+                doc.text(
+                    `- ${moeda(venda.entrada || venda.valorVenda)} através de ${venda.formaPagamento || "pagamento informado"
+                    }.`
                 );
+
+            }
 
             doc.moveDown(2);
 
-            /*
-            DATA
-            */
+            /* =========================
+               DATA
+            ========================= */
 
             doc.text(
-                `Jaguariúna, ${dataBR(
-                    venda.createdAt
-                )}.`,
+                `${venda.cliente.cidade || "Jaguariúna"}, ${dataBR(venda.createdAt)}.`,
                 {
                     align: "left"
                 }
@@ -281,9 +318,9 @@ export default {
 
             doc.moveDown(4);
 
-            /*
-            ASSINATURA
-            */
+            /* =========================
+               ASSINATURA
+            ========================= */
 
             doc.text(
                 "_________________________________________",
