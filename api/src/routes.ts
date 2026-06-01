@@ -10,6 +10,7 @@ import comissao from "./controller/ctcomissao";
 import clientes from "./controller/ctclientes";
 import documentos from "./controller/ctdocumentos";
 import auth from "./middlewares/auth";
+import lojas from "./controller/ctlojas";
 
 const routes = Router();
 
@@ -76,5 +77,7 @@ routes.get(
 );
 
 routes.get("/comissoes", auth, comissao.listar);
+
+routes.get("/lojas", lojas.listar);
 
 export default routes;
