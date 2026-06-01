@@ -46,6 +46,7 @@ routes.get("/vendas", auth, vendas.listar);
 routes.get("/vendas/:id", auth, vendas.detalhar);
 routes.delete("/vendas/:id", auth, vendas.cancelar);
 
+routes.delete("/admin/vendas/:id", auth, vendas.cancelarAdmin);
 routes.get("/dashboard", auth, dashboard.indicadores);
 
 routes.post("/historico", auth, historico.cadastrar);

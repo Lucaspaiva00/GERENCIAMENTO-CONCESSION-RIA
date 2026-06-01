@@ -297,4 +297,73 @@ const cancelar = async (req: Request, res: Response) => {
     }
 };
 
-export default { criar, listar, detalhar, cancelar };
+const cancelarAdmin = async (req: Request, res: Response) => {
+    try {
+
+        if (req.usuario.tipo !== "ADMIN") {
+            return res.status(403).json({
+                error: "Acesso negado"
+            });
+        }
+
+        const { id } = req.params;
+
+        const venda = await prisma.venda.findUnique({
+            where: {
+                vendaid: Number(id)
+            }
+        });
+
+        if (!venda) {
+            return res.status(404).json({
+                error: "Venda não encontrada"
+            });
+        }
+
+        await prisma.$transaction(async (tx) => {
+
+            await tx.veiculo.update({
+                where: {
+                    veiculoid: venda.veiculoId
+                },
+                data: {
+                    status: StatusVeiculo.DISPONIVEL
+                }
+            });
+
+            await tx.contaReceber.deleteMany({
+                where: {
+                    vendaId: venda.vendaid
+                }
+            });
+
+            await tx.comissao.deleteMany({
+                where: {
+                    vendaId: venda.vendaid
+                }
+            });
+
+            await tx.venda.delete({
+                where: {
+                    vendaid: venda.vendaid
+                }
+            });
+
+        });
+
+        return res.json({
+            message: "Venda cancelada pelo administrador com sucesso"
+        });
+
+    } catch (error) {
+
+        console.log(error);
+
+        return res.status(500).json({
+            error: "Erro ao cancelar venda"
+        });
+
+    }
+};
+
+export default { criar, listar, detalhar, cancelar, cancelarAdmin };
