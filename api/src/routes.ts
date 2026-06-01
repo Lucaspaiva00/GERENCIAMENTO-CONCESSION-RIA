@@ -79,5 +79,5 @@ routes.get(
 routes.get("/comissoes", auth, comissao.listar);
 
 routes.get("/lojas", lojas.listar);
-
+routes.get("/lojas/:id", lojas.detalhar);
 export default routes;
