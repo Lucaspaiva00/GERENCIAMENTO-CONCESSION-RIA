@@ -34,6 +34,7 @@ routes.get("/veiculos/cards", auth, veiculos.listar);
 routes.get("/veiculos/:id", auth, veiculos.detalhar);
 routes.put("/veiculos/:id", auth, veiculos.atualizar);
 routes.delete("/veiculos/:id", auth, veiculos.deletar);
+routes.delete("/veiculos/:id", auth, veiculos.deletarAdmin);
 
 routes.post("/financeiro", auth, financeiro.cadastrar);
 routes.get("/financeiro", auth, financeiro.listar);

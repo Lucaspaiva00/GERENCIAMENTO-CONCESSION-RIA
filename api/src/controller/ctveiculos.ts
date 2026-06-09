@@ -291,5 +291,48 @@ export default {
                 error: "Erro ao deletar veículo"
             });
         }
+    },
+    async deletarAdmin(req: Request, res: Response) {
+        try {
+
+            if (req.usuario.tipo !== "ADMIN") {
+                return res.status(403).json({
+                    error: "Acesso negado"
+                });
+            }
+
+            const { id } = req.params;
+
+            const veiculoExiste = await prisma.veiculo.findUnique({
+                where: {
+                    veiculoid: Number(id)
+                }
+            });
+
+            if (!veiculoExiste) {
+                return res.status(404).json({
+                    error: "Veículo não encontrado"
+                });
+            }
+
+            await prisma.veiculo.delete({
+                where: {
+                    veiculoid: Number(id)
+                }
+            });
+
+            return res.json({
+                message: "Veículo deletado com sucesso"
+            });
+
+        } catch (error) {
+
+            console.log(error);
+
+            return res.status(500).json({
+                error: "Erro ao deletar veículo"
+            });
+
+        }
     }
 };
