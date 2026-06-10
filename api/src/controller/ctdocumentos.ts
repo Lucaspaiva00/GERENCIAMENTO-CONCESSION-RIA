@@ -351,42 +351,226 @@ export default {
 
     async termoEntrega(req: Request, res: Response) {
         try {
+
             const { vendaId } = req.params;
-            const venda = await buscarVenda(vendaId, req.usuario.lojaId);
+
+            const venda =
+                await buscarVenda(
+                    vendaId,
+                    req.usuario.lojaId
+                );
 
             if (!venda) {
-                return res.status(404).json({ error: "Venda não encontrada" });
+                return res.status(404).json({
+                    error: "Venda não encontrada"
+                });
             }
 
-            const doc = criarPdf(res, `termo-entrega-${venda.vendaid}`);
+            const doc =
+                criarPdf(
+                    res,
+                    `termo-entrega-${venda.vendaid}`
+                );
 
-            titulo(doc, "TERMO DE ENTREGA");
-            linha(doc, "Cliente", venda.cliente.nome);
-            linha(doc, "Veículo", venda.veiculo.titulo);
-            linha(doc, "Placa", venda.veiculo.placa);
-            linha(doc, "Data entrega", dataBR(new Date()));
+            /* =========================
+               CABEÇALHO
+            ========================= */
+
+            doc
+                .font("Helvetica-Bold")
+                .fontSize(18)
+                .text(
+                    venda.loja.nome.toUpperCase(),
+                    {
+                        align: "center"
+                    }
+                );
+
+            doc
+                .font("Helvetica")
+                .fontSize(10)
+                .text(
+                    `Telefone: ${venda.loja.telefone || "-"} `,
+                    {
+                        align: "center"
+                    }
+                );
+
+            doc.moveDown(2);
+
+            /* =========================
+               DADOS VEÍCULO
+            ========================= */
+
+            doc
+                .font("Helvetica-Bold")
+                .fontSize(16)
+                .text(
+                    "TERMO DE ENTREGA E GARANTIA",
+                    {
+                        align: "center"
+                    }
+                );
+
             doc.moveDown();
 
-            subtitulo(doc, "CHECKLIST");
-            doc.font("Helvetica").fontSize(10);
-            doc.text(`( ${venda.veiculo.possuiManual ? "X" : " "} ) Manual`);
+            subtitulo(doc, "DADOS DO VEÍCULO");
+
+            linha(doc, "Marca", venda.veiculo.marca);
+            linha(doc, "Modelo", venda.veiculo.modelo);
+            linha(
+                doc,
+                "Ano",
+                `${venda.veiculo.ano}/${venda.veiculo.anoModelo}`
+            );
+            linha(doc, "Cor", venda.veiculo.cor);
+            linha(doc, "Placa", venda.veiculo.placa);
+            linha(doc, "RENAVAM", venda.veiculo.renavam);
+            linha(doc, "Chassi", venda.veiculo.chassi);
+            linha(doc, "Quilometragem", `${venda.veiculo.km} KM`);
+
+            doc.moveDown();
+
+            /* =========================
+               GARANTIA
+            ========================= */
+
+            subtitulo(doc, "TERMO DE GARANTIA");
+
+            doc
+                .font("Helvetica")
+                .fontSize(10)
+                .text(
+                    "1. O veículo acima descrito possui garantia de motor e câmbio pelo prazo de 90 (noventa) dias a partir da data da venda."
+                );
+
+            doc.moveDown(0.5);
+
+            doc.text(
+                "2. A garantia não cobre itens de desgaste natural, revisões periódicas, regulagens, freios, embreagem, suspensão, pneus, bateria, lâmpadas ou quaisquer componentes consumíveis."
+            );
+
+            doc.moveDown(0.5);
+
+            doc.text(
+                "3. A garantia será automaticamente cancelada em casos de mau uso, modificações não autorizadas, utilização inadequada ou manutenção realizada por terceiros sem autorização."
+            );
+
+            doc.moveDown();
+
+            /* =========================
+               DECLARAÇÃO
+            ========================= */
+
+            subtitulo(
+                doc,
+                "DECLARAÇÃO DE RECEBIMENTO"
+            );
+
+            doc
+                .font("Helvetica")
+                .fontSize(10)
+                .text(
+                    `Declaro que recebi nesta data o veículo acima descrito, tendo realizado conferência visual, teste de funcionamento e inspeção geral de suas condições. Declaro ainda estar ciente das condições do veículo e das informações recebidas sobre sua utilização e manutenção.`,
+                    {
+                        align: "justify"
+                    }
+                );
+
+            doc.moveDown();
+
+            /* =========================
+               CHECKLIST
+            ========================= */
+
+            subtitulo(doc, "RECEBI NESTE ATO");
+
             doc.text(
                 `( ${venda.veiculo.possuiChaveReserva ? "X" : " "} ) Chave reserva`
             );
-            doc.text("(   ) Documento");
-            doc.text("(   ) Revisão entregue");
-            doc.text("(   ) Pneus conferidos");
-            doc.text("(   ) Óleo conferido");
-            doc.moveDown(5);
-            doc.text("__________________________________", { align: "center" });
-            doc.text("Assinatura comprador", { align: "center" });
+
+            doc.text(
+                `( ${venda.veiculo.possuiManual ? "X" : " "} ) Manual do veículo`
+            );
+
+            doc.text("( X ) CRLV / Documento");
+
+            doc.text(
+                "( X ) Recibo de compra e venda preenchido"
+            );
+
+            doc.moveDown();
+
+            linha(
+                doc,
+                "Data da entrega",
+                dataBR(venda.createdAt)
+            );
+
+            doc.moveDown(4);
+
+            /* =========================
+               ASSINATURAS
+            ========================= */
+
+            doc.text(
+                "________________________________________",
+                {
+                    align: "center"
+                }
+            );
+
+            doc.text(
+                venda.cliente.nome,
+                {
+                    align: "center"
+                }
+            );
+
+            doc.text(
+                "Cliente",
+                {
+                    align: "center"
+                }
+            );
+
+            doc.moveDown(4);
+
+            doc.text(
+                "________________________________________",
+                {
+                    align: "center"
+                }
+            );
+
+            doc.text(
+                venda.vendedor
+                    ? venda.vendedor.nome
+                    : venda.loja.nome,
+                {
+                    align: "center"
+                }
+            );
+
+            doc.text(
+                "Responsável pela entrega",
+                {
+                    align: "center"
+                }
+            );
+
             doc.end();
+
         } catch (error) {
+
             console.log(error);
-            return res.status(500).json({ error: "Erro ao gerar termo" });
+
+            return res.status(500).json({
+                error: "Erro ao gerar termo"
+            });
+
         }
     },
-
     async termoResponsabilidade(req: Request, res: Response) {
         try {
 
