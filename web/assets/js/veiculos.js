@@ -1033,7 +1033,7 @@ async function deletarHistorico(id) {
 
     const confirmar =
         confirm(
-            "Deseja excluir este histórico?"
+            "Deseja excluir este item do histórico?"
         );
 
     if (!confirmar) return;
@@ -1059,7 +1059,7 @@ async function deletarHistorico(id) {
 
             alert(
                 result.error ||
-                "Erro ao excluir histórico"
+                "Erro ao excluir esse item do histórico"
             );
 
             return;
@@ -1075,7 +1075,7 @@ async function deletarHistorico(id) {
         console.log(error);
 
         alert(
-            "Erro ao excluir histórico"
+            "Erro ao excluir esse item do histórico"
         );
 
     }
