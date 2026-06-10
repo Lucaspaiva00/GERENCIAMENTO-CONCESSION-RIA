@@ -1154,7 +1154,7 @@ formHistorico.addEventListener(
 
                 alert(
                     result.error ||
-                    "Erro ao cadastrar histórico"
+                    "Erro ao atualizar o histórico"
                 );
 
                 return;
@@ -1174,7 +1174,7 @@ formHistorico.addEventListener(
             );
 
             alert(
-                "Histórico cadastrado com sucesso"
+                "Histórico atualizado com sucesso"
             );
 
         } catch (error) {
@@ -1182,7 +1182,7 @@ formHistorico.addEventListener(
             console.log(error);
 
             alert(
-                "Erro ao cadastrar histórico"
+                "Erro ao atualizar o histórico"
             );
 
         }
