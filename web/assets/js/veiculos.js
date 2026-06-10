@@ -875,6 +875,8 @@ form.addEventListener(
 let veiculoHistoricoAtual =
     null;
 
+let historicoEditando = null;
+
 async function verHistorico(id) {
 
     veiculoHistoricoAtual =
@@ -956,8 +958,40 @@ async function carregarHistorico(id) {
                     </div>
 
                     <p>
-                        ${item.descricao}
+                    ${item.descricao}
                     </p>
+
+                    <div
+                        style="
+                            margin-top:10px;
+                            display:flex;
+                            gap:10px;
+                        "
+                    >
+
+                        <button
+                            class="btn-action btn-edit"
+                            onclick="editarHistorico(
+                                ${item.historicoid},
+                                '${item.descricao.replace(/'/g, "\\'")}',
+                                ${item.valor || 0}
+                            )">
+
+                            <i class="fa-solid fa-pen"></i>
+
+                        </button>
+
+                        <button
+                            class="btn-action btn-delete"
+                            onclick="deletarHistorico(
+                                ${item.historicoid}
+                            )">
+
+                            <i class="fa-solid fa-trash"></i>
+
+                        </button>
+
+                    </div>
 
                 </div>
 
@@ -971,6 +1005,77 @@ async function carregarHistorico(id) {
 
         alert(
             "Erro ao abrir histórico"
+        );
+
+    }
+
+}
+
+function editarHistorico(
+    id,
+    descricao,
+    valor
+) {
+
+    historicoEditando = id;
+
+    document.getElementById(
+        "novaDescricaoHistorico"
+    ).value = descricao;
+
+    document.getElementById(
+        "novoValorHistorico"
+    ).value = valor || "";
+
+}
+
+async function deletarHistorico(id) {
+
+    const confirmar =
+        confirm(
+            "Deseja excluir este histórico?"
+        );
+
+    if (!confirmar) return;
+
+    try {
+
+        const response =
+            await fetch(
+                `${API}/historico/${id}`,
+                {
+                    method: "DELETE",
+                    headers: {
+                        Authorization:
+                            `Bearer ${token}`
+                    }
+                }
+            );
+
+        const result =
+            await response.json();
+
+        if (!response.ok || result.error) {
+
+            alert(
+                result.error ||
+                "Erro ao excluir histórico"
+            );
+
+            return;
+
+        }
+
+        await carregarHistorico(
+            veiculoHistoricoAtual
+        );
+
+    } catch (error) {
+
+        console.log(error);
+
+        alert(
+            "Erro ao excluir histórico"
         );
 
     }
@@ -1001,13 +1106,21 @@ formHistorico.addEventListener(
             ).value;
 
         try {
+            const url =
+                historicoEditando
+                    ? `${API}/historico/${historicoEditando}`
+                    : `${API}/historico`;
 
+            const method =
+                historicoEditando
+                    ? "PUT"
+                    : "POST";
             const response =
                 await fetch(
-                    `${API}/historico`,
+                    url,
                     {
 
-                        method: "POST",
+                        method,
 
                         headers: {
 

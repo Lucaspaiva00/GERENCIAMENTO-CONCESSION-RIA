@@ -53,6 +53,7 @@ routes.get("/dashboard", auth, dashboard.indicadores);
 routes.post("/historico", auth, historico.cadastrar);
 routes.get("/historico/:veiculoId", auth, historico.listar);
 routes.delete("/historico/:id", auth, historico.deletar);
+routes.put("/historico/:id", auth, historico.atualizar);
 
 routes.post("/contas-receber", auth, contasReceber.cadastrar);
 routes.get("/contas-receber", auth, contasReceber.listar);

@@ -71,5 +71,38 @@ export default {
             console.log(error);
             return res.status(500).json(error);
         }
+    },
+
+    async atualizar(req: Request, res: Response) {
+        try {
+
+            const { id } = req.params;
+
+            const { descricao, valor } = req.body;
+
+            const historico =
+                await prisma.historicoVeiculo.update({
+                    where: {
+                        historicoid: Number(id)
+                    },
+                    data: {
+                        descricao,
+                        valor: valor
+                            ? Number(valor)
+                            : null
+                    }
+                });
+
+            return res.json(historico);
+
+        } catch (error) {
+
+            console.log(error);
+
+            return res.status(500).json(error);
+
+        }
     }
 };
+
+
