@@ -366,4 +366,136 @@ const cancelarAdmin = async (req: Request, res: Response) => {
     }
 };
 
-export default { criar, listar, detalhar, cancelar, cancelarAdmin };
+const atualizar = async (req: Request, res: Response) => {
+    try {
+
+        const lojaId = req.usuario.lojaId;
+        const { id } = req.params;
+
+        const {
+            vendedorId,
+            valorVenda,
+            formaPagamento,
+            entrada,
+            parcelas,
+            observacoes
+        } = req.body;
+
+        const venda = await prisma.venda.findFirst({
+            where: {
+                vendaid: Number(id),
+                lojaId
+            },
+            include: {
+                veiculo: true
+            }
+        });
+
+        if (!venda) {
+            return res.status(404).json({
+                error: "Venda não encontrada"
+            });
+        }
+
+        let vendedor = null;
+
+        if (vendedorId) {
+
+            vendedor = await prisma.usuario.findFirst({
+                where: {
+                    usuarioid: Number(vendedorId),
+                    lojaId
+                }
+            });
+
+            if (!vendedor) {
+                return res.status(404).json({
+                    error: "Vendedor não encontrado"
+                });
+            }
+
+        }
+
+        const lucro =
+            Number(valorVenda) -
+            Number(venda.valorCompra);
+
+        await prisma.$transaction(async (tx) => {
+
+            await tx.venda.update({
+                where: {
+                    vendaid: venda.vendaid
+                },
+                data: {
+                    vendedorId:
+                        vendedorId
+                            ? Number(vendedorId)
+                            : null,
+
+                    valorVenda:
+                        Number(valorVenda),
+
+                    lucro,
+
+                    formaPagamento,
+
+                    entrada:
+                        Number(entrada || 0),
+
+                    parcelas:
+                        Number(parcelas || 1),
+
+                    observacoes
+                }
+            });
+
+            await tx.comissao.deleteMany({
+                where: {
+                    vendaId: venda.vendaid
+                }
+            });
+
+            if (
+                vendedor &&
+                vendedor.comissaoPercentual
+            ) {
+
+                const valorComissao =
+                    (
+                        Number(valorVenda) *
+                        Number(vendedor.comissaoPercentual)
+                    ) / 100;
+
+                await tx.comissao.create({
+                    data: {
+                        vendaId: venda.vendaid,
+                        vendedorId: vendedor.usuarioid,
+                        percentual:
+                            vendedor.comissaoPercentual,
+                        valor:
+                            valorComissao
+                    }
+                });
+
+            }
+
+        });
+
+        return res.json({
+            message:
+                "Venda atualizada com sucesso"
+        });
+
+    } catch (error) {
+
+        console.log(error);
+
+        return res.status(500).json({
+            error:
+                "Erro ao atualizar venda"
+        });
+
+    }
+};
+
+export default { criar, listar, detalhar, cancelar, cancelarAdmin, atualizar };

@@ -86,6 +86,7 @@ const btnCards =
     );
 
 let vendasCache = [];
+let vendaEditandoId = null;
 
 /* =========================================
    LOGOUT
@@ -107,6 +108,23 @@ document.getElementById(
 ========================================= */
 
 btnNovaVenda.onclick = () => {
+
+    vendaEditandoId = null;
+
+    formVenda.reset();
+
+    document.querySelector(
+        ".modal-header h2"
+    ).innerText =
+        "Nova venda";
+
+    document.querySelector(
+        "#formVenda button[type='submit']"
+    ).innerHTML =
+        `
+        <i class="fa-solid fa-floppy-disk"></i>
+        Finalizar venda
+        `;
 
     modalVenda.classList.add(
         "active"
@@ -489,7 +507,8 @@ function montarCardVenda(venda) {
             <div class="documentos-grid" style="margin-bottom:12px;">
 
                 <button
-                    class="btn-doc-premium">
+                    class="btn-doc-premium"
+                    onclick="editarVenda(${venda.vendaid})">
 
                     <i class="fa-solid fa-pen"></i>
                     Editar
@@ -807,7 +826,85 @@ formVenda.addEventListener(
 
             const formData =
                 new FormData(formVenda);
+            if (vendaEditandoId) {
 
+                const response =
+                    await fetch(
+                        `${API_URL}/vendas/${vendaEditandoId}`,
+                        {
+                            method: "PUT",
+                            headers: {
+                                "Content-Type":
+                                    "application/json",
+                                Authorization:
+                                    `Bearer ${token}`
+                            },
+                            body: JSON.stringify({
+
+                                vendedorId:
+                                    formData.get("vendedorId")
+                                        ? Number(
+                                            formData.get("vendedorId")
+                                        )
+                                        : null,
+
+                                valorVenda:
+                                    Number(
+                                        formData.get("valorVenda")
+                                    ),
+
+                                formaPagamento:
+                                    formData.get(
+                                        "formaPagamento"
+                                    ),
+
+                                entrada:
+                                    Number(
+                                        formData.get("entrada") || 0
+                                    ),
+
+                                parcelas:
+                                    Number(
+                                        formData.get("parcelas") || 1
+                                    ),
+
+                                observacoes:
+                                    formData.get(
+                                        "observacoes"
+                                    )
+
+                            })
+                        }
+                    );
+
+                const data =
+                    await response.json();
+
+                if (!response.ok) {
+
+                    alert(
+                        data.error ||
+                        "Erro ao atualizar venda"
+                    );
+
+                    return;
+
+                }
+
+                alert(
+                    "Venda atualizada com sucesso"
+                );
+
+                vendaEditandoId = null;
+
+                modalVenda.classList.remove(
+                    "active"
+                );
+
+                listarVendas();
+
+                return;
+            }
             /* CLIENTE */
 
             const clienteResponse =
@@ -1172,6 +1269,122 @@ function formatarMoeda(valor) {
                 currency: "BRL"
             }
         );
+
+}
+
+async function editarVenda(vendaId) {
+
+    try {
+
+        const response =
+            await fetch(
+                `${API_URL}/vendas/${vendaId}`,
+                {
+                    headers: {
+                        Authorization:
+                            `Bearer ${token}`
+                    }
+                }
+            );
+
+        const venda =
+            await response.json();
+        const optionExiste =
+            [...selectVeiculos.options]
+                .some(
+                    o => Number(o.value) === venda.veiculoId
+                );
+
+        if (!optionExiste) {
+
+            selectVeiculos.innerHTML += `
+
+        <option
+            value="${venda.veiculoId}">
+
+            ${venda.veiculo.titulo}
+            -
+            ${venda.veiculo.placa || "-"}
+
+        </option>
+
+    `;
+
+        }
+        vendaEditandoId =
+            venda.vendaid;
+
+        const form =
+            formVenda;
+
+        form.clienteNome.value =
+            venda.cliente?.nome || "";
+
+        form.clienteTelefone.value =
+            venda.cliente?.telefone || "";
+
+        form.clienteTelefone2.value =
+            venda.cliente?.telefone2 || "";
+
+        form.rg.value =
+            venda.cliente?.rg || "";
+
+        form.cpf.value =
+            venda.cliente?.cpf || "";
+
+        form.cidade.value =
+            venda.cliente?.cidade || "";
+
+        form.endereco.value =
+            venda.cliente?.endereco || "";
+
+        form.veiculoId.value =
+            venda.veiculoId;
+
+        form.valorVenda.value =
+            venda.valorVenda;
+
+        form.entrada.value =
+            venda.entrada || 0;
+
+        form.parcelas.value =
+            venda.parcelas || 1;
+
+        form.formaPagamento.value =
+            venda.formaPagamento || "PIX";
+
+        form.vendedorId.value =
+            venda.vendedorId || "";
+
+        form.observacoes.value =
+            venda.observacoes || "";
+
+        document.querySelector(
+            ".modal-header h2"
+        ).innerText =
+            "Editar venda";
+
+        document.querySelector(
+            "#formVenda button[type='submit']"
+        ).innerHTML =
+            `
+            <i class="fa-solid fa-floppy-disk"></i>
+            Salvar alterações
+            `;
+
+        modalVenda.classList.add(
+            "active"
+        );
+
+    } catch (error) {
+
+        console.log(error);
+
+        alert(
+            "Erro ao carregar venda"
+        );
+
+    }
 
 }
 
