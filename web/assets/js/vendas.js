@@ -274,7 +274,14 @@ function montarLinhaVenda(venda) {
                         <i class="fa-solid fa-file-signature"></i>
 
                     </button>
+                    <button
+                        class="btn-action btn-delete"
+                        title="Excluir venda"
+                        onclick="excluirVenda(${venda.vendaid})">
 
+                        <i class="fa-solid fa-trash"></i>
+
+                    </button>
                 </div>
 
             </td>
@@ -479,7 +486,27 @@ function montarCardVenda(venda) {
                 </div>
 
             </div>
+            <div class="documentos-grid" style="margin-bottom:12px;">
 
+                <button
+                    class="btn-doc-premium">
+
+                    <i class="fa-solid fa-pen"></i>
+                    Editar
+
+                </button>
+
+                <button
+                    class="btn-doc-premium"
+                    style="background:linear-gradient(135deg,#dc2626,#ef4444)"
+                    onclick="excluirVenda(${venda.vendaid})">
+
+                    <i class="fa-solid fa-trash"></i>
+                    Excluir
+
+                </button>
+
+            </div>
             <!-- DOCUMENTOS -->
 
             <div class="documentos-grid">
@@ -1145,6 +1172,64 @@ function formatarMoeda(valor) {
                 currency: "BRL"
             }
         );
+
+}
+
+/* =========================================
+   EXCLUIR VENDA
+========================================= */
+
+async function excluirVenda(vendaId) {
+
+    const confirmar = confirm(
+        "Deseja realmente excluir esta venda?\n\nO veículo voltará para o estoque."
+    );
+
+    if (!confirmar) return;
+
+    try {
+
+        const response =
+            await fetch(
+                `${API_URL}/vendas/${vendaId}`,
+                {
+                    method: "DELETE",
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (!response.ok) {
+
+            alert(
+                data.error ||
+                "Erro ao excluir venda"
+            );
+
+            return;
+
+        }
+
+        alert(
+            "Venda excluída com sucesso"
+        );
+
+        listarVendas();
+        listarVeiculos();
+
+    } catch (error) {
+
+        console.log(error);
+
+        alert(
+            "Erro ao excluir venda"
+        );
+
+    }
 
 }
 

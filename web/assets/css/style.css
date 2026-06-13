@@ -2044,15 +2044,15 @@ body {
 
 .cards-vendas-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(520px, 1fr));
-    gap: 28px;
-    margin-top: 28px;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 18px;
+    margin-top: 20px;
 }
 
 .venda-card-premium {
     background: white;
     border-radius: 30px;
-    padding: 28px;
+    padding: 18px;
     border: 1px solid #e5e7eb;
     border-top: 6px solid #2563eb;
     box-shadow: 0 15px 40px rgba(15, 23, 42, 0.08);
@@ -2142,7 +2142,7 @@ body {
 .info-card-mini {
     background: #f8fafc;
     border-radius: 18px;
-    padding: 15px;
+    padding: 10px;
     min-width: 0;
 }
 
@@ -2171,7 +2171,7 @@ body {
 
 .valor-premium {
     border-radius: 20px;
-    padding: 18px 12px;
+    padding: 8px;
     text-align: center;
     min-width: 0;
 }
@@ -2179,13 +2179,13 @@ body {
 .valor-premium span {
     display: block;
     margin-bottom: 8px;
-    font-size: 11px;
+    font-size: 8px;
     font-weight: 800;
     text-transform: uppercase;
 }
 
 .valor-premium h3 {
-    font-size: clamp(18px, 1.4vw, 24px);
+    font-size: clamp(16px, 1.3vw, 18px);
     font-weight: 800;
     line-height: 1.1;
     white-space: normal;
@@ -2218,7 +2218,7 @@ body {
     background: white;
     border: 1px solid #e5e7eb;
     border-radius: 18px;
-    padding: 16px;
+    padding: 10px;
     min-width: 0;
 }
 
@@ -2232,7 +2232,7 @@ body {
 }
 
 .extra-box strong {
-    font-size: 16px;
+    font-size: 14px;
     color: #111827;
     overflow-wrap: anywhere;
 }
