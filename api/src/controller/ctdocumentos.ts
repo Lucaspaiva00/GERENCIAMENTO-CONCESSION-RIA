@@ -402,13 +402,6 @@ export default {
                 }
             );
 
-            doc.text(
-                `CEP: ${venda.loja.cep || "-"}   Tel: ${venda.loja.telefone || "-"}`,
-                {
-                    align: "center"
-                }
-            );
-
             doc.moveDown(2);
 
             /* =========================
