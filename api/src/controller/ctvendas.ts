@@ -262,9 +262,9 @@ const listar = async (req: Request, res: Response) => {
 
     }
 };
-
 const detalhar = async (req: Request, res: Response) => {
     try {
+
         const lojaId = req.usuario.lojaId;
         const { id } = req.params;
 
@@ -283,13 +283,56 @@ const detalhar = async (req: Request, res: Response) => {
         });
 
         if (!venda) {
-            return res.status(404).json({ error: "Venda não encontrada" });
+            return res.status(404).json({
+                error: "Venda não encontrada"
+            });
         }
 
-        return res.json(venda);
+        const historicos =
+            await prisma.historicoVeiculo.findMany({
+                where: {
+                    veiculoId: venda.veiculoId
+                }
+            });
+
+        const totalDespesas =
+            historicos.reduce(
+                (acc, item) =>
+                    acc + Number(item.valor || 0),
+                0
+            );
+
+        const lucro =
+            Number(venda.valorVenda || 0) -
+            Number(venda.valorCompra || 0) -
+            totalDespesas;
+
+        if (lucro !== venda.lucro) {
+
+            await prisma.venda.update({
+                where: {
+                    vendaid: venda.vendaid
+                },
+                data: {
+                    lucro
+                }
+            });
+
+        }
+
+        return res.json({
+            ...venda,
+            lucro
+        });
+
     } catch (error) {
+
         console.log(error);
-        return res.status(500).json({ error: "Erro ao detalhar venda" });
+
+        return res.status(500).json({
+            error: "Erro ao detalhar venda"
+        });
+
     }
 };
 
