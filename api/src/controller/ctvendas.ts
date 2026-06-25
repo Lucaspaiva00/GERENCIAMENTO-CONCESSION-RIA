@@ -196,6 +196,7 @@ const listar = async (req: Request, res: Response) => {
         if (dataInicio || dataFim) {
             filtros.createdAt = {};
             if (dataInicio) filtros.createdAt.gte = new Date(String(dataInicio));
+
             if (dataFim) {
                 const dataFinal = new Date(String(dataFim));
                 dataFinal.setHours(23, 59, 59, 999);
@@ -206,7 +207,7 @@ const listar = async (req: Request, res: Response) => {
         if (vendedorId) filtros.vendedorId = Number(vendedorId);
         if (formaPagamento) filtros.formaPagamento = String(formaPagamento);
 
-        const vendas = await prisma.venda.findMany({
+        const vendasBanco = await prisma.venda.findMany({
             where: filtros,
             include: {
                 cliente: true,
@@ -215,13 +216,50 @@ const listar = async (req: Request, res: Response) => {
                 contaRecebers: true,
                 comissao: true
             },
-            orderBy: { vendaid: "desc" }
+            orderBy: {
+                vendaid: "desc"
+            }
         });
 
+        const vendas = await Promise.all(
+            vendasBanco.map(async (venda) => {
+
+                const historicos =
+                    await prisma.historicoVeiculo.findMany({
+                        where: {
+                            veiculoId: venda.veiculoId
+                        }
+                    });
+
+                const totalDespesas =
+                    historicos.reduce(
+                        (acc, item) =>
+                            acc + Number(item.valor || 0),
+                        0
+                    );
+
+                const lucro =
+                    Number(venda.valorVenda || 0) -
+                    Number(venda.valorCompra || 0) -
+                    totalDespesas;
+
+                return {
+                    ...venda,
+                    lucro
+                };
+            })
+        );
+
         return res.json(vendas);
+
     } catch (error) {
+
         console.log(error);
-        return res.status(500).json({ error: "Erro ao listar vendas" });
+
+        return res.status(500).json({
+            error: "Erro ao listar vendas"
+        });
+
     }
 };
 
