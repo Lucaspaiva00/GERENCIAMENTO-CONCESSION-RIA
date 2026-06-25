@@ -446,10 +446,8 @@ const cancelarAdmin = async (req: Request, res: Response) => {
 
     }
 };
-
 const atualizar = async (req: Request, res: Response) => {
     try {
-
         const lojaId = req.usuario.lojaId;
         const { id } = req.params;
 
@@ -459,7 +457,19 @@ const atualizar = async (req: Request, res: Response) => {
             formaPagamento,
             entrada,
             parcelas,
-            observacoes
+            observacoes,
+
+            nome,
+            telefone,
+            telefone2,
+            rg,
+            cpf,
+            cep,
+            endereco,
+            numero,
+            bairro,
+            cidade,
+            estado
         } = req.body;
 
         const venda = await prisma.venda.findFirst({
@@ -468,7 +478,8 @@ const atualizar = async (req: Request, res: Response) => {
                 lojaId
             },
             include: {
-                veiculo: true
+                veiculo: true,
+                cliente: true
             }
         });
 
@@ -481,7 +492,6 @@ const atualizar = async (req: Request, res: Response) => {
         let vendedor = null;
 
         if (vendedorId) {
-
             vendedor = await prisma.usuario.findFirst({
                 where: {
                     usuarioid: Number(vendedorId),
@@ -494,38 +504,55 @@ const atualizar = async (req: Request, res: Response) => {
                     error: "Vendedor não encontrado"
                 });
             }
-
         }
 
+        const historicos = await prisma.historicoVeiculo.findMany({
+            where: {
+                veiculoId: venda.veiculoId
+            }
+        });
+
+        const totalDespesas = historicos.reduce(
+            (acc, item) => acc + Number(item.valor || 0),
+            0
+        );
+
         const lucro =
-            Number(valorVenda) -
-            Number(venda.valorCompra);
+            Number(valorVenda || 0) -
+            Number(venda.valorCompra || 0) -
+            totalDespesas;
 
         await prisma.$transaction(async (tx) => {
+            await tx.cliente.update({
+                where: {
+                    clienteid: venda.clienteId
+                },
+                data: {
+                    nome,
+                    telefone,
+                    telefone2,
+                    rg,
+                    cpf,
+                    cep,
+                    endereco,
+                    numero,
+                    bairro,
+                    cidade,
+                    estado
+                }
+            });
 
             await tx.venda.update({
                 where: {
                     vendaid: venda.vendaid
                 },
                 data: {
-                    vendedorId:
-                        vendedorId
-                            ? Number(vendedorId)
-                            : null,
-
-                    valorVenda:
-                        Number(valorVenda),
-
+                    vendedorId: vendedorId ? Number(vendedorId) : null,
+                    valorVenda: Number(valorVenda || 0),
                     lucro,
-
                     formaPagamento,
-
-                    entrada:
-                        Number(entrada || 0),
-
-                    parcelas:
-                        Number(parcelas || 1),
-
+                    entrada: Number(entrada || 0),
+                    parcelas: Number(parcelas || 1),
                     observacoes
                 }
             });
@@ -536,46 +563,32 @@ const atualizar = async (req: Request, res: Response) => {
                 }
             });
 
-            if (
-                vendedor &&
-                vendedor.comissaoPercentual
-            ) {
-
+            if (vendedor && vendedor.comissaoPercentual) {
                 const valorComissao =
-                    (
-                        Number(valorVenda) *
-                        Number(vendedor.comissaoPercentual)
-                    ) / 100;
+                    (Number(valorVenda || 0) *
+                        Number(vendedor.comissaoPercentual)) /
+                    100;
 
                 await tx.comissao.create({
                     data: {
                         vendaId: venda.vendaid,
                         vendedorId: vendedor.usuarioid,
-                        percentual:
-                            vendedor.comissaoPercentual,
-                        valor:
-                            valorComissao
+                        percentual: vendedor.comissaoPercentual,
+                        valor: valorComissao
                     }
                 });
-
             }
-
         });
 
         return res.json({
-            message:
-                "Venda atualizada com sucesso"
+            message: "Venda atualizada com sucesso"
         });
-
     } catch (error) {
-
         console.log(error);
 
         return res.status(500).json({
-            error:
-                "Erro ao atualizar venda"
+            error: "Erro ao atualizar venda"
         });
-
     }
 };
 
