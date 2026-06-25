@@ -1351,6 +1351,18 @@ async function editarVenda(vendaId) {
         form.cidade.value =
             venda.cliente?.cidade || "";
 
+        form.estado.value =
+            venda.cliente?.estado || "";
+
+        form.cep.value =
+            venda.cliente?.cep || "";
+
+        form.bairro.value =
+            venda.cliente?.bairro || "";
+
+        form.numero.value =
+            venda.cliente?.numero || "";
+
         form.endereco.value =
             venda.cliente?.endereco || "";
 
