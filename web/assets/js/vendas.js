@@ -914,11 +914,8 @@ formVenda.addEventListener(
                         method: "POST",
 
                         headers: {
-                            "Content-Type":
-                                "application/json",
-
-                            Authorization:
-                                `Bearer ${token}`
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${token}`
                         },
 
                         body: JSON.stringify({
@@ -948,14 +945,34 @@ formVenda.addEventListener(
                                     "cpf"
                                 ),
 
-                            cidade:
+                            cep:
                                 formData.get(
-                                    "cidade"
+                                    "cep"
                                 ),
 
                             endereco:
                                 formData.get(
                                     "endereco"
+                                ),
+
+                            numero:
+                                formData.get(
+                                    "numero"
+                                ),
+
+                            bairro:
+                                formData.get(
+                                    "bairro"
+                                ),
+
+                            cidade:
+                                formData.get(
+                                    "cidade"
+                                ),
+
+                            estado:
+                                formData.get(
+                                    "estado"
                                 )
 
                         })
@@ -987,8 +1004,7 @@ formVenda.addEventListener(
                         method: "POST",
 
                         headers: {
-                            "Content-Type":
-                                "application/json",
+                            "Content-Type": "application/json",
 
                             Authorization:
                                 `Bearer ${token}`
