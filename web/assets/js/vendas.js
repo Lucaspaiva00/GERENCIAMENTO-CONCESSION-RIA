@@ -921,59 +921,57 @@ formVenda.addEventListener(
                         body: JSON.stringify({
 
                             nome:
-                                formData.get(
-                                    "clienteNome"
-                                ),
+                                formData.get("clienteNome"),
 
                             telefone:
-                                formData.get(
-                                    "clienteTelefone"
-                                ),
+                                formData.get("clienteTelefone"),
 
                             telefone2:
-                                formData.get(
-                                    "clienteTelefone2"
-                                ),
+                                formData.get("clienteTelefone2"),
 
                             rg:
-                                formData.get(
-                                    "rg"
-                                ),
+                                formData.get("rg"),
 
                             cpf:
-                                formData.get(
-                                    "cpf"
-                                ),
+                                formData.get("cpf"),
 
                             cep:
-                                formData.get(
-                                    "cep"
-                                ),
+                                formData.get("cep"),
 
                             endereco:
-                                formData.get(
-                                    "endereco"
-                                ),
+                                formData.get("endereco"),
 
                             numero:
-                                formData.get(
-                                    "numero"
-                                ),
+                                formData.get("numero"),
 
                             bairro:
-                                formData.get(
-                                    "bairro"
-                                ),
+                                formData.get("bairro"),
 
                             cidade:
-                                formData.get(
-                                    "cidade"
-                                ),
+                                formData.get("cidade"),
 
                             estado:
-                                formData.get(
-                                    "estado"
-                                )
+                                formData.get("estado"),
+
+                            vendedorId:
+                                formData.get("vendedorId")
+                                    ? Number(formData.get("vendedorId"))
+                                    : null,
+
+                            valorVenda:
+                                Number(formData.get("valorVenda")),
+
+                            formaPagamento:
+                                formData.get("formaPagamento"),
+
+                            entrada:
+                                Number(formData.get("entrada") || 0),
+
+                            parcelas:
+                                Number(formData.get("parcelas") || 1),
+
+                            observacoes:
+                                formData.get("observacoes")
 
                         })
 
