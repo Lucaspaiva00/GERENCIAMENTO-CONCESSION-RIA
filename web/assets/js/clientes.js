@@ -209,24 +209,37 @@ formCliente.addEventListener(
                         body: JSON.stringify({
 
                             nome:
-                                formData.get(
-                                    "nome"
-                                ),
+                                formData.get("nome"),
 
                             telefone:
-                                formData.get(
-                                    "telefone"
-                                ),
+                                formData.get("telefone"),
+
+                            telefone2:
+                                formData.get("telefone2"),
+
+                            rg:
+                                formData.get("rg"),
 
                             cpf:
-                                formData.get(
-                                    "cpf"
-                                ),
+                                formData.get("cpf"),
+
+                            cep:
+                                formData.get("cep"),
+
+                            endereco:
+                                formData.get("endereco"),
+
+                            numero:
+                                formData.get("numero"),
+
+                            bairro:
+                                formData.get("bairro"),
 
                             cidade:
-                                formData.get(
-                                    "cidade"
-                                )
+                                formData.get("cidade"),
+
+                            estado:
+                                formData.get("estado")
 
                         })
 

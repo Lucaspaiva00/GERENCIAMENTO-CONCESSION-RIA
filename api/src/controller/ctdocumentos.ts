@@ -375,26 +375,39 @@ export default {
             /* =========================
                CABEÇALHO
             ========================= */
-
-            doc
-                .font("Helvetica-Bold")
-                .fontSize(18)
-                .text(
-                    venda.loja.nome.toUpperCase(),
-                    {
-                        align: "center"
-                    }
-                );
-
             doc
                 .font("Helvetica")
-                .fontSize(10)
-                .text(
-                    `Telefone: ${venda.loja.telefone || "-"} `,
-                    {
-                        align: "center"
-                    }
-                );
+                .fontSize(10);
+
+            doc.text(
+                venda.loja.endereco
+                    ? `${venda.loja.endereco}${venda.loja.numero ? `, ${venda.loja.numero}` : ""}`
+                    : "",
+                {
+                    align: "center"
+                }
+            );
+
+            doc.text(
+                venda.loja.bairro || "",
+                {
+                    align: "center"
+                }
+            );
+
+            doc.text(
+                `${venda.loja.cidade || ""}${venda.loja.estado ? ` - ${venda.loja.estado}` : ""}`,
+                {
+                    align: "center"
+                }
+            );
+
+            doc.text(
+                `CEP: ${venda.loja.cep || "-"}   Tel: ${venda.loja.telefone || "-"}`,
+                {
+                    align: "center"
+                }
+            );
 
             doc.moveDown(2);
 

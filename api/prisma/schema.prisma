@@ -44,6 +44,12 @@ model Loja {
   lojaid     Int          @id @default(autoincrement())
   nome       String
   telefone   String?
+  endereco   String?
+  numero     String?
+  bairro     String?
+  cidade     String?
+  estado     String?
+  cep        String?
   createdAt  DateTime     @default(now())
   usuarios   Usuario[]
   clientes   Cliente[]
