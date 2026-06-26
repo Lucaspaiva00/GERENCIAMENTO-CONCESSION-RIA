@@ -353,6 +353,20 @@ export default {
         try {
 
             const { vendaId } = req.params;
+            const manual =
+                req.query.manual === "true";
+
+            const chaveReserva =
+                req.query.chaveReserva === "true";
+
+            const documento =
+                req.query.documento !== "false";
+
+            const reciboEntregue =
+                req.query.reciboEntregue === "true";
+
+            const recibo5Dias =
+                req.query.recibo5Dias === "true";
 
             const venda =
                 await buscarVenda(
@@ -492,17 +506,23 @@ export default {
             subtitulo(doc, "RECEBI NESTE ATO");
 
             doc.text(
-                `( ${venda.veiculo.possuiChaveReserva ? "X" : " "} ) Chave reserva`
+                `( ${chaveReserva ? "X" : " "} ) Chave reserva`
             );
 
             doc.text(
-                `( ${venda.veiculo.possuiManual ? "X" : " "} ) Manual do veículo`
+                `( ${manual ? "X" : " "} ) Manual do veículo`
             );
 
-            doc.text("( X ) CRLV / Documento");
+            doc.text(
+                `( ${documento ? "X" : " "} ) CRLV / Documento`
+            );
 
             doc.text(
-                "( X ) Recibo de compra e venda preenchido"
+                `( ${reciboEntregue ? "X" : " "} ) Recibo de compra e venda preenchido`
+            );
+
+            doc.text(
+                `( ${recibo5Dias ? "X" : " "} ) Recibo será entregue em até 5 dias`
             );
 
             doc.moveDown();

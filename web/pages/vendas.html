@@ -582,7 +582,70 @@
         </div>
 
     </div>
+    <div class="modal-overlay" id="modalTermoEntrega">
 
+        <div class="modal-content" style="max-width: 520px;">
+
+            <div class="modal-header">
+
+                <div>
+                    <h2>Itens do termo de entrega</h2>
+                    <p>Marque o que foi entregue ao cliente</p>
+                </div>
+
+                <button id="fecharModalTermoEntrega" type="button">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+
+            </div>
+
+            <div class="form-grid">
+
+                <div class="form-group full">
+                    <label>
+                        <input type="checkbox" id="termoManual">
+                        Manual do veículo
+                    </label>
+                </div>
+
+                <div class="form-group full">
+                    <label>
+                        <input type="checkbox" id="termoChaveReserva">
+                        Chave reserva
+                    </label>
+                </div>
+
+                <div class="form-group full">
+                    <label>
+                        <input type="checkbox" id="termoDocumento" checked>
+                        CRLV / Documento
+                    </label>
+                </div>
+
+                <div class="form-group full">
+                    <label>
+                        <input type="checkbox" id="termoReciboEntregue" checked>
+                        Recibo de compra e venda preenchido
+                    </label>
+                </div>
+
+                <div class="form-group full">
+                    <label>
+                        <input type="checkbox" id="termoRecibo5Dias">
+                        Recibo será entregue em até 5 dias
+                    </label>
+                </div>
+
+            </div>
+
+            <button class="btn-primary" id="btnGerarTermoEntrega" type="button" style="width:100%;">
+                <i class="fa-solid fa-file-pdf"></i>
+                Gerar termo
+            </button>
+
+        </div>
+
+    </div>
     <script src="../assets/js/config.js"></script>
     <script src="../assets/js/vendas.js"></script>
     <script src="../assets/js/menu.js"></script>

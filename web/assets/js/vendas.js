@@ -1195,8 +1195,37 @@ document.getElementById(
 /* =========================================
    DOCUMENTOS
 ========================================= */
+let termoEntregaVendaId = null;
 
 async function abrirDocumento(tipo, vendaId) {
+
+    if (tipo === "termo-entrega") {
+
+        const venda =
+            vendasCache.find(
+                item => Number(item.vendaid) === Number(vendaId)
+            );
+
+        termoEntregaVendaId = vendaId;
+
+        document.getElementById("termoManual").checked =
+            venda?.veiculo?.possuiManual || false;
+
+        document.getElementById("termoChaveReserva").checked =
+            venda?.veiculo?.possuiChaveReserva || false;
+
+        document.getElementById("termoDocumento").checked = true;
+
+        document.getElementById("termoReciboEntregue").checked = true;
+
+        document.getElementById("termoRecibo5Dias").checked = false;
+
+        document.getElementById("modalTermoEntrega")
+            .classList.add("active");
+
+        return;
+
+    }
 
     try {
 
@@ -1213,9 +1242,7 @@ async function abrirDocumento(tipo, vendaId) {
 
         if (!response.ok) {
 
-            alert(
-                "Erro ao gerar documento"
-            );
+            alert("Erro ao gerar documento");
 
             return;
 
@@ -1225,26 +1252,119 @@ async function abrirDocumento(tipo, vendaId) {
             await response.blob();
 
         const url =
-            window.URL.createObjectURL(
-                blob
-            );
+            window.URL.createObjectURL(blob);
 
-        window.open(
-            url,
-            "_blank"
-        );
+        window.open(url, "_blank");
 
     } catch (error) {
 
         console.log(error);
 
-        alert(
-            "Erro ao abrir documento"
-        );
+        alert("Erro ao abrir documento");
 
     }
 
 }
+
+document.getElementById("fecharModalTermoEntrega")
+    .onclick = () => {
+
+        document.getElementById("modalTermoEntrega")
+            .classList.remove("active");
+
+        termoEntregaVendaId = null;
+
+    };
+
+document.getElementById("termoRecibo5Dias")
+    .addEventListener("change", function () {
+
+        if (this.checked) {
+            document.getElementById("termoReciboEntregue").checked = false;
+        }
+
+    });
+
+document.getElementById("termoReciboEntregue")
+    .addEventListener("change", function () {
+
+        if (this.checked) {
+            document.getElementById("termoRecibo5Dias").checked = false;
+        }
+
+    });
+
+document.getElementById("btnGerarTermoEntrega")
+    .onclick = async () => {
+
+        if (!termoEntregaVendaId) return;
+
+        const manual =
+            document.getElementById("termoManual").checked;
+
+        const chaveReserva =
+            document.getElementById("termoChaveReserva").checked;
+
+        const documento =
+            document.getElementById("termoDocumento").checked;
+
+        const reciboEntregue =
+            document.getElementById("termoReciboEntregue").checked;
+
+        const recibo5Dias =
+            document.getElementById("termoRecibo5Dias").checked;
+
+        const url =
+            `${API_URL}/documentos/termo-entrega/${termoEntregaVendaId}` +
+            `?manual=${manual}` +
+            `&chaveReserva=${chaveReserva}` +
+            `&documento=${documento}` +
+            `&reciboEntregue=${reciboEntregue}` +
+            `&recibo5Dias=${recibo5Dias}`;
+
+        try {
+
+            const response =
+                await fetch(
+                    url,
+                    {
+                        headers: {
+                            Authorization:
+                                `Bearer ${token}`
+                        }
+                    }
+                );
+
+            if (!response.ok) {
+
+                alert("Erro ao gerar termo de entrega");
+
+                return;
+
+            }
+
+            const blob =
+                await response.blob();
+
+            const pdfUrl =
+                window.URL.createObjectURL(blob);
+
+            window.open(pdfUrl, "_blank");
+
+            document.getElementById("modalTermoEntrega")
+                .classList.remove("active");
+
+            termoEntregaVendaId = null;
+
+        } catch (error) {
+
+            console.log(error);
+
+            alert("Erro ao gerar termo de entrega");
+
+        }
+
+    };
 
 /* =========================================
    HELPERS
