@@ -166,7 +166,7 @@ function renderizarTabela(lista) {
                 </td>
 
                 <td>
-                    ${item.placa}
+                    ${item.veiculo?.placa || "-"}
                 </td>
 
                 <td>
