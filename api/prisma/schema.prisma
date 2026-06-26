@@ -4,8 +4,8 @@ generator client {
 
 datasource db {
   provider  = "postgresql"
-  url        = env("DATABASE_URL")
-  directUrl  = env("DIRECT_URL")
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 enum TipoUsuario {
@@ -118,15 +118,17 @@ model Veiculo {
   createdAt          DateTime           @default(now())
   vendas             Venda[]
   historicos         HistoricoVeiculo[]
+  financeiros        Financeiro[]
 }
 
 model HistoricoVeiculo {
-  historicoid Int      @id @default(autoincrement())
+  historicoid Int          @id @default(autoincrement())
   veiculoId   Int
-  veiculo     Veiculo  @relation(fields: [veiculoId], references: [veiculoid], onDelete: Cascade)
-  descricao   String   @db.Text
+  veiculo     Veiculo      @relation(fields: [veiculoId], references: [veiculoid], onDelete: Cascade)
+  descricao   String       @db.Text
   valor       Float?
-  createdAt   DateTime @default(now())
+  createdAt   DateTime     @default(now())
+  financeiros Financeiro[]
 }
 
 model Venda {
@@ -174,13 +176,24 @@ model ContaReceber {
 }
 
 model Financeiro {
-  financeiroid Int              @id @default(autoincrement())
-  lojaId       Int
-  loja         Loja             @relation(fields: [lojaId], references: [lojaid], onDelete: Cascade)
-  descricao    String
-  tipo         TipoMovimentacao
-  valor        Float
-  status       StatusConta      @default(PENDENTE)
-  vencimento   DateTime?
-  createdAt    DateTime         @default(now())
+  financeiroid Int @id @default(autoincrement())
+
+  lojaId Int
+  loja   Loja @relation(fields: [lojaId], references: [lojaid], onDelete: Cascade)
+
+  // Relação opcional com veículo
+  veiculoId Int?
+  veiculo   Veiculo? @relation(fields: [veiculoId], references: [veiculoid], onDelete: SetNull)
+
+  // Relação opcional com histórico
+  historicoId Int?
+  historico   HistoricoVeiculo? @relation(fields: [historicoId], references: [historicoid], onDelete: SetNull)
+
+  descricao  String
+  tipo       TipoMovimentacao
+  valor      Float
+  status     StatusConta      @default(PENDENTE)
+  vencimento DateTime?
+
+  createdAt DateTime @default(now())
 }
