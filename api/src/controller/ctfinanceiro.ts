@@ -69,7 +69,8 @@ export default {
                 dataFim,
                 tipo,
                 status,
-                busca
+                busca,
+                veiculoId
             } = req.query;
 
             const filtros: Prisma.FinanceiroWhereInput = {
@@ -119,6 +120,10 @@ export default {
             if (status) {
                 filtros.status =
                     status as Prisma.EnumStatusContaFilter;
+            }
+
+            if (veiculoId) {
+                filtros.veiculoId = Number(veiculoId);
             }
 
             if (busca) {

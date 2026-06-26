@@ -29,6 +29,9 @@ const btnFechar =
 
 let movimentacoes = [];
 
+const veiculoFiltro =
+    document.getElementById("veiculoFiltro");
+
 /* LOGOUT */
 
 document.getElementById("logoutBtn")
@@ -66,13 +69,27 @@ window.onclick = (e) => {
 };
 
 /* CARREGAR */
-
 async function carregarFinanceiro() {
 
     try {
 
+        const params =
+            new URLSearchParams();
+
+        if (veiculoFiltro && veiculoFiltro.value) {
+            params.append(
+                "veiculoId",
+                veiculoFiltro.value
+            );
+        }
+
+        const url =
+            params.toString()
+                ? `${API}/financeiro?${params.toString()}`
+                : `${API}/financeiro`;
+
         const response = await fetch(
-            `${API}/financeiro`,
+            url,
             {
                 headers: {
                     Authorization:
@@ -98,6 +115,47 @@ async function carregarFinanceiro() {
 
 }
 
+async function carregarVeiculosFiltro() {
+
+    try {
+
+        const response =
+            await fetch(
+                `${API}/veiculos`,
+                {
+                    headers: {
+                        Authorization:
+                            `Bearer ${token}`
+                    }
+                }
+            );
+
+        const veiculos =
+            await response.json();
+
+        veiculoFiltro.innerHTML = `
+            <option value="">
+                Todos os veículos
+            </option>
+        `;
+
+        veiculos.forEach(veiculo => {
+
+            veiculoFiltro.innerHTML += `
+                <option value="${veiculo.veiculoid}">
+                    ${veiculo.titulo} - ${veiculo.placa || "Sem placa"}
+                </option>
+            `;
+
+        });
+
+    } catch (error) {
+
+        console.log(error);
+
+    }
+
+}
 /* KPIS */
 
 function atualizarKPIs() {
@@ -354,6 +412,13 @@ document.getElementById("filtroTipo")
 document.getElementById("filtroStatus")
     .addEventListener("change", aplicarFiltros);
 
+veiculoFiltro.addEventListener(
+    "change",
+    () => {
+        carregarFinanceiro();
+    }
+);
+
 function aplicarFiltros() {
 
     const busca =
@@ -411,10 +476,32 @@ function aplicarFiltros() {
     const filtrado =
         movimentacoes.filter(item => {
 
-            const matchBusca =
+            const descricao =
                 item.descricao
-                    .toLowerCase()
-                    .includes(busca);
+                    ?.toLowerCase() || "";
+
+            const placa =
+                item.veiculo?.placa
+                    ?.toLowerCase() || "";
+
+            const titulo =
+                item.veiculo?.titulo
+                    ?.toLowerCase() || "";
+
+            const marca =
+                item.veiculo?.marca
+                    ?.toLowerCase() || "";
+
+            const modelo =
+                item.veiculo?.modelo
+                    ?.toLowerCase() || "";
+
+            const matchBusca =
+                descricao.includes(busca) ||
+                placa.includes(busca) ||
+                titulo.includes(busca) ||
+                marca.includes(busca) ||
+                modelo.includes(busca);
 
             const matchTipo =
                 !tipo ||
@@ -616,4 +703,6 @@ document
         "change",
         aplicarFiltros
     );
+
+carregarVeiculosFiltro();
 carregarFinanceiro();
