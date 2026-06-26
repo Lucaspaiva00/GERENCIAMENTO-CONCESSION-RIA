@@ -29,8 +29,6 @@ const btnFechar =
 
 let movimentacoes = [];
 
-const veiculoFiltro =
-    document.getElementById("veiculoFiltro");
 
 /* LOGOUT */
 
@@ -68,42 +66,22 @@ window.onclick = (e) => {
 
 };
 
-/* CARREGAR */
 async function carregarFinanceiro() {
 
     try {
 
-        const params =
-            new URLSearchParams();
-
-        if (veiculoFiltro && veiculoFiltro.value) {
-            params.append(
-                "veiculoId",
-                veiculoFiltro.value
-            );
-        }
-
-        const url =
-            params.toString()
-                ? `${API}/financeiro?${params.toString()}`
-                : `${API}/financeiro`;
-
         const response = await fetch(
-            url,
+            `${API}/financeiro`,
             {
                 headers: {
-                    Authorization:
-                        `Bearer ${token}`
+                    Authorization: `Bearer ${token}`
                 }
             }
         );
 
-        movimentacoes =
-            await response.json();
+        movimentacoes = await response.json();
 
-        renderizarTabela(
-            movimentacoes
-        );
+        renderizarTabela(movimentacoes);
 
         atualizarKPIs();
 
@@ -115,47 +93,6 @@ async function carregarFinanceiro() {
 
 }
 
-async function carregarVeiculosFiltro() {
-
-    try {
-
-        const response =
-            await fetch(
-                `${API}/veiculos`,
-                {
-                    headers: {
-                        Authorization:
-                            `Bearer ${token}`
-                    }
-                }
-            );
-
-        const veiculos =
-            await response.json();
-
-        veiculoFiltro.innerHTML = `
-            <option value="">
-                Todos os veículos
-            </option>
-        `;
-
-        veiculos.forEach(veiculo => {
-
-            veiculoFiltro.innerHTML += `
-                <option value="${veiculo.veiculoid}">
-                    ${veiculo.titulo} - ${veiculo.placa || "Sem placa"}
-                </option>
-            `;
-
-        });
-
-    } catch (error) {
-
-        console.log(error);
-
-    }
-
-}
 /* KPIS */
 
 function atualizarKPIs() {
@@ -412,12 +349,7 @@ document.getElementById("filtroTipo")
 document.getElementById("filtroStatus")
     .addEventListener("change", aplicarFiltros);
 
-veiculoFiltro.addEventListener(
-    "change",
-    () => {
-        carregarFinanceiro();
-    }
-);
+
 
 function aplicarFiltros() {
 
@@ -704,5 +636,4 @@ document
         aplicarFiltros
     );
 
-carregarVeiculosFiltro();
 carregarFinanceiro();
