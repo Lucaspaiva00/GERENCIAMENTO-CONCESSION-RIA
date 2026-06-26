@@ -166,6 +166,10 @@ function renderizarTabela(lista) {
                 </td>
 
                 <td>
+                    ${item.placa}
+                </td>
+
+                <td>
 
                     <span class="
                         badge
