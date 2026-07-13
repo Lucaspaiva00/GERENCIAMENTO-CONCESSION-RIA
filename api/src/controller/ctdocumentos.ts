@@ -168,56 +168,36 @@ export default {
             );
 
             /* =========================
-               CABEÇALHO EMPRESA
+               CABEÇALHO
             ========================= */
-
             doc
                 .font("Helvetica-Bold")
                 .fontSize(20)
-                .text(
-                    venda.loja.nome.toUpperCase(),
-                    {
-                        align: "center"
-                    }
-                );
+                .text(venda.loja.nome.toUpperCase(), { align: "center" });
 
             doc
                 .font("Helvetica")
                 .fontSize(10)
                 .text(
-                    venda.cliente.endereco
-                        ? `${venda.cliente.endereco}${venda.cliente.numero ? `, ${venda.cliente.numero}` : ""
-                        }`
-                        : "",
-                    {
-                        align: "center"
-                    }
+                    venda.loja.endereco
+                        ? `${venda.loja.endereco}${venda.loja.numero ? `, ${venda.loja.numero}` : ""}`
+                        : "Rua Cândido Bueno, 707",
+                    { align: "center" }
                 );
 
             doc.text(
-                venda.cliente.bairro || "",
-                {
-                    align: "center"
-                }
+                venda.loja.bairro || "Centro",
+                { align: "center" }
             );
 
             doc.text(
-                `${venda.cliente.cidade || ""}${venda.cliente.estado
-                    ? ` - ${venda.cliente.estado}`
-                    : ""
-                }`,
-                {
-                    align: "center"
-                }
+                `${venda.loja.cidade || "Jaguariúna"} - ${venda.loja.estado || "SP"}`,
+                { align: "center" }
             );
 
             doc.text(
-                `CEP: ${venda.cliente.cep || "-"
-                }   Tel: ${venda.loja.telefone || "-"
-                }`,
-                {
-                    align: "center"
-                }
+                `CEP: ${venda.loja.cep || "13910-033"}   Tel: ${venda.loja.telefone || "-"}`,
+                { align: "center" }
             );
 
             doc.moveDown(2);
